@@ -184,6 +184,11 @@ h3 {
     flex-wrap: wrap;
     gap: 8px 20px;
     font-size: 13px;
+    color: var(--color-muted);
+  }
+
+  /* Das Label, dessen Bauteil in der Szene gerade aufleuchtet (mainboardLabelIndex). */
+  .station-labels .reveal-item[data-flash='true'] {
     color: var(--color-accent);
   }
 
@@ -203,7 +208,8 @@ h3 {
     transform: translateY(16px);
     transition:
       opacity 500ms ease,
-      transform 500ms ease;
+      transform 500ms ease,
+      color 300ms ease;
   }
 
   .reveal-item[data-revealed='true'] {
@@ -285,12 +291,13 @@ h3 {
   }
 }
 
-/* Feste Navigation (components/nav/SiteNav.tsx). Höhe in --nav-h, damit Overlays nicht darunter laufen. */
-:root {
-  --nav-h: 64px;
-}
-
+/* Feste Navigation (components/nav/SiteNav.tsx). Höhe in --nav-h, damit Overlays nicht darunter laufen.
+   --nav-h und sein Mobil-Override müssen im selben Layer stehen, sonst gewinnt die ungeschichtete Regel. */
 @layer components {
+  :root {
+    --nav-h: 64px;
+  }
+
   .nav-bar {
     position: fixed;
     inset: 0 0 auto 0;

@@ -122,4 +122,22 @@ test.describe('Feste Navigation', () => {
     expect(await canvas.getAttribute('tabindex')).toBeNull()
     await expect(page.getByRole('img', { name: 'Smart Flow' })).toHaveCount(1)
   })
+
+  for (const [width, height, navH] of [
+    [1280, 800, 64],
+    [390, 844, 84],
+    [320, 568, 84],
+  ] as const) {
+    test(`--nav-h und Leistenhöhe bei ${width}x${height} sind ${navH}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height })
+      await page.goto('/')
+      await expect(page.locator('html')).toHaveAttribute('data-mode', '3d')
+      const token = await page.evaluate(() =>
+        getComputedStyle(document.documentElement).getPropertyValue('--nav-h').trim(),
+      )
+      expect(token).toBe(`${navH}px`)
+      const box = await page.locator('.nav-bar').boundingBox()
+      expect(box?.height).toBe(navH)
+    })
+  }
 })
