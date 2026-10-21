@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 import { de } from '../../content/de'
 import { STATIONS, stationWindow } from '../../scene/stations'
 
-// scrollToStation landet auf dem Fenster-Start der Station (0.86); der Brief nannte > 0.9, das passt nicht zu STATIONS.
+// Kontakt: scrollToStation landet am Ende der Fahrt; die Schwelle liegt knapp vor dem Fensterstart.
 const KONTAKT_START = stationWindow('kontakt').start - 0.005
 
 const progress = (page: import('@playwright/test').Page) =>
@@ -20,6 +20,21 @@ test.describe('Feste Navigation', () => {
       'aria-current',
       'true',
     )
+  })
+
+  test('Klick auf Abläufe landet im Fenster und zeigt das Overlay', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.locator('html')).toHaveAttribute('data-mode', '3d')
+    await page.getByRole('link', { name: de.nav.labels.cpu, exact: true }).click()
+    await expect(page.locator('#cpu')).toHaveAttribute('data-state', 'visible', { timeout: 3000 })
+    expect(Math.abs((await progress(page)) - 0.343)).toBeLessThan(0.01)
+  })
+
+  test('Deep Link /#ablaeufe zeigt das CPU-Overlay', async ({ page }) => {
+    await page.goto('/#ablaeufe')
+    await expect(page.locator('html')).toHaveAttribute('data-mode', '3d')
+    await expect.poll(async () => Math.abs((await progress(page)) - 0.343), { timeout: 5000 }).toBeLessThan(0.01)
+    await expect(page.locator('#cpu')).toHaveAttribute('data-state', 'visible', { timeout: 5000 })
   })
 
   test('CTA fährt zu Kontakt', async ({ page }) => {

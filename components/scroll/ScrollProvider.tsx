@@ -9,6 +9,9 @@ import { progressStore } from '@/lib/scroll/progress'
 import { shouldRefresh, type Size } from '@/lib/scroll/resize'
 import { STATIONS, stationOffset } from '@/scene/stations'
 
+/** Anteil des Stationsfensters, auf dem Navigation und Deep Links landen. */
+export const STATION_LANDING = 0.45
+
 let lenisInstance: Lenis | null = null
 
 /** Maximal möglicher Scrollweg der Seite (unabhängig von svh/innerHeight-Abweichungen). */
@@ -29,8 +32,11 @@ function stationFromHash() {
 export function scrollToStation(id: StationId, opts?: { immediate?: boolean }): void {
   const station = STATIONS.find((s) => s.id === id)
   if (!station) return
-  // Kontakt: ans Ende der Fahrt, denn sein Overlay erscheint erst nach 30 % des Fensters (Ruling Task 17).
-  const target = stationOffset(id === 'kontakt' ? 1 : station.start, lenisInstance ? lenisInstance.limit : maxScroll())
+  // Landung im Fenster (45 %): Overlay ab 40 % sichtbar, Kamera ab 35 % geparkt. Start (gehaeuse) bei 0,
+  // Kontakt am Ende der Fahrt, denn sein Overlay erscheint erst nach 30 % des Fensters (Ruling Task 17).
+  const at =
+    id === 'gehaeuse' ? 0 : id === 'kontakt' ? 1 : station.start + STATION_LANDING * (station.end - station.start)
+  const target = stationOffset(at, lenisInstance ? lenisInstance.limit : maxScroll())
   if (lenisInstance) {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     lenisInstance.scrollTo(target, reduced || opts?.immediate ? { immediate: true } : undefined)
