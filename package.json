@@ -12,6 +12,7 @@
     "e2e": "playwright test",
     "typecheck": "tsc --noEmit",
     "brand:svg": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/svg-text-to-path.mts",
+    "content:legacy": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/extract-legacy-sentences.mts",
     "brand:icons": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/render-icons.mts"
   },
   "dependencies": {
