@@ -42,6 +42,8 @@ export function scrollToStation(id: StationId, opts?: { immediate?: boolean }): 
 export function ScrollProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger)
+    // Resize gehört unserem Handler: ScrollTriggers eigener Resize-Refresh liefe danach und verschöbe progress.
+    ScrollTrigger.config({ autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load' })
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const lenis = new Lenis(
