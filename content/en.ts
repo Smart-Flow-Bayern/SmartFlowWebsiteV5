@@ -5,7 +5,7 @@ export const en: SiteContent = {
   meta: {
     title: 'Smart Flow – Workflows, Digitization, Automation | Regensburg',
     description:
-      'Smart Flow from Regensburg sorts out workflows in small businesses, picks fitting software and automates whatever keeps repeating.',
+      'Smart Flow from Regensburg sorts out workflows in small businesses, picks the right software and automates whatever keeps repeating.',
   },
   nav: {
     labels: {
@@ -106,15 +106,15 @@ export const en: SiteContent = {
       },
       {
         name: 'Refinement',
-        happens: 'Once everything runs, we look at where daily work still snags and adjust.',
+        happens: 'Once everything runs, we look at where daily work still gets stuck and adjust.',
         deliverable: 'A workflow that has proven itself in the business, not just on paper.',
         duration: 'to be agreed',
       },
     ],
   },
   contact: {
-    title: 'Let us talk about your business.',
-    text: 'Tell us where things snag for you. Afterward you will know clearly whether we can help and where we would start.',
+    title: "Let's talk about your business.",
+    text: 'Tell us where things get stuck. Afterward you will know clearly whether we can help and where we would start.',
     calCta: 'Pick a time',
     calConsent:
       'The Cal.com calendar only appears once you click. Data is then sent to Cal.com; see the privacy policy for details.',

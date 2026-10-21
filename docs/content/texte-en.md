@@ -7,7 +7,7 @@ Gegenüberstellung der deutschen und englischen Texte. Korrekturen bitte als Kom
 | Feld | Deutsch | English |
 |---|---|---|
 | meta.title | Smart Flow – Abläufe, Digitalisierung, Automatisierung \| Regensburg | Smart Flow – Workflows, Digitization, Automation \| Regensburg |
-| meta.description | Smart Flow aus Regensburg ordnet Abläufe in kleinen Betrieben, wählt passende Software aus und automatisiert, was sich ständig wiederholt. | Smart Flow from Regensburg sorts out workflows in small businesses, picks fitting software and automates whatever keeps repeating. |
+| meta.description | Smart Flow aus Regensburg ordnet Abläufe in kleinen Betrieben, wählt passende Software aus und automatisiert, was sich ständig wiederholt. | Smart Flow from Regensburg sorts out workflows in small businesses, picks the right software and automates whatever keeps repeating. |
 
 ## Navigation
 
@@ -107,7 +107,7 @@ Gegenüberstellung der deutschen und englischen Texte. Korrekturen bitte als Kom
 | ssd.blocks[2].deliverable | Abläufe, die im Alltag funktionieren und die Ihr Team selbst bedienen kann. | Workflows that hold up in daily work and that your team can operate itself. |
 | ssd.blocks[2].duration | nach Absprache | to be agreed |
 | ssd.blocks[3].name | Optimierung | Refinement |
-| ssd.blocks[3].happens | Wenn alles läuft, schauen wir, wo es im Alltag noch hakt, und bessern nach. | Once everything runs, we look at where daily work still snags and adjust. |
+| ssd.blocks[3].happens | Wenn alles läuft, schauen wir, wo es im Alltag noch hakt, und bessern nach. | Once everything runs, we look at where daily work still gets stuck and adjust. |
 | ssd.blocks[3].deliverable | Ein Ablauf, der sich im Betrieb bewährt hat, nicht nur auf dem Papier. | A workflow that has proven itself in the business, not just on paper. |
 | ssd.blocks[3].duration | nach Absprache | to be agreed |
 
@@ -115,8 +115,8 @@ Gegenüberstellung der deutschen und englischen Texte. Korrekturen bitte als Kom
 
 | Feld | Deutsch | English |
 |---|---|---|
-| contact.title | Reden wir über Ihren Betrieb. | Let us talk about your business. |
-| contact.text | Erzählen Sie, wo es bei Ihnen hakt. Sie hören danach klar, ob wir helfen können und womit wir anfangen würden. | Tell us where things snag for you. Afterward you will know clearly whether we can help and where we would start. |
+| contact.title | Reden wir über Ihren Betrieb. | Let's talk about your business. |
+| contact.text | Erzählen Sie, wo es bei Ihnen hakt. Sie hören danach klar, ob wir helfen können und womit wir anfangen würden. | Tell us where things get stuck. Afterward you will know clearly whether we can help and where we would start. |
 | contact.calCta | Termin wählen | Pick a time |
 | contact.calConsent | Der Kalender von Cal.com erscheint erst, wenn Sie klicken. Dann gehen Daten an Cal.com; mehr dazu in der Datenschutzerklärung. | The Cal.com calendar only appears once you click. Data is then sent to Cal.com; see the privacy policy for details. |
 | contact.calTitle | Terminbuchung bei Cal.com | Booking an appointment with Cal.com |

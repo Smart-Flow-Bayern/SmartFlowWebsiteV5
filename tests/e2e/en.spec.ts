@@ -24,6 +24,15 @@ test.describe('English site', () => {
     await expect(page).toHaveTitle(en.meta.title)
   })
 
+  test('/en noise field has no German terms', async ({ page }) => {
+    await page.goto('/en')
+    await expect(page.locator('html')).toHaveAttribute('data-mode', '3d')
+    await expect(page.locator('#station0')).not.toContainText('Pflicht für alle')
+    const terms = await page.locator('#station0 [data-noise]').allTextContents()
+    expect(terms.length).toBeGreaterThan(0)
+    expect(terms).not.toContain('Pflicht für alle')
+  })
+
   test('/ stays German with hreflang en', async ({ page }) => {
     await page.goto('/')
     await expect(page.locator('html')).toHaveAttribute('lang', 'de')
