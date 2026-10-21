@@ -33,11 +33,13 @@ export function mainboardLabelIndex(progress: number): number {
   return revealIndex(progress, MAINBOARD, 5) - 1
 }
 
-/** Lüfterwinkel in rad; steht außerhalb der GPU-Station, die Drehzahl steigt im ersten Fensterdrittel auf 18 rad/s. */
-export function fanAngle(progress: number, time: number): number {
+/**
+ * Lüfterdrehzahl in rad/s: 0 außerhalb der GPU-Station, im ersten Fensterdrittel linear von 0 auf 18,
+ * danach 18. Der Winkel wird pro Frame aus der Drehzahl integriert (siehe Computer.tsx), damit er nie springt.
+ */
+export function fanSpeed(progress: number): number {
   if (!inWindow(progress, GPU)) return 0
-  const speed = FAN_MAX_SPEED * clamp01(localProgress(progress, GPU) / FIRST_THIRD)
-  return time * speed
+  return FAN_MAX_SPEED * clamp01(localProgress(progress, GPU) / FIRST_THIRD)
 }
 
 /** Anzahl der beschriebenen SSD-Blöcke, 0 bis 4. */

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   cableInsert,
   coolerLift,
-  fanAngle,
+  fanSpeed,
   mainboardLabelIndex,
   sidePanelOffset,
   ssdBlocksWritten,
@@ -27,16 +27,23 @@ describe('animations', () => {
     expect(mainboardLabelIndex(0.3)).toBe(-1)
   })
 
-  it('fanAngle: 0 außerhalb der GPU-Station, danach wächst der Winkel mit der Zeit', () => {
-    expect(fanAngle(0.3, 1)).toBe(0)
-    expect(fanAngle(0.75, 5)).toBe(0)
-    expect(fanAngle(0.68, 1)).toBeGreaterThan(0)
-    expect(fanAngle(0.68, 2)).toBeGreaterThan(fanAngle(0.68, 1))
+  it('fanSpeed: 0 außerhalb der GPU-Station und am Fensterbeginn', () => {
+    expect(fanSpeed(0.5)).toBe(0)
+    expect(fanSpeed(0.3)).toBe(0)
+    expect(fanSpeed(0.56)).toBe(0)
+    expect(fanSpeed(0.75)).toBe(0)
   })
 
-  it('fanAngle: Drehzahl erreicht 18 rad/s nach dem ersten Fensterdrittel', () => {
-    expect(fanAngle(0.68, 1)).toBeCloseTo(18, 6)
-    expect(fanAngle(0.56, 1)).toBe(0)
+  it('fanSpeed: steigt im ersten Fensterdrittel streng und bleibt dann bei 18 rad/s', () => {
+    const a = fanSpeed(0.58)
+    const b = fanSpeed(0.59)
+    const c = fanSpeed(0.6)
+    expect(a).toBeGreaterThan(0)
+    expect(b).toBeGreaterThan(a)
+    expect(c).toBeGreaterThan(b)
+    expect(c).toBeLessThan(18)
+    expect(fanSpeed(0.61)).toBe(18)
+    expect(fanSpeed(0.68)).toBe(18)
   })
 
   it('ssdBlocksWritten: 0 bis 4', () => {

@@ -17,7 +17,7 @@ import {
 } from 'three'
 import { colors } from '@/lib/brand/tokens'
 import { progressStore } from '@/lib/scroll/progress'
-import { cableInsert, coolerLift, fanAngle, sidePanelOffset, traceImpulse } from '@/scene/animations'
+import { cableInsert, coolerLift, fanSpeed, sidePanelOffset, traceImpulse } from '@/scene/animations'
 import { useComputer } from '@/scene/loadComputer'
 import { IMPULSE_TRACE } from '@/scene/model/layout'
 import Lights from './Lights'
@@ -34,9 +34,21 @@ const CABLE_START_OFFSET = 0.3
 const CABLE_X_OFFSET = 0.004
 const IMPULSE_RADIUS = 0.004
 
-/** Ruheposition eines Teils; das Modell wird nie im Render mutiert, daher einmal beim Mount lesen. */
+/** Größter Schritt der Lüfter-Integration; ein Tab-Wechsel soll die Lüfter nicht springen lassen. */
+const MAX_FAN_STEP = 0.1
+
+/**
+ * Ruheposition eines Teils. Das glb-Modell ist zwischen Mounts geteilt (HMR, Moduswechsel) und bereits
+ * verschoben; deshalb wird die Ruhe einmal in `userData.rest` abgelegt und danach von dort gelesen.
+ */
 function rest(object: Object3D | undefined) {
-  return { object, x: object?.position.x ?? 0, y: object?.position.y ?? 0, z: object?.position.z ?? 0 }
+  if (!object) return { object, x: 0, y: 0, z: 0 }
+  const saved = (object.userData.rest ??= { x: object.position.x, y: object.position.y, z: object.position.z }) as {
+    x: number
+    y: number
+    z: number
+  }
+  return { object, ...saved }
 }
 
 /** Kabel (Zylinder auf z) samt Stecker, Ziel ist `ioSlot_cable`; Slot-Position aus den lokalen Koordinaten, ohne Weltmatrix. */
@@ -108,6 +120,7 @@ interface Rig {
   sidePanel: ReturnType<typeof rest>
   cooler: ReturnType<typeof rest>
   fans: Object3D[]
+  fanAngle: number
   cable: Mesh
   cableZ: number
   curve: CurvePath<Vector3>
@@ -121,6 +134,7 @@ function buildRig(scene: Object3D): Rig {
     sidePanel: rest(scene.getObjectByName('sidePanel')),
     cooler: rest(scene.getObjectByName('cpuCooler')),
     fans: [0, 1].flatMap((i) => scene.getObjectByName(`gpuFan_${i}`) ?? []),
+    fanAngle: scene.getObjectByName('gpuFan_0')?.rotation.y ?? 0,
     cable,
     cableZ: origin.z,
     ...buildImpulse(),
@@ -129,7 +143,7 @@ function buildRig(scene: Object3D): Rig {
 }
 
 /** Setzt alle scrollgetriebenen Bauteile auf den Zustand zu `progress`. Läuft pro Frame, ohne Allokation. */
-function animate(rig: Rig, progress: number, time: number, impulseVisible: boolean) {
+function animate(rig: Rig, progress: number, delta: number, impulseVisible: boolean) {
   const { sidePanel, cooler, fans, cable, curve, sphere } = rig
   if (sidePanel.object) sidePanel.object.position.x = sidePanel.x + sidePanelOffset(progress)
   if (cooler.object) {
@@ -137,8 +151,8 @@ function animate(rig: Rig, progress: number, time: number, impulseVisible: boole
     cooler.object.position.z = cooler.z + COOLER_LIFT_Z * lift
     cooler.object.position.y = cooler.y + COOLER_LIFT_Y * lift
   }
-  const angle = fanAngle(progress, time)
-  for (const fan of fans) fan.rotation.y = angle
+  rig.fanAngle += fanSpeed(progress) * Math.min(delta, MAX_FAN_STEP)
+  for (const fan of fans) fan.rotation.y = rig.fanAngle
   const insert = cableInsert(progress)
   cable.visible = insert > 0
   cable.position.z = rig.cableZ + MathUtils.lerp(CABLE_START_OFFSET, 0, insert)
@@ -158,13 +172,23 @@ export default function Computer() {
 
   const rig = useMemo(() => buildRig(scene), [scene])
 
-  useFrame(({ clock }, delta) => {
-    animate(rig, progressStore.get(), clock.elapsedTime, fade.current >= 1)
+  useFrame((_, delta) => {
+    animate(rig, progressStore.get(), delta, fade.current >= 1)
 
     if (fade.current >= 1) return
     fade.current = Math.min(1, fade.current + Math.min(delta, MAX_FADE_STEP) / FADE_SECONDS)
     setFade(targets, MathUtils.smoothstep(fade.current, 0, 1))
   })
+
+  useEffect(() => {
+    const { cable, sphere } = rig
+    return () => {
+      for (const mesh of [cable, ...cable.children, sphere] as Mesh[]) {
+        mesh.geometry.dispose()
+        ;(mesh.material as Material).dispose()
+      }
+    }
+  }, [rig])
 
   useEffect(() => {
     if (window.__sf) window.__sf.modelLoaded = true
