@@ -50,9 +50,21 @@ for (const p of pages) {
   }
   await page.waitForTimeout(1000)
   await page.getByRole('button', { name: p.cta }).click()
-  const calSrc = page.locator('iframe[src^="https://cal.com/"], iframe[src^="https://app.cal.com/"], iframe[src*=".cal.com/"]')
   try {
-    await calSrc.first().waitFor({ state: 'attached', timeout: 10_000 })
+    // Hostname exakt prüfen (cal.com oder Subdomain), kein Substring-Selektor.
+    await page.waitForFunction(
+      () =>
+        [...document.querySelectorAll('iframe')].some((f) => {
+          try {
+            const host = new URL(f.src).hostname
+            return host === 'cal.com' || host.endsWith('.cal.com')
+          } catch {
+            return false
+          }
+        }),
+      undefined,
+      { timeout: 10_000 },
+    )
     calFrame += 1
   } catch {
     const srcs = await page.locator('iframe').evaluateAll((els) => els.map((e) => e.getAttribute('src')))

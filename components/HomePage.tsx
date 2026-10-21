@@ -43,10 +43,11 @@ export function HomePage() {
   const mode = useMode()
   return (
     <>
+      {/* Zuerst im DOM: Tab-Reihenfolge beginnt in der Navigation (fixed, optisch unverändert). */}
+      <SiteNav />
       {mode === 'static' ? <StaticStations /> : <ScrollLayout />}
       {/* Nach #stage: ScrollTrigger hüllt #stage beim Pinnen um, Einfügen davor bräche React. */}
       <SceneGate />
-      <SiteNav />
     </>
   )
 }

@@ -17,9 +17,9 @@ describe('qualityFor', () => {
   it('wenig Speicher senkt auch am Desktop', () => {
     expect(qualityFor(1440, 4).dpr[1]).toBe(1.25)
   })
-  it('Grenze bei 768 px', () => {
-    expect(qualityFor(767, undefined).noiseCount).toBe(24)
-    expect(qualityFor(768, undefined).noiseCount).toBe(72)
+  it('Grenze bei 768 px (einschließlich, wie das CSS)', () => {
+    expect(qualityFor(768, undefined).noiseCount).toBe(24)
+    expect(qualityFor(769, undefined).noiseCount).toBe(72)
   })
   it('Schatten immer aus', () => {
     expect(qualityFor(390, 4).shadows).toBe(false)

@@ -4,6 +4,6 @@ export type Locale = 'de' | 'en'
 export function alternates(locale: Locale) {
   return {
     canonical: locale === 'de' ? '/' : '/en',
-    languages: { de: '/', en: '/en' },
+    languages: { de: '/', en: '/en', 'x-default': '/' },
   }
 }

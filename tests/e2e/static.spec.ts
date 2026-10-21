@@ -27,7 +27,10 @@ test.describe('Statischer Modus', () => {
       await expect(heading).toBeVisible()
     }
 
+    // Station 0 zeigt die Gehäuse-Silhouette statt eines Standbilds.
+    await expect(page.locator('#start > svg')).toHaveCount(1)
     for (const [i] of STATION_IDS.entries()) {
+      if (i === 0) continue
       const img = page.locator(`img[src="/stations/station-${i}.webp"]`)
       await img.scrollIntoViewIfNeeded()
       await expect
@@ -88,5 +91,23 @@ test.describe('Statischer Modus', () => {
         { timeout: 3000 },
       )
       .toBe(true)
+  })
+})
+
+test.describe('Statischer Modus: Anker und Fokus', () => {
+  test('alter v3-Anker #contact scrollt zur Kontakt-Station', async ({ page }) => {
+    await page.goto('/?fallback=1#contact')
+    await expect(page.locator('html')).toHaveAttribute('data-mode', 'static')
+    await expect(page.locator('section#kontakt')).toHaveCount(1)
+    await expect(page.locator('[id="kontakt"]')).toHaveCount(1)
+    await expect(page.locator('#kontakt h2')).toBeInViewport({ timeout: 3000 })
+  })
+
+  test('erster Tab landet in der Navigationsleiste, nicht im Kontakt-CTA', async ({ page }) => {
+    await page.goto('/?fallback=1')
+    await expect(page.locator('html')).toHaveAttribute('data-mode', 'static')
+    await page.keyboard.press('Tab')
+    const insideNav = await page.evaluate(() => !!document.activeElement?.closest('header'))
+    expect(insideNav).toBe(true)
   })
 })

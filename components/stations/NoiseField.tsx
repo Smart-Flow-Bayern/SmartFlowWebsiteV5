@@ -5,7 +5,7 @@ import { useContent } from '@/components/content/ContentProvider'
 import { NOISE_TERMS, NOISE_TERMS_EN } from '@/content/noise'
 import { colors } from '@/lib/brand/tokens'
 import { layoutNoise, noiseOpacity } from '@/lib/noise/layout'
-import { useProgress } from '@/lib/scroll/progress'
+import { useProgressSelector } from '@/lib/scroll/progress'
 
 const NOISE_SEED = 20261021
 const PARTICLES = {
@@ -17,7 +17,7 @@ const PARTICLES = {
 export function NoiseField({ count }: { count?: number }) {
   const { locale } = useContent()
   const particles = useMemo(() => PARTICLES[locale], [locale])
-  const opacity = noiseOpacity(useProgress())
+  const opacity = useProgressSelector(noiseOpacity)
   return (
     <div
       aria-hidden="true"

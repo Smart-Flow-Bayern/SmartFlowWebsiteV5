@@ -12,12 +12,14 @@ import { StationRam } from '@/components/stations/StationRam'
 import { StationSsd } from '@/components/stations/StationSsd'
 import { wordmarkVariant } from '@/lib/brand/tokens'
 import { lastStation } from '@/lib/device/mode'
+import { resolveStationSlug } from '@/lib/scroll/hash'
+import { CaseSilhouette } from '@/components/stations/CaseSilhouette'
 import { STATIONS } from '@/scene/stations'
 
 function StationImage({ index }: { index: number }) {
   return (
     <picture>
-      <source media="(max-width: 767px)" width={800} height={1200} srcSet={`/stations/station-${index}-mobile.webp`} />
+      <source media="(max-width: 768px)" width={800} height={1200} srcSet={`/stations/station-${index}-mobile.webp`} />
       <img
         src={`/stations/station-${index}.webp`}
         width={1600}
@@ -54,7 +56,9 @@ export function StaticStations() {
     } else if (location.hash.length > 1) {
       // Deep Link: SSR rendert das Scroll-Layout, der Browser findet den Anker erst nach dem Umschalten.
       try {
-        id = decodeURIComponent(location.hash.slice(1))
+        const decoded = decodeURIComponent(location.hash.slice(1))
+        // Alte v3-Anker (#contact usw.) wie im 3D-Modus auf die Station abbilden.
+        id = resolveStationSlug(decoded)?.slug ?? decoded
       } catch {
         return
       }
@@ -78,8 +82,9 @@ export function StaticStations() {
   return (
     <main className="static-stations">
       {STATIONS.map(({ id, slug }, index) => (
-        <div key={id} id={slug} className="static-station">
-          <StationImage index={index} />
+        // Bei slug === id (kontakt) trägt schon die Sektion den Anker; doppelte ids vermeiden.
+        <div key={id} id={slug === id ? undefined : slug} className="static-station">
+          {index === 0 ? <CaseSilhouette /> : <StationImage index={index} />}
           <div className="static-station-text">{bodies[index]}</div>
         </div>
       ))}

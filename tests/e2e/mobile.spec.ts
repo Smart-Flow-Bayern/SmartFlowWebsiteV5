@@ -25,7 +25,7 @@ async function openCpu(page: Page) {
 }
 
 test.describe('Mobil 390x844', () => {
-  test('Station 0, CPU-Overlay und kein Überlauf', async ({ page }) => {
+  test('Station 0, CPU-Overlay und kein Überlauf', async ({ page }, testInfo) => {
     await page.goto('/')
     await expect(page.locator('html')).toHaveAttribute('data-mode', '3d')
     await expect(page.locator('h1')).toHaveText(de.station0.sentence)
@@ -37,7 +37,7 @@ test.describe('Mobil 390x844', () => {
     const box = await page.locator('#cpu .station-overlay-body').boundingBox()
     expect(box!.width).toBeLessThanOrEqual(390 - 32)
     expect((await page.locator('.nav-bar').boundingBox())!.height).toBe(84)
-    await page.screenshot({ path: 'test-results/t20-mobile-cpu.png' })
+    await page.screenshot({ path: testInfo.outputPath('t20-mobile-cpu.png') })
   })
 
   test('Höhe 844 auf 760: kein Refresh, kein Sprung', async ({ page }) => {
@@ -62,7 +62,7 @@ test.describe('Mobil 390x844', () => {
 
 test.describe('Mobil 320x568', () => {
   test.use({ viewport: { width: 320, height: 568 } })
-  test('CPU-Text wird nicht abgeschnitten', async ({ page }) => {
+  test('CPU-Text wird nicht abgeschnitten', async ({ page }, testInfo) => {
     await openCpu(page)
     const m = await page.locator('#cpu .station-overlay-body').evaluate((el) => ({
       sh: el.scrollHeight,
@@ -81,6 +81,6 @@ test.describe('Mobil 320x568', () => {
     expect(cta.y + cta.height).toBeLessThanOrEqual(84)
     expect(cta.height).toBeGreaterThanOrEqual(44)
     expect(Math.abs(brand.y + brand.height / 2 - (cta.y + cta.height / 2))).toBeLessThan(4)
-    await page.screenshot({ path: 'test-results/t20-mobile-320.png' })
+    await page.screenshot({ path: testInfo.outputPath('t20-mobile-320.png') })
   })
 })

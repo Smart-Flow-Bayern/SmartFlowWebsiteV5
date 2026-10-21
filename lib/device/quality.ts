@@ -5,8 +5,8 @@ export interface Quality {
   shadows: false
 }
 
-/** Breite < 768 px zählt als mobil. */
-export const MOBILE_MAX_WIDTH = 767
+/** Breite bis einschließlich 768 px zählt als mobil (wie `max-width: 768px` im CSS). */
+export const MOBILE_MAX_WIDTH = 768
 const MOBILE_MAX_MEMORY_GB = 4
 
 const MOBILE: Quality = { dpr: [1, 1.25], noiseCount: 24, pointLights: 1, shadows: false }

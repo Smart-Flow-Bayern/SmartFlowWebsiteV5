@@ -6,10 +6,10 @@ import { alternates } from '@/lib/i18n'
 
 describe('i18n', () => {
   it('alternates für de', () => {
-    expect(alternates('de')).toEqual({ canonical: '/', languages: { de: '/', en: '/en' } })
+    expect(alternates('de')).toEqual({ canonical: '/', languages: { de: '/', en: '/en', 'x-default': '/' } })
   })
   it('alternates für en', () => {
-    expect(alternates('en')).toEqual({ canonical: '/en', languages: { de: '/', en: '/en' } })
+    expect(alternates('en')).toEqual({ canonical: '/en', languages: { de: '/', en: '/en', 'x-default': '/' } })
   })
   it('CONTENT ordnet Sprachen zu', () => {
     expect(CONTENT.de).toBe(de)
