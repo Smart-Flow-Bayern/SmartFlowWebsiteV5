@@ -18,6 +18,12 @@ export const STATIONS: readonly StationWindow[] = [
   { id: 'kontakt', slug: 'kontakt', start: 0.86, end: 1.0 },
 ]
 
+export function stationWindow(id: StationId): StationWindow {
+  const found = STATIONS.find((s) => s.id === id)
+  if (!found) throw new Error(`Unbekannte Station: ${id}`)
+  return found
+}
+
 export const ABOUT_WINDOW = { start: 0.22, end: 0.28 } as const
 
 /** Gesamter Scrollweg der Fahrt in Bildschirmhöhen */

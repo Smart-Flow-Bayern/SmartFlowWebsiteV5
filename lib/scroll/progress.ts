@@ -23,6 +23,15 @@ export const progressStore = {
   },
 }
 
+/** Abonniert nur den gewählten Wert; liefert `select` einen Primitivwert, rendert React nur bei Änderung neu. */
+export function useProgressSelector<T>(select: (p: number) => T): T {
+  return useSyncExternalStore(
+    progressStore.subscribe,
+    () => select(progressStore.get()),
+    () => select(0),
+  )
+}
+
 export function useProgress(): number {
   return useSyncExternalStore(progressStore.subscribe, progressStore.get, () => 0)
 }

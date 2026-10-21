@@ -3,20 +3,23 @@
 import { Impulse } from '@/components/brand/Impulse'
 import { Wordmark } from '@/components/brand/Wordmark'
 import { de } from '@/content/de'
-import { useProgress } from '@/lib/scroll/progress'
+import { useProgressSelector } from '@/lib/scroll/progress'
 import { overlayState } from '@/lib/scroll/visibility'
-import { STATIONS } from '@/scene/stations'
+import { stationWindow } from '@/scene/stations'
 import { colors, wordmarkVariant } from '@/lib/brand/tokens'
 import { CaseSilhouette } from './CaseSilhouette'
 import { NoiseField } from './NoiseField'
 
-const WINDOW = STATIONS[0]
+const WINDOW = stationWindow('gehaeuse')
+
+// Bei progress 0 sofort sichtbar: hidden/entering zählen im eigenen Fenster als visible.
+function station0State(progress: number): 'visible' | 'leaving' | 'hidden' {
+  if (progress >= WINDOW.end) return 'hidden'
+  return overlayState(progress, WINDOW) === 'leaving' ? 'leaving' : 'visible'
+}
 
 export function Station0() {
-  // Bei progress 0 sofort sichtbar: hidden/entering zählen im eigenen Fenster als visible.
-  const progress = useProgress()
-  const raw = overlayState(progress, WINDOW)
-  const state = progress >= WINDOW.end ? 'hidden' : raw === 'leaving' ? 'leaving' : 'visible'
+  const state = useProgressSelector(station0State)
   return (
     <div
       id="station0"

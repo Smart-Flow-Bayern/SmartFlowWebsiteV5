@@ -1,14 +1,17 @@
 'use client'
 
 import { de } from '@/content/de'
-import { STATIONS } from '@/scene/stations'
+import { useReveal } from '@/lib/scroll/stationHooks'
+import { stationWindow } from '@/scene/stations'
 import { StationOverlay, titleId } from './StationOverlay'
 
-const WINDOW = STATIONS.find((s) => s.id === 'gpu')!
+const WINDOW = stationWindow('gpu')
 
 export function StationGpu() {
+  // Desktop zeigt alle Zeilen; mobil nur das aktuelle Paar (data-current).
+  const revealed = useReveal(WINDOW, de.gpu.before.length)
   return (
-    <StationOverlay id="gpu" window={WINDOW} align="right">
+    <StationOverlay id="gpu" range={WINDOW} align="right">
       <h2 id={titleId('gpu')} className="station-title">
         {de.gpu.title}
       </h2>
@@ -17,8 +20,8 @@ export function StationGpu() {
         <div>
           <h3 className="station-mono font-mono">Vorher</h3>
           <ul className="station-list">
-            {de.gpu.before.map((line) => (
-              <li key={line} className="station-text">
+            {de.gpu.before.map((line, i) => (
+              <li key={line} className="station-text" data-current={i === revealed - 1}>
                 {line}
               </li>
             ))}
@@ -27,8 +30,8 @@ export function StationGpu() {
         <div>
           <h3 className="station-mono font-mono station-mono-accent">Nachher</h3>
           <ul className="station-list">
-            {de.gpu.after.map((line) => (
-              <li key={line} className="station-text">
+            {de.gpu.after.map((line, i) => (
+              <li key={line} className="station-text" data-current={i === revealed - 1}>
                 {line}
               </li>
             ))}

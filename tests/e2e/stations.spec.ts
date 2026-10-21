@@ -75,11 +75,14 @@ test.describe('Stationen 1 bis 5 und Über', () => {
   test('SSD zeigt in der Mitte mindestens zwei Blöcke und am Ende alle vier', async ({ page }) => {
     await page.goto('/')
     const w = win('ssd')
-    await scrollToProgress(page, mid(w))
+    await scrollToProgress(page, mid(w) + 0.01)
     const revealed = page.locator('#ssd [data-revealed="true"]')
-    expect(await revealed.count()).toBeGreaterThanOrEqual(2)
+    await expect
+      .poll(() => revealed.count(), { message: 'mindestens zwei Blöcke in der Fenstermitte' })
+      .toBeGreaterThanOrEqual(2)
     await scrollToProgress(page, w.end - 0.12 * (w.end - w.start))
     await expect(revealed).toHaveCount(4)
+    await expect(page.locator('#ssd')).toBeVisible()
     for (const b of de.ssd.blocks) {
       await expect(page.locator('#ssd')).toContainText(b.name)
       await expect(page.locator('#ssd')).toContainText(b.deliverable)
@@ -90,6 +93,7 @@ test.describe('Stationen 1 bis 5 und Über', () => {
     await page.goto('/')
     await scrollToProgress(page, mid(win('gpu')))
     const gpu = page.locator('#gpu')
+    await expect(gpu).toBeVisible()
     await expect(gpu).toContainText('Vorher')
     await expect(gpu).toContainText('Nachher')
     await expect(gpu).toContainText(de.gpu.before[0])
@@ -99,11 +103,23 @@ test.describe('Stationen 1 bis 5 und Über', () => {
   test.describe('Mobil 320x568', () => {
     test.use({ viewport: { width: 320, height: 568 } })
     for (const slug of ['cpu', 'gpu', 'ssd'] as const) {
-      test(`${slug}: kein horizontales Scrollen`, async ({ page }) => {
+      test(`${slug}: kein horizontales Scrollen, jeder Eintrag passt in den Rahmen`, async ({ page }) => {
         await page.goto('/')
         await expect(page.locator('html')).toHaveAttribute('data-mode', '3d')
-        await scrollToProgress(page, CASES.find((c) => c.slug === slug)!.mid)
-        expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(320)
+        const w = win(slug)
+        const len = w.end - w.start
+        // Positionen im Fenster, in denen jeweils ein anderer Eintrag der Reihe aktuell ist.
+        for (const t of [0.45, 0.6, 0.75, 0.85]) {
+          await scrollToProgress(page, w.start + t * len)
+          const section = page.locator(`section#${slug}[data-state="visible"]`)
+          await expect(section).toBeVisible()
+          expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(320)
+          const m = await section.evaluate((el) => ({
+            need: (el.firstElementChild as HTMLElement).scrollHeight,
+            avail: el.clientHeight - 24,
+          }))
+          expect(m.need, `${slug} @${t}`).toBeLessThanOrEqual(m.avail)
+        }
       })
     }
   })

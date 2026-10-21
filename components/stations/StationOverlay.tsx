@@ -1,8 +1,8 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import { useProgress } from '@/lib/scroll/progress'
-import { overlayState, type OverlayState } from '@/lib/scroll/visibility'
+import type { ProgressWindow } from '@/lib/scroll/visibility'
+import { useOverlayState } from '@/lib/scroll/stationHooks'
 
 export type OverlaySlug = 'mainboard' | 'ueber' | 'cpu' | 'ram' | 'gpu' | 'ssd'
 
@@ -12,13 +12,13 @@ export function titleId(id: OverlaySlug): string {
 
 interface Props {
   id: OverlaySlug
-  window: { start: number; end: number }
+  range: ProgressWindow
   align: 'left' | 'right'
   children: ReactNode
 }
 
-export function StationOverlay({ id, window, align, children }: Props) {
-  const state: OverlayState = overlayState(useProgress(), window)
+export function StationOverlay({ id, range, align, children }: Props) {
+  const state = useOverlayState(range)
   return (
     <section
       id={id}

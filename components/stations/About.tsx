@@ -8,7 +8,7 @@ import { StationOverlay, titleId } from './StationOverlay'
 
 export function About() {
   return (
-    <StationOverlay id="ueber" window={ABOUT_WINDOW} align="left">
+    <StationOverlay id="ueber" range={ABOUT_WINDOW} align="left">
       <span aria-hidden="true" className="station-wordmark">
         <Wordmark variant={wordmarkVariant} size={18} />
       </span>

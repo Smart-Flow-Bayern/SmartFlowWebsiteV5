@@ -1,17 +1,16 @@
 'use client'
 
 import { de } from '@/content/de'
-import { useProgress } from '@/lib/scroll/progress'
-import { revealIndex } from '@/lib/scroll/visibility'
-import { STATIONS } from '@/scene/stations'
+import { useReveal } from '@/lib/scroll/stationHooks'
+import { stationWindow } from '@/scene/stations'
 import { StationOverlay, titleId } from './StationOverlay'
 
-const WINDOW = STATIONS.find((s) => s.id === 'mainboard')!
+const WINDOW = stationWindow('mainboard')
 
 export function Station1Mainboard() {
-  const revealed = revealIndex(useProgress(), WINDOW, de.station1.labels.length)
+  const revealed = useReveal(WINDOW, de.station1.labels.length)
   return (
-    <StationOverlay id="mainboard" window={WINDOW} align="left">
+    <StationOverlay id="mainboard" range={WINDOW} align="left">
       <h2 id={titleId('mainboard')} className="station-title">
         {de.station1.claim}
       </h2>

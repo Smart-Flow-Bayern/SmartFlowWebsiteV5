@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import { progressStore, useProgress } from '@/lib/scroll/progress'
+import { progressStore, useProgress, useProgressSelector } from '@/lib/scroll/progress'
 
 describe('progressStore', () => {
   it('liefert den gesetzten Wert über den Hook und aktualisiert bei Änderung', () => {
@@ -26,5 +26,25 @@ describe('progressStore', () => {
     unsubscribe()
     progressStore.set(0.3)
     expect(fn).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('useProgressSelector', () => {
+  it('rendert nur bei geänderter Auswahl neu', () => {
+    progressStore.set(0)
+    let renders = 0
+    const select = (p: number) => (p < 0.5 ? 'a' : 'b')
+    const { result } = renderHook(() => {
+      renders += 1
+      return useProgressSelector(select)
+    })
+    const initial = renders
+    act(() => progressStore.set(0.2))
+    act(() => progressStore.set(0.4))
+    expect(renders).toBe(initial)
+    expect(result.current).toBe('a')
+    act(() => progressStore.set(0.6))
+    expect(result.current).toBe('b')
+    expect(renders).toBe(initial + 1)
   })
 })
