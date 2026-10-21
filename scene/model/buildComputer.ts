@@ -29,7 +29,7 @@ const caseMaterial = new MeshStandardMaterial({ name: 'case', color: CASE_COLOR,
 const surfaceMaterial = new MeshStandardMaterial({ name: 'surface', color: colors.surface, roughness: 0.7, metalness: 0.2 })
 
 /** Eigene Materialinstanz je Emissionsteil, damit jedes Teil getrennt aufleuchten kann. */
-function emissiveMaterial(name: PartName): MeshStandardMaterial {
+function emissiveMaterial(name: string): MeshStandardMaterial {
   return new MeshStandardMaterial({
     name,
     color: colors.surface,
@@ -93,15 +93,18 @@ function buildCpu(): Mesh {
   )
 }
 
-/** Kühlerturm: Grundplatte und 8 Lamellen. */
+/** Kühlerturm: Grundplatte und 8 Lamellen. Kleiner als die CPU und leicht abgehoben, damit ihr Rand sichtbar leuchtet. */
+const COOLER = { size: 0.028, lift: 0.003 }
+
 function buildCpuCooler(): Mesh {
-  const size = CPU.size + 0.01
+  const size = COOLER.size
   const baseThickness = 0.008
   const finDepth = 0.07
   const finThickness = 0.002
   const finCount = 8
-  const baseFront = CPU_FRONT + baseThickness
-  const parts = [box(size, size, baseThickness, CPU.x, CPU.y, CPU_FRONT + baseThickness / 2)]
+  const baseBack = CPU_FRONT + COOLER.lift
+  const baseFront = baseBack + baseThickness
+  const parts = [box(size, size, baseThickness, CPU.x, CPU.y, baseBack + baseThickness / 2)]
   const pitch = (size - finThickness) / (finCount - 1)
   for (let i = 0; i < finCount; i++) {
     const y = CPU.y - size / 2 + finThickness / 2 + i * pitch
@@ -152,7 +155,9 @@ function buildSsd(): Mesh {
   const blockSize = 0.014
   for (let i = 0; i < 4; i++) {
     const x = -SSD.width / 2 + 0.013 + i * 0.018
-    ssd.add(mesh(`ssdBlock_${i}`, box(blockSize, blockSize, 0.002, x, 0, SSD.thickness / 2 + 0.001), material))
+    // Eigene Materialinstanz je Block (gleiche Werte), damit die Blöcke später einzeln aufleuchten können
+    const name = `ssdBlock_${i}`
+    ssd.add(mesh(name, box(blockSize, blockSize, 0.002, x, 0, SSD.thickness / 2 + 0.001), emissiveMaterial(name)))
   }
   return ssd
 }

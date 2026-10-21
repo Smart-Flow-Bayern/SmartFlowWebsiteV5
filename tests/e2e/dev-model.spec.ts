@@ -25,6 +25,11 @@ test.describe('/dev/model', () => {
       'false',
     )
 
+    const sidePanel = page.getByRole('button', { name: 'Seitenwand', exact: true })
+    await expect(sidePanel).toHaveAttribute('aria-pressed', 'false')
+    await sidePanel.click()
+    await expect(sidePanel).toHaveAttribute('aria-pressed', 'true')
+
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/)
     expect(errors).toEqual([])
   })
