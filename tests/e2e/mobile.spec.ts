@@ -29,12 +29,14 @@ test.describe('Mobil 390x844', () => {
     await page.goto('/')
     await expect(page.locator('html')).toHaveAttribute('data-mode', '3d')
     await expect(page.locator('h1')).toHaveText(de.station0.sentence)
+    await expect(page.locator('h1')).toBeVisible()
     await expect(page.locator('.noise-particle:visible')).toHaveCount(24)
     await scrollToProgress(page, 0.35)
     await expect(page.locator('#cpu')).toHaveAttribute('data-state', 'visible')
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390)
     const box = await page.locator('#cpu .station-overlay-body').boundingBox()
     expect(box!.width).toBeLessThanOrEqual(390 - 32)
+    expect((await page.locator('.nav-bar').boundingBox())!.height).toBe(84)
     await page.screenshot({ path: 'test-results/t20-mobile-cpu.png' })
   })
 
@@ -69,10 +71,16 @@ test.describe('Mobil 320x568', () => {
       nav: document.querySelector('.nav-bar')?.getBoundingClientRect().height ?? null,
       sw: document.documentElement.scrollWidth,
     }))
-    console.log('320 metrics', JSON.stringify(m))
     expect(m.sh).toBeLessThanOrEqual(m.ch + 1)
     expect(m.w).toBeLessThanOrEqual(320 - 32)
     expect(m.sw).toBe(320)
+    expect(m.nav).toBe(84)
+    const brand = (await page.locator('.nav-brand svg').boundingBox())!
+    const cta = (await page.locator('.nav-cta').boundingBox())!
+    expect(brand.y).toBeGreaterThanOrEqual(0)
+    expect(cta.y + cta.height).toBeLessThanOrEqual(84)
+    expect(cta.height).toBeGreaterThanOrEqual(44)
+    expect(Math.abs(brand.y + brand.height / 2 - (cta.y + cta.height / 2))).toBeLessThan(4)
     await page.screenshot({ path: 'test-results/t20-mobile-320.png' })
   })
 })

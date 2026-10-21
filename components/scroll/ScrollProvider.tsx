@@ -79,6 +79,7 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
     window.addEventListener('hashchange', onHashChange)
 
     let timer: ReturnType<typeof setTimeout> | undefined
+    // lastSize wird nur beim Refresh aktualisiert: kleine Abweichungen summieren sich bis zur Schwelle.
     let lastSize: Size = { w: window.innerWidth, h: window.innerHeight }
     const onResize = () => {
       clearTimeout(timer)

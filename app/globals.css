@@ -430,6 +430,21 @@ h3 {
     }
   }
 
+  @media (max-width: 359px) {
+    /* Wortmarke und CTA teilen sich bei 320 px eine Zeile innerhalb von 84 px. */
+    .nav-brand svg {
+      height: 18px;
+      width: auto;
+    }
+
+    .nav-cta {
+      min-height: 44px;
+      padding: 0 8px;
+      font-size: 11px;
+      letter-spacing: 0.02em;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .nav-bar::after,
     .nav-station,
