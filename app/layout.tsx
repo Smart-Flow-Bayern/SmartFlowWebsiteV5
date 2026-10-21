@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { de } from "@/content/de";
 import "./globals.css";
 
 const schibsted = localFont({
@@ -17,10 +18,8 @@ const jetbrains = localFont({
 });
 
 export const metadata: Metadata = {
-  title:
-    "Smart Flow – Prozessoptimierung, Digitalisierung, Automatisierung | Regensburg",
-  description:
-    "Smart Flow aus Regensburg unterstützt kleine und mittlere Unternehmen bei Prozessoptimierung, Digitalisierung und Automatisierung.",
+  title: de.meta.title,
+  description: de.meta.description,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
