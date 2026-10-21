@@ -70,6 +70,7 @@ function dampEmissive(driven: readonly Driven[], progress: number, delta: number
 export default function Lights({ computer }: { computer: Group }) {
   const ambient = useRef<AmbientLight>(null)
   const accent = useRef<PointLight>(null)
+  const accentPlaced = useRef(false)
   const background = useMemo(() => new Color(colors.bg), [])
   const world = useMemo(() => new Vector3(), [])
 
@@ -90,7 +91,17 @@ export default function Lights({ computer }: { computer: Group }) {
     const target = active ? computer.getObjectByName(active) : null
     if (accent.current && target) {
       target.getWorldPosition(world)
-      accent.current.position.set(world.x, world.y, world.z + ACCENT_OFFSET_Z)
+      const light = accent.current.position
+      if (!accentPlaced.current) {
+        light.set(world.x, world.y, world.z + ACCENT_OFFSET_Z)
+        accentPlaced.current = true
+      } else {
+        light.set(
+          MathUtils.damp(light.x, world.x, LAMBDA, delta),
+          MathUtils.damp(light.y, world.y, LAMBDA, delta),
+          MathUtils.damp(light.z, world.z + ACCENT_OFFSET_Z, LAMBDA, delta),
+        )
+      }
     }
 
     dampEmissive(driven, p, delta)

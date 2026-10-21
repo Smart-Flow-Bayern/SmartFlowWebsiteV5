@@ -22,6 +22,8 @@ export default function CameraRig() {
     if (!initialised.current) {
       camera.position.set(...goal.position)
       look.set(...goal.target)
+      camera.fov = goal.fov
+      camera.updateProjectionMatrix()
       initialised.current = true
     } else {
       camera.position.set(
@@ -36,7 +38,7 @@ export default function CameraRig() {
       )
     }
     camera.lookAt(look)
-    const fov = initialised.current ? MathUtils.damp(camera.fov, goal.fov, LAMBDA, delta) : goal.fov
+    const fov = MathUtils.damp(camera.fov, goal.fov, LAMBDA, delta)
     if (Math.abs(fov - camera.fov) > FOV_EPSILON) {
       camera.fov = fov
       camera.updateProjectionMatrix()
