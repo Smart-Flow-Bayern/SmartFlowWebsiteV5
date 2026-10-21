@@ -1,6 +1,5 @@
 export interface Quality {
   dpr: [number, number]
-  noiseCount: number
   pointLights: number
   shadows: false
 }
@@ -9,8 +8,8 @@ export interface Quality {
 export const MOBILE_MAX_WIDTH = 768
 const MOBILE_MAX_MEMORY_GB = 4
 
-const MOBILE: Quality = { dpr: [1, 1.25], noiseCount: 24, pointLights: 1, shadows: false }
-const DESKTOP: Quality = { dpr: [1, 1.75], noiseCount: 72, pointLights: 2, shadows: false }
+const MOBILE: Quality = { dpr: [1, 1.25], pointLights: 1, shadows: false }
+const DESKTOP: Quality = { dpr: [1, 1.75], pointLights: 2, shadows: false }
 
 /** Referenzstabil: liefert immer eine der zwei Konstanten. */
 export function qualityFor(width: number, deviceMemory: number | undefined): Quality {

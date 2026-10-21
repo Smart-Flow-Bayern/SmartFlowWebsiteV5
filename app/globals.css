@@ -53,40 +53,6 @@ h3 {
   }
 }
 
-/* Station 0: KI-Lärm. Flackern in kurzen Sprüngen, auf Mobil nur die ersten 24 Partikel. */
-@keyframes flicker {
-  0%, 100% { opacity: 0; }
-  8% { opacity: 0.9; }
-  14% { opacity: 0.1; }
-  22% { opacity: 0.7; }
-  60% { opacity: 0.7; }
-  68% { opacity: 0; }
-  76% { opacity: 0.9; }
-  90% { opacity: 0; }
-}
-
-@layer components {
-  .noise-particle {
-    opacity: 0;
-    animation-name: flicker;
-    animation-iteration-count: infinite;
-    animation-timing-function: steps(1, end);
-  }
-
-  @media (max-width: 768px) {
-    .noise-particle:nth-child(n + 25) {
-      display: none;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .noise-particle {
-      animation-name: none;
-      opacity: 0.35;
-    }
-  }
-}
-
 /* Stationen 1 bis 5 und Über: Zustand (data-state) kommt aus lib/scroll/visibility.ts */
 @layer components {
   .station-overlay {

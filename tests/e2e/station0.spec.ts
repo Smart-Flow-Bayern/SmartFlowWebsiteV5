@@ -5,11 +5,10 @@ import { IDLE_GRACE_MS } from '../../scene/timing'
 const GUARD_MS = 500
 
 test.describe('Station 0', () => {
-  test('zeigt Satz, KI-Lärm und Wortmarke ohne Scrollen', async ({ page }) => {
+  test('zeigt Satz und Wortmarke ohne Scrollen', async ({ page }) => {
     await page.goto('/')
     await expect(page.locator('h1')).toBeVisible()
     await expect(page.locator('h1')).toHaveText(de.station0.sentence)
-    expect(await page.locator('[data-noise]').count()).toBeGreaterThanOrEqual(40)
     await expect(page.getByRole('img', { name: /Smart Flow/ }).first()).toBeVisible()
   })
 
@@ -23,10 +22,9 @@ test.describe('Station 0', () => {
     expect(requests.filter((u) => u.includes('/models/computer.glb'))).toHaveLength(0)
   })
 
-  test('bei reduzierter Bewegung gibt es keine Partikel (statischer Modus)', async ({ page }) => {
+  test('bei reduzierter Bewegung läuft der statische Modus', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto('/')
     await expect(page.locator('html')).toHaveAttribute('data-mode', 'static')
-    await expect(page.locator('[data-noise]')).toHaveCount(0)
   })
 })

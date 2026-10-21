@@ -5,7 +5,6 @@ import { localProgress, stationWindow } from './stations'
 const MAINBOARD = stationWindow('mainboard')
 const CPU = stationWindow('cpu')
 const RAM = stationWindow('ram')
-const GPU = stationWindow('gpu')
 const SSD = stationWindow('ssd')
 const KONTAKT = stationWindow('kontakt')
 
@@ -17,7 +16,6 @@ const FIRST_THIRD = 1 / 3
 const PANEL_FROM = 0.06
 const PANEL_TO = 0.14
 const PANEL_DISTANCE = 0.35
-const FAN_MAX_SPEED = 18
 /** Mainboard-Fenster: Impuls läuft dort dreimal so schnell wie sonst. */
 const IMPULSE_BOOST = 3
 const IMPULSE_CYCLES = 6
@@ -31,15 +29,6 @@ export function sidePanelOffset(progress: number): number {
 export function mainboardLabelIndex(progress: number): number {
   if (!inWindow(progress, MAINBOARD)) return -1
   return revealIndex(progress, MAINBOARD, 5) - 1
-}
-
-/**
- * Lüfterdrehzahl in rad/s: 0 außerhalb der GPU-Station, im ersten Fensterdrittel linear von 0 auf 18,
- * danach 18. Der Winkel wird pro Frame aus der Drehzahl integriert (siehe Computer.tsx), damit er nie springt.
- */
-export function fanSpeed(progress: number): number {
-  if (!inWindow(progress, GPU)) return 0
-  return FAN_MAX_SPEED * clamp01(localProgress(progress, GPU) / FIRST_THIRD)
 }
 
 /** Anzahl der beschriebenen SSD-Blöcke, 0 bis 4. */

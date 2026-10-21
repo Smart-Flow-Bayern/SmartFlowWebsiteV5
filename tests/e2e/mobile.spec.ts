@@ -30,7 +30,6 @@ test.describe('Mobil 390x844', () => {
     await expect(page.locator('html')).toHaveAttribute('data-mode', '3d')
     await expect(page.locator('h1')).toHaveText(de.station0.sentence)
     await expect(page.locator('h1')).toBeVisible()
-    await expect(page.locator('.noise-particle:visible')).toHaveCount(24)
     await scrollToProgress(page, 0.35)
     await expect(page.locator('#cpu')).toHaveAttribute('data-state', 'visible')
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390)

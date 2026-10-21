@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 import {
   cableInsert,
   coolerLift,
-  fanSpeed,
   mainboardLabelIndex,
   sidePanelOffset,
   ssdBlocksWritten,
@@ -25,25 +24,6 @@ describe('animations', () => {
     expect(mainboardLabelIndex(0.135)).toBe(0)
     expect(mainboardLabelIndex(0.2)).toBe(4)
     expect(mainboardLabelIndex(0.3)).toBe(-1)
-  })
-
-  it('fanSpeed: 0 außerhalb der GPU-Station und am Fensterbeginn', () => {
-    expect(fanSpeed(0.5)).toBe(0)
-    expect(fanSpeed(0.3)).toBe(0)
-    expect(fanSpeed(0.56)).toBe(0)
-    expect(fanSpeed(0.75)).toBe(0)
-  })
-
-  it('fanSpeed: steigt im ersten Fensterdrittel streng und bleibt dann bei 18 rad/s', () => {
-    const a = fanSpeed(0.58)
-    const b = fanSpeed(0.59)
-    const c = fanSpeed(0.6)
-    expect(a).toBeGreaterThan(0)
-    expect(b).toBeGreaterThan(a)
-    expect(c).toBeGreaterThan(b)
-    expect(c).toBeLessThan(18)
-    expect(fanSpeed(0.61)).toBe(18)
-    expect(fanSpeed(0.68)).toBe(18)
   })
 
   it('ssdBlocksWritten: 0 bis 4', () => {

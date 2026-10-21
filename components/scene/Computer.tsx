@@ -17,7 +17,7 @@ import {
 } from 'three'
 import { colors } from '@/lib/brand/tokens'
 import { progressStore } from '@/lib/scroll/progress'
-import { cableInsert, coolerLift, fanSpeed, sidePanelOffset, traceImpulse } from '@/scene/animations'
+import { cableInsert, coolerLift, sidePanelOffset, traceImpulse } from '@/scene/animations'
 import { useComputer } from '@/scene/loadComputer'
 import { IMPULSE_TRACE } from '@/scene/model/layout'
 import Lights from './Lights'
@@ -33,9 +33,6 @@ const CABLE_START_OFFSET = 0.3
 /** Das Kabel steckt nicht in der Mitte des Slots, sondern an dessen Öffnung (+x). */
 const CABLE_X_OFFSET = 0.004
 const IMPULSE_RADIUS = 0.004
-
-/** Größter Schritt der Lüfter-Integration; ein Tab-Wechsel soll die Lüfter nicht springen lassen. */
-const MAX_FAN_STEP = 0.1
 
 /**
  * Ruheposition eines Teils. Das glb-Modell ist zwischen Mounts geteilt (HMR, Moduswechsel) und bereits
@@ -119,8 +116,6 @@ function setFade(targets: ReturnType<typeof fadeTargets>, f: number) {
 interface Rig {
   sidePanel: ReturnType<typeof rest>
   cooler: ReturnType<typeof rest>
-  fans: Object3D[]
-  fanAngle: number
   cable: Mesh
   cableZ: number
   curve: CurvePath<Vector3>
@@ -133,8 +128,6 @@ function buildRig(scene: Object3D): Rig {
   return {
     sidePanel: rest(scene.getObjectByName('sidePanel')),
     cooler: rest(scene.getObjectByName('cpuCooler')),
-    fans: [0, 1].flatMap((i) => scene.getObjectByName(`gpuFan_${i}`) ?? []),
-    fanAngle: scene.getObjectByName('gpuFan_0')?.rotation.y ?? 0,
     cable,
     cableZ: origin.z,
     ...buildImpulse(),
@@ -144,15 +137,13 @@ function buildRig(scene: Object3D): Rig {
 
 /** Setzt alle scrollgetriebenen Bauteile auf den Zustand zu `progress`. Läuft pro Frame, ohne Allokation. */
 function animate(rig: Rig, progress: number, delta: number, impulseVisible: boolean) {
-  const { sidePanel, cooler, fans, cable, curve, sphere } = rig
+  const { sidePanel, cooler, cable, curve, sphere } = rig
   if (sidePanel.object) sidePanel.object.position.x = sidePanel.x + sidePanelOffset(progress)
   if (cooler.object) {
     const lift = coolerLift(progress)
     cooler.object.position.z = cooler.z + COOLER_LIFT_Z * lift
     cooler.object.position.y = cooler.y + COOLER_LIFT_Y * lift
   }
-  rig.fanAngle += fanSpeed(progress) * Math.min(delta, MAX_FAN_STEP)
-  for (const fan of fans) fan.rotation.y = rig.fanAngle
   const insert = cableInsert(progress)
   cable.visible = insert > 0
   cable.position.z = rig.cableZ + MathUtils.lerp(CABLE_START_OFFSET, 0, insert)
