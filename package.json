@@ -19,6 +19,7 @@
     "budget": "node scripts/check-budget.mjs",
     "lighthouse": "lhci autorun",
     "lighthouse:desktop": "lhci autorun --config=./lighthouserc.desktop.cjs",
+    "check:csp": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-csp.mts",
     "measure:frames": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/measure-frames.mts"
   },
   "dependencies": {

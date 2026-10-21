@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
 import { useEffect, type ReactNode } from 'react'
 import type { StationId } from '@/content/types'
+import { resolveStationSlug } from '@/lib/scroll/hash'
 import { progressStore } from '@/lib/scroll/progress'
 import { shouldRefresh, type Size } from '@/lib/scroll/resize'
 import { STATIONS, stationOffset } from '@/scene/stations'
@@ -26,7 +27,7 @@ function stationFromHash() {
   } catch {
     return undefined // kaputte Prozentkodierung: wie unbekannter Hash
   }
-  return STATIONS.find((s) => s.slug === slug)
+  return resolveStationSlug(slug)
 }
 
 export function scrollToStation(id: StationId, opts?: { immediate?: boolean }): void {
