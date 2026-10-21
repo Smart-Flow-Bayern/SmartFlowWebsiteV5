@@ -14,6 +14,7 @@
     "brand:svg": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/svg-text-to-path.mts",
     "content:legacy": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/extract-legacy-sentences.mts",
     "brand:icons": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/render-icons.mts",
+    "stations:render": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/render-stations.ts",
     "model:export": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/export-model.mts"
   },
   "dependencies": {

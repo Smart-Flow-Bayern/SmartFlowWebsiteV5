@@ -2,6 +2,7 @@
 
 import type { ReactNode } from 'react'
 import type { ProgressWindow } from '@/lib/scroll/visibility'
+import { useMode } from '@/lib/device/mode'
 import { useOverlayState } from '@/lib/scroll/stationHooks'
 
 export type OverlaySlug = 'mainboard' | 'ueber' | 'cpu' | 'ram' | 'gpu' | 'ssd' | 'kontakt'
@@ -21,6 +22,19 @@ interface Props {
 
 export function StationOverlay({ id, range, align, className, scrollable, children }: Props) {
   const state = useOverlayState(range)
+  const staticMode = useMode() === 'static'
+  if (staticMode) {
+    return (
+      <section
+        id={id}
+        aria-labelledby={titleId(id)}
+        className={className ? `station-static ${className}` : 'station-static'}
+        data-state="visible"
+      >
+        <div className="station-overlay-body">{children}</div>
+      </section>
+    )
+  }
   return (
     <section
       id={id}

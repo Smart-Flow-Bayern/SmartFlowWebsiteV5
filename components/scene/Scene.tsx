@@ -3,6 +3,7 @@
 import { Canvas } from '@react-three/fiber'
 import { Suspense, useEffect, useState } from 'react'
 import type { StationId } from '@/content/types'
+import { switchToStatic } from '@/lib/device/mode'
 import { progressStore } from '@/lib/scroll/progress'
 import { activePart } from '@/scene/lighting'
 import { preloadComputer } from '@/scene/loadComputer'
@@ -11,6 +12,7 @@ import type { PartName } from '@/scene/model/parts'
 import { stationAt } from '@/scene/stations'
 import CameraRig from './CameraRig'
 import Computer from './Computer'
+import { SceneErrorBoundary } from './SceneErrorBoundary'
 
 declare global {
   interface Window {
@@ -66,7 +68,7 @@ function usePreload(): boolean {
   return streaming
 }
 
-function useDebugState() {
+export function useDebugState() {
   useEffect(() => {
     if (process.env.NODE_ENV === 'production') return
     syncDebug(false)
@@ -88,7 +90,13 @@ export default function Scene() {
   return (
     <Canvas
       aria-hidden
-      onCreated={({ gl }) => gl.domElement.setAttribute('aria-hidden', 'true')}
+      onCreated={({ gl }) => {
+        gl.domElement.setAttribute('aria-hidden', 'true')
+        gl.domElement.addEventListener('webglcontextlost', (event) => {
+          event.preventDefault()
+          switchToStatic()
+        })
+      }}
       frameloop="always"
       dpr={[1, 1.5]}
       gl={{ alpha: true, antialias: true }}
@@ -96,7 +104,9 @@ export default function Scene() {
       style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}
     >
       <CameraRig />
-      <Suspense fallback={null}>{streaming && <Computer />}</Suspense>
+      <SceneErrorBoundary>
+        <Suspense fallback={null}>{streaming && <Computer />}</Suspense>
+      </SceneErrorBoundary>
     </Canvas>
   )
 }

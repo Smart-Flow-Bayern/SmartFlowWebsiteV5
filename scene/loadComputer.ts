@@ -24,6 +24,29 @@ export function useComputer(): { scene: Group; part(name: PartName): Object3D } 
   return { scene, part }
 }
 
+let loadErrorGuard = false
+
+function isComputerLoadError(reason: unknown): boolean {
+  return reason instanceof Error && reason.message.includes(COMPUTER_URL)
+}
+
+/**
+ * Der GLTF-Loader wirft einen Ladefehler zusätzlich außerhalb von React (Rejection des Preload-Promises
+ * ohne catch bzw. Fehler im Loader-Callback). Behandelt wird er über Suspense und SceneErrorBoundary
+ * (Umschalten auf den statischen Modus); hier nur den doppelten, unbehandelten Fehler abfangen.
+ */
+function guardLoadErrors(): void {
+  if (loadErrorGuard) return
+  loadErrorGuard = true
+  window.addEventListener('unhandledrejection', (event) => {
+    if (isComputerLoadError(event.reason)) event.preventDefault()
+  })
+  window.addEventListener('error', (event) => {
+    if (isComputerLoadError(event.error)) event.preventDefault()
+  })
+}
+
 export function preloadComputer(): void {
+  guardLoadErrors()
   useGLTF.preload(COMPUTER_URL, USE_DRACO, USE_MESHOPT)
 }

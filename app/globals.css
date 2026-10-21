@@ -576,3 +576,63 @@ h3 {
     }
   }
 }
+
+/* Statischer Modus (components/static/StaticStations.tsx): Standbilder und Texte im Dokumentfluss. */
+@layer components {
+  html[data-mode='static'] body {
+    background: #050607;
+  }
+
+  html[data-mode='static'] .nav-bar {
+    background: rgb(5 6 7 / 0.92);
+  }
+
+  .static-stations {
+    padding-top: var(--nav-h);
+  }
+
+  .static-station {
+    display: grid;
+    gap: 32px;
+    padding: 48px 6vw;
+    max-width: 1280px;
+    margin-inline: auto;
+    scroll-margin-top: var(--nav-h);
+  }
+
+  .static-station picture,
+  .static-station img {
+    display: block;
+    width: 100%;
+  }
+
+  .static-station img {
+    height: auto;
+    border-radius: 4px;
+    background: #141618;
+  }
+
+  .static-station-text {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    min-width: 0;
+  }
+
+  .station-static {
+    max-width: 60ch;
+    scroll-margin-top: var(--nav-h);
+  }
+
+  /* Mobil blendet das Overlay-Layout alle Einträge außer dem aktuellen aus; im statischen Modus stehen alle. */
+  html[data-mode='static'] [data-current='false'] {
+    display: revert-layer;
+  }
+
+  @media (min-width: 1024px) {
+    .static-station {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: start;
+    }
+  }
+}

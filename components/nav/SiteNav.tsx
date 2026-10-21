@@ -4,6 +4,7 @@ import { Wordmark } from '@/components/brand/Wordmark'
 import { scrollToStation } from '@/components/scroll/ScrollProvider'
 import { useContent } from '@/components/content/ContentProvider'
 import { wordmarkVariant } from '@/lib/brand/tokens'
+import { useMode } from '@/lib/device/mode'
 import { useProgressSelector } from '@/lib/scroll/progress'
 import { STATIONS, stationAt } from '@/scene/stations'
 
@@ -27,7 +28,9 @@ function focusWhenReady(elementId: string, stationId = 'kontakt'): void {
 export function SiteNav() {
   const content = useContent()
   const activeId = useProgressSelector((p) => stationAt(p).id)
-  const scrolled = useProgressSelector((p) => p > SCROLLED_AFTER)
+  const scrolledByProgress = useProgressSelector((p) => p > SCROLLED_AFTER)
+  const staticMode = useMode() === 'static'
+  const scrolled = staticMode || scrolledByProgress
 
   return (
     <header className="nav-bar" data-scrolled={scrolled}>
@@ -36,6 +39,7 @@ export function SiteNav() {
         aria-label={content.nav.homeLabel}
         className="nav-link nav-brand"
         onClick={(event) => {
+          if (staticMode) return
           event.preventDefault()
           scrollToStation('gehaeuse')
           history.replaceState(null, '', '#start')
@@ -49,9 +53,10 @@ export function SiteNav() {
             key={id}
             href={`#${slug}`}
             aria-label={content.nav.labels[id]}
-            aria-current={id === activeId ? 'true' : undefined}
+            aria-current={!staticMode && id === activeId ? 'true' : undefined}
             className="nav-link nav-station"
             onClick={(event) => {
+              if (staticMode) return
               event.preventDefault()
               scrollToStation(id)
               history.replaceState(null, '', `#${slug}`)
@@ -64,7 +69,15 @@ export function SiteNav() {
           </a>
         ))}
       </nav>
-      <button type="button" className="nav-link nav-cta" onClick={() => {
+      <button
+        type="button"
+        className="nav-link nav-cta"
+        onClick={() => {
+          if (staticMode) {
+            location.hash = '#kontakt'
+            document.getElementById('kontakt-title')?.focus({ preventScroll: true })
+            return
+          }
           scrollToStation('kontakt')
           focusWhenReady('kontakt-title')
         }}

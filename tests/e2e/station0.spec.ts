@@ -23,13 +23,10 @@ test.describe('Station 0', () => {
     expect(requests.filter((u) => u.includes('/models/computer.glb'))).toHaveLength(0)
   })
 
-  test('Partikel haben bei reduzierter Bewegung keine Animation', async ({ page }) => {
+  test('bei reduzierter Bewegung gibt es keine Partikel (statischer Modus)', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto('/')
-    const name = await page
-      .locator('[data-noise]')
-      .first()
-      .evaluate((el) => getComputedStyle(el).animationName)
-    expect(name).toBe('none')
+    await expect(page.locator('html')).toHaveAttribute('data-mode', 'static')
+    await expect(page.locator('[data-noise]')).toHaveCount(0)
   })
 })
