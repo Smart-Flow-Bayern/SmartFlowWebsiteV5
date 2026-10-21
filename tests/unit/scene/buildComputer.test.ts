@@ -1,4 +1,4 @@
-import { Box3, BufferGeometry, LineBasicMaterial, Mesh, MeshStandardMaterial, Object3D, Vector3 } from 'three'
+import { Box3, BufferGeometry, LineBasicMaterial, LineSegments, Mesh, MeshStandardMaterial, Object3D, Vector3 } from 'three'
 import { describe, expect, it } from 'vitest'
 import { STATION_IDS } from '@/content/types'
 import { buildComputer } from '@/scene/model/buildComputer'
@@ -34,10 +34,35 @@ describe('buildComputer', () => {
     }
   })
 
-  it('has named ssd blocks and the cable slot', () => {
-    const ssd = group.getObjectByName('ssd')!
-    for (let i = 0; i < 4; i++) expect(ssd.getObjectByName(`ssdBlock_${i}`), `ssdBlock_${i}`).toBeDefined()
-    expect(group.getObjectByName('ioPanel')!.getObjectByName('ioSlot_cable')).toBeDefined()
+  it('gives each gpu fan exactly 7 blade children', () => {
+    for (const name of ['gpuFan_0', 'gpuFan_1']) {
+      const fan = group.getObjectByName(name)!
+      expect(fan.children.filter((c) => c instanceof Mesh && c.name.startsWith(`${name}_blade_`)), name).toHaveLength(7)
+    }
+  })
+
+  it('builds the cpu cooler from a base and exactly 8 fins', () => {
+    // cpuCooler ist ein gemergtes Mesh: Grundplatte + 8 Lamellen = 9 Boxen à 24 Eckpunkte
+    const cooler = group.getObjectByName('cpuCooler')
+    expect(cooler).toBeInstanceOf(Mesh)
+    expect((cooler as Mesh).geometry.getAttribute('position').count / 24 - 1).toBe(8)
+  })
+
+  it('has exactly 6 io slots, one named ioSlot_cable', () => {
+    const slots = group.getObjectByName('ioPanel')!.children
+    expect(slots).toHaveLength(6)
+    expect(slots.every((c) => c.name.startsWith('ioSlot_'))).toBe(true)
+    expect(slots.filter((c) => c.name === 'ioSlot_cable')).toHaveLength(1)
+  })
+
+  it('has exactly the ssd blocks ssdBlock_0..3', () => {
+    expect(group.getObjectByName('ssd')!.children.map((c) => c.name)).toEqual(['ssdBlock_0', 'ssdBlock_1', 'ssdBlock_2', 'ssdBlock_3'])
+  })
+
+  it('has a psu mesh with geometry', () => {
+    const psu = group.getObjectByName('psu')
+    expect(psu).toBeInstanceOf(Mesh)
+    expect((psu as Mesh).geometry.getAttribute('position').count).toBeGreaterThan(0)
   })
 
   it('fits the 0.45 × 0.45 × 0.20 m case, centred at the origin', () => {
@@ -52,11 +77,29 @@ describe('buildComputer', () => {
     expect(box.getCenter(new Vector3()).length()).toBeLessThan(0.01)
   })
 
-  // Die 0.20-m-Tiefe liegt auf z (Größentest oben), daher Seitenwand bei z = +0.10 und Mainboard bei z = −0.08
-  it('places the side panel at z = +0.10 and the mainboard at z = -0.08', () => {
-    const at = (name: string) => new Box3().setFromObject(group.getObjectByName(name)!).getCenter(new Vector3())
-    expect(at('sidePanel').z).toBeCloseTo(0.1, 2)
-    expect(at('mainboard').z).toBeCloseTo(-0.08, 2)
+  // Die 0.20-m-Tiefe liegt auf z (Größentest oben), daher Seitenwand bei z = +0.10 und Mainboard bei z = −0.08.
+  // Mainboard-Platte ohne Kinder (Sockel), damit nur die Platte selbst zählt.
+  function boardPlate(): Box3 {
+    const board = group.getObjectByName('mainboard') as Mesh
+    group.updateMatrixWorld(true)
+    board.geometry.computeBoundingBox()
+    return board.geometry.boundingBox!.clone().applyMatrix4(board.matrixWorld)
+  }
+
+  it('places the side panel at z = +0.10 and the mainboard plate at z = -0.08', () => {
+    const sidePanel = new Box3().setFromObject(group.getObjectByName('sidePanel')!).getCenter(new Vector3())
+    expect(Math.abs(sidePanel.z - 0.1)).toBeLessThanOrEqual(0.005)
+    expect(Math.abs(boardPlate().getCenter(new Vector3()).z + 0.08)).toBeLessThanOrEqual(0.005)
+  })
+
+  it('puts cpu, ram, gpu and ssd in front of the mainboard plate and inside the case', () => {
+    const boardFront = boardPlate().max.z
+    const caseBox = new Box3().setFromObject(group.getObjectByName('case')!)
+    for (const name of ['cpu', 'ram_0', 'ram_1', 'ram_2', 'ram_3', 'gpu', 'ssd']) {
+      const box = new Box3().setFromObject(group.getObjectByName(name)!)
+      expect(box.min.z, name).toBeGreaterThanOrEqual(boardFront - 0.001)
+      expect(caseBox.containsBox(box), name).toBe(true)
+    }
   })
 
   it('gives every emissive part an accent emissive starting at intensity 0', () => {
@@ -76,8 +119,9 @@ describe('buildComputer', () => {
   })
 
   it('draws at least 40 trace segments', () => {
-    const traces = group.getObjectByName('traces') as Object3D & { geometry: BufferGeometry }
-    expect(traces.geometry.getAttribute('position').count / 2).toBeGreaterThanOrEqual(40)
+    const traces = group.getObjectByName('traces')
+    expect(traces).toBeInstanceOf(LineSegments)
+    expect((traces as LineSegments).geometry.getAttribute('position').count / 2).toBeGreaterThanOrEqual(40)
   })
 
   it('stays under 60 000 triangles', () => {
