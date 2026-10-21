@@ -3,13 +3,27 @@
 import { Impulse } from '@/components/brand/Impulse'
 import { Wordmark } from '@/components/brand/Wordmark'
 import { de } from '@/content/de'
+import { useProgress } from '@/lib/scroll/progress'
+import { overlayState } from '@/lib/scroll/visibility'
+import { STATIONS } from '@/scene/stations'
 import { colors, wordmarkVariant } from '@/lib/brand/tokens'
 import { CaseSilhouette } from './CaseSilhouette'
 import { NoiseField } from './NoiseField'
 
+const WINDOW = STATIONS[0]
+
 export function Station0() {
+  // Bei progress 0 sofort sichtbar: hidden/entering zählen im eigenen Fenster als visible.
+  const progress = useProgress()
+  const raw = overlayState(progress, WINDOW)
+  const state = progress >= WINDOW.end ? 'hidden' : raw === 'leaving' ? 'leaving' : 'visible'
   return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+    <div
+      id="station0"
+      data-state={state}
+      inert={state === 'hidden'}
+      className="station-fade pointer-events-none absolute inset-0 overflow-hidden"
+    >
       <CaseSilhouette />
       <NoiseField />
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 px-6 text-center">

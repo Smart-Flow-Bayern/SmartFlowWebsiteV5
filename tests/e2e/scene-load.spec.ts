@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { de } from '../../content/de'
 
 test.describe('Szene', () => {
   test('behält Scrollposition und aktives Teil, wenn das Modell nachlädt', async ({ page }) => {
@@ -13,6 +14,9 @@ test.describe('Szene', () => {
       window.scrollTo(0, 0.35 * (document.documentElement.scrollHeight - window.innerHeight)),
     )
     await expect.poll(() => page.evaluate(() => window.__sf?.progress ?? 0)).toBeGreaterThan(0.3)
+    expect(await page.evaluate(() => window.__sf?.modelLoaded)).toBe(false)
+    // Der Text steht, bevor das Modell ankommt.
+    await expect(page.locator('section#cpu[data-state="visible"] h2')).toHaveText(de.cpu.title)
     expect(await page.evaluate(() => window.__sf?.modelLoaded)).toBe(false)
     await expect.poll(() => page.evaluate(() => window.__sf?.modelLoaded), { timeout: 20_000 }).toBe(true)
     const sf = await page.evaluate(() => window.__sf)
