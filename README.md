@@ -6,7 +6,7 @@ Neue Unternehmenswebsite von Smart Flow (smartflow.bayern): eine Scroll-Fahrt du
 
 - Next.js 16 (App Router), React 19, TypeScript
 - Tailwind CSS 4
-- Three.js (Modell), React Three Fiber für die Szene (ab Task 9)
+- Three.js 0.186 (Modell), React Three Fiber 9 und drei 10 für die Szene (Testansicht unter `/dev/model`)
 - Vitest und Testing Library (Unit-Tests), Playwright (E2E)
 - pnpm
 

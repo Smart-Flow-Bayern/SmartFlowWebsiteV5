@@ -17,6 +17,8 @@
     "model:export": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/export-model.mts"
   },
   "dependencies": {
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.2",
     "next": "16.4.2",
     "react": "19.3.0",
     "react-dom": "19.3.0",
