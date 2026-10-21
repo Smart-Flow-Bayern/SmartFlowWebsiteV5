@@ -28,7 +28,8 @@ function stationFromHash() {
 export function scrollToStation(id: StationId, opts?: { immediate?: boolean }): void {
   const station = STATIONS.find((s) => s.id === id)
   if (!station) return
-  const target = stationOffset(station.start, lenisInstance ? lenisInstance.limit : maxScroll())
+  // Kontakt: ans Ende der Fahrt, denn sein Overlay erscheint erst nach 30 % des Fensters (Ruling Task 17).
+  const target = stationOffset(id === 'kontakt' ? 1 : station.start, lenisInstance ? lenisInstance.limit : maxScroll())
   if (lenisInstance) {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     lenisInstance.scrollTo(target, reduced || opts?.immediate ? { immediate: true } : undefined)

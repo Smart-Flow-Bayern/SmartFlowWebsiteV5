@@ -5,11 +5,13 @@ export interface ProgressWindow {
   end: number
 }
 
-/** Erst nach der Kamera-Ankunft (30 % des Fensters) einblenden, 10 % vor dem Ende ausblenden. */
+/** Erst nach der Kamera-Ankunft (30 % des Fensters) einblenden, 10 % vor dem Ende ausblenden (außer im letzten Fenster). */
 export function overlayState(progress: number, w: ProgressWindow): OverlayState {
   const len = w.end - w.start
-  if (progress < w.start + 0.3 * len || progress >= w.end) return 'hidden'
+  const isLast = w.end >= 1
+  if (progress < w.start + 0.3 * len || (!isLast && progress >= w.end)) return 'hidden'
   if (progress < w.start + 0.4 * len) return 'entering'
+  if (isLast) return 'visible' // Die Fahrt endet hier; der Kontakt bleibt bis zum Seitenende stehen.
   if (progress < w.end - 0.1 * len) return 'visible'
   return 'leaving'
 }

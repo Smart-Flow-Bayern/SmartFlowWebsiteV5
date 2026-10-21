@@ -9,6 +9,21 @@ import { STATIONS, stationAt } from '@/scene/stations'
 
 const SCROLLED_AFTER = 0.05
 
+/** Fokus erst setzen, wenn die Station nicht mehr inert ist (Overlay blendet nach der Fahrt ein). Max. 3 s. */
+function focusWhenReady(elementId: string, stationId = 'kontakt'): void {
+  const until = performance.now() + 3000
+  const step = () => {
+    const station = document.getElementById(stationId)
+    const target = document.getElementById(elementId)
+    if (station && target && !station.hasAttribute('inert')) {
+      target.focus({ preventScroll: true })
+      return
+    }
+    if (performance.now() < until) requestAnimationFrame(step)
+  }
+  requestAnimationFrame(step)
+}
+
 export function SiteNav() {
   const activeId = useProgressSelector((p) => stationAt(p).id)
   const scrolled = useProgressSelector((p) => p > SCROLLED_AFTER)
@@ -48,7 +63,11 @@ export function SiteNav() {
           </a>
         ))}
       </nav>
-      <button type="button" className="nav-link nav-cta" onClick={() => scrollToStation('kontakt')}>
+      <button type="button" className="nav-link nav-cta" onClick={() => {
+          scrollToStation('kontakt')
+          focusWhenReady('kontakt-title')
+        }}
+      >
         {de.nav.cta}
       </button>
     </header>

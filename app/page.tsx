@@ -7,6 +7,7 @@ import { Station1Mainboard } from '@/components/stations/Station1Mainboard'
 import { StationCpu } from '@/components/stations/StationCpu'
 import { StationGpu } from '@/components/stations/StationGpu'
 import { StationRam } from '@/components/stations/StationRam'
+import { StationContact } from '@/components/stations/StationContact'
 import { StationSsd } from '@/components/stations/StationSsd'
 import { SCROLL_HEIGHTS } from '@/scene/stations'
 
@@ -21,6 +22,7 @@ export default function Home() {
         <StationRam />
         <StationGpu />
         <StationSsd />
+        <StationContact />
       </main>
       <div aria-hidden style={{ height: `calc(${SCROLL_HEIGHTS - 1} * 100svh)` }} />
       {/* Nach #stage: ScrollTrigger hüllt #stage beim Pinnen um, Einfügen davor bräche React. */}

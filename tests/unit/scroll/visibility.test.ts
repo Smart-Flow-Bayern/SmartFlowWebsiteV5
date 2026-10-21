@@ -24,6 +24,24 @@ describe('overlayState', () => {
   })
 })
 
+describe('overlayState im letzten Fenster (end = 1)', () => {
+  const last = { start: 0.86, end: 1 }
+
+  it('bleibt bis einschließlich progress 1 sichtbar', () => {
+    expect(overlayState(0.99, last)).toBe('visible')
+    expect(overlayState(1, last)).toBe('visible')
+  })
+
+  it('blendet am Anfang weiter erst nach der Kamera-Ankunft ein', () => {
+    expect(overlayState(0.87, last)).toBe('hidden')
+    expect(overlayState(0.86 + 0.35 * 0.14, last)).toBe('entering')
+  })
+
+  it('ein inneres Fenster ist bei p = end weiter hidden', () => {
+    expect(overlayState(0.42, w)).toBe('hidden')
+  })
+})
+
 describe('revealIndex', () => {
   it('zeigt vor start + 0.35·len nichts und am Ende alles', () => {
     expect(revealIndex(0.3, w, 4)).toBe(0)

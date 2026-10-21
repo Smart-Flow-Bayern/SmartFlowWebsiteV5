@@ -1,0 +1,123 @@
+/* Rechtsseiten. Farben als Literale aus lib/brand/tokens.ts (statisches CSS, kein Import möglich). */
+@font-face {
+  font-family: 'Schibsted Grotesk';
+  src: url('/fonts/schibsted-grotesk-latin-wght.woff2') format('woff2');
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('/fonts/jetbrains-mono-latin-wght.woff2') format('woff2');
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #050607; /* colors.bg */
+  color: #f4f6f5; /* colors.text */
+  font-family: 'Schibsted Grotesk', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+body > header {
+  padding: 24px 6vw;
+  border-bottom: 1px solid #141618; /* colors.surface */
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 13px;
+}
+
+a {
+  color: #ddff4d; /* colors.accent */
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+a:focus-visible {
+  outline: 2px solid #ddff4d;
+  outline-offset: 3px;
+}
+
+.legal-page {
+  padding: 48px 6vw;
+}
+
+.legal-container {
+  max-width: 72ch;
+  margin: 0 auto;
+}
+
+h1,
+h2,
+h3 {
+  font-family: 'Schibsted Grotesk', system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+h1 {
+  font-size: clamp(32px, 5vw, 44px);
+  margin: 0 0 8px;
+}
+
+h2 {
+  font-size: 24px;
+  margin: 0 0 12px;
+}
+
+h3 {
+  font-size: 18px;
+  margin: 24px 0 8px;
+}
+
+p,
+address,
+ul,
+ol {
+  margin: 0 0 12px;
+  font-style: normal;
+}
+
+li {
+  margin-bottom: 4px;
+}
+
+.legal-meta {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: #7a8a8a; /* colors.muted */
+  margin-bottom: 32px;
+}
+
+.legal-section {
+  padding: 24px 0;
+  border-top: 1px solid #1a1d20; /* colors.bgLight */
+}
+
+body > footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  padding: 24px 6vw 48px;
+  border-top: 1px solid #141618;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+}
+
+body > footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+}
