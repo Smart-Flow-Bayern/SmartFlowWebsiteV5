@@ -73,4 +73,20 @@ test.describe('Statischer Modus', () => {
     await expect(page).toHaveURL(/#ablaeufe$/)
     await expect(page.locator('#cpu h2')).toBeInViewport()
   })
+
+  test('Hash-Deep-Link scrollt im statischen Modus zur Station', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto('/?fallback=1#ablaeufe')
+    await expect(page.locator('html')).toHaveAttribute('data-mode', 'static')
+    await expect
+      .poll(
+        async () => {
+          const box = await page.locator('#cpu h2').boundingBox()
+          const height = page.viewportSize()?.height ?? 0
+          return box !== null && box.y >= 0 && box.y < height
+        },
+        { timeout: 3000 },
+      )
+      .toBe(true)
+  })
 })

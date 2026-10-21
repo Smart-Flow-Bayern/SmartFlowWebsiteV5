@@ -27,23 +27,29 @@ export function useComputer(): { scene: Group; part(name: PartName): Object3D } 
 let loadErrorGuard = false
 
 function isComputerLoadError(reason: unknown): boolean {
-  return reason instanceof Error && reason.message.includes(COMPUTER_URL)
+  return reason instanceof Error && reason.message.startsWith(`Could not load ${COMPUTER_URL}`)
 }
 
 /**
  * Der GLTF-Loader wirft einen Ladefehler zusätzlich außerhalb von React (Rejection des Preload-Promises
  * ohne catch bzw. Fehler im Loader-Callback). Behandelt wird er über Suspense und SceneErrorBoundary
  * (Umschalten auf den statischen Modus); hier nur den doppelten, unbehandelten Fehler abfangen.
+ * Gefiltert wird auf die Meldung des Loaders ("Could not load <url>"), nicht auf den Fehler aus part().
+ * Die Listener leben bewusst für die gesamte Seitenlebensdauer; der Fehler wird einmal per console.warn protokolliert.
  */
 function guardLoadErrors(): void {
   if (loadErrorGuard) return
   loadErrorGuard = true
-  window.addEventListener('unhandledrejection', (event) => {
-    if (isComputerLoadError(event.reason)) event.preventDefault()
-  })
-  window.addEventListener('error', (event) => {
-    if (isComputerLoadError(event.error)) event.preventDefault()
-  })
+  let logged = false
+  const swallow = (event: Event, reason: unknown) => {
+    if (!isComputerLoadError(reason)) return
+    event.preventDefault()
+    if (logged) return
+    logged = true
+    console.warn(reason)
+  }
+  window.addEventListener('unhandledrejection', (event) => swallow(event, event.reason))
+  window.addEventListener('error', (event) => swallow(event, event.error))
 }
 
 export function preloadComputer(): void {

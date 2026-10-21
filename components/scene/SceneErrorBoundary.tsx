@@ -15,7 +15,8 @@ export class SceneErrorBoundary extends Component<Props, { failed: boolean }> {
     return { failed: true }
   }
 
-  componentDidCatch() {
+  componentDidCatch(error: unknown) {
+    console.error(error)
     switchToStatic()
   }
 

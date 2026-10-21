@@ -17,7 +17,7 @@ import { STATIONS } from '@/scene/stations'
 function StationImage({ index }: { index: number }) {
   return (
     <picture>
-      <source media="(max-width: 767px)" srcSet={`/stations/station-${index}-mobile.webp`} />
+      <source media="(max-width: 767px)" width={800} height={1200} srcSet={`/stations/station-${index}-mobile.webp`} />
       <img
         src={`/stations/station-${index}.webp`}
         width={1600}
@@ -48,9 +48,18 @@ function Intro() {
 export function StaticStations() {
   useEffect(() => {
     const station = lastStation()
-    if (!station) return
-    const slug = STATIONS.find((s) => s.id === station)?.slug
-    if (slug) document.getElementById(slug)?.scrollIntoView({ block: 'start' })
+    let id: string | undefined
+    if (station) {
+      id = STATIONS.find((s) => s.id === station)?.slug
+    } else if (location.hash.length > 1) {
+      // Deep Link: SSR rendert das Scroll-Layout, der Browser findet den Anker erst nach dem Umschalten.
+      try {
+        id = decodeURIComponent(location.hash.slice(1))
+      } catch {
+        return
+      }
+    }
+    if (id) document.getElementById(id)?.scrollIntoView({ block: 'start' })
   }, [])
 
   const bodies: ReactNode[] = [
