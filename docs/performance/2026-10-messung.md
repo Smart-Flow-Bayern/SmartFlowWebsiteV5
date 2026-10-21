@@ -54,6 +54,10 @@ Nicht gezogen, weil nicht nötig oder nicht begründet:
 - `frameloop="demand"`, `content-visibility` für Partikel: Architekturumbau ohne gemessenen Bedarf auf echter GPU.
 - GSAP ist bereits per `gsap` und `gsap/ScrollTrigger` eingebunden; `three` wird überall mit Named Imports genutzt (`optimizePackageImports` für `three` und `@react-three/drei` ist gesetzt, Next 16 meldet dazu keine Warnung).
 
+## Lighthouse auf der Preview
+
+Steht aus: Es gibt noch keine Preview-URL (siehe `docs/abnahme/checkliste.md`). Werte für mobil und Desktop werden nach dem ersten Vercel-Preview-Build hier ergänzt.
+
 ## Reproduktion
 
 ```bash

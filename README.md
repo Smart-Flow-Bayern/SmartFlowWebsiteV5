@@ -21,9 +21,10 @@ Neue Unternehmenswebsite von Smart Flow (smartflow.bayern): eine Scroll-Fahrt du
 | `pnpm test` | Unit-Tests (Vitest) |
 | `pnpm test:watch` | Vitest im Watch-Modus |
 | `pnpm model:export` | Erzeugt `public/models/computer.glb` aus `scene/model/buildComputer.ts` (Meshopt-komprimiert) |
-| `pnpm e2e` | E2E-Tests (Playwright, startet den Dev-Server auf Port 3005) |
+| `pnpm e2e` | E2E-Tests (Playwright, Chromium und Firefox, startet den Dev-Server auf Port 3005) |
+| `pnpm check:csp` | Prüft die Content-Security-Policy gegen den Production-Build (`pnpm start -p 3006` muss laufen) |
 
-Einmalig vor dem ersten E2E-Lauf: `pnpm exec playwright install chromium`.
+Einmalig vor dem ersten E2E-Lauf: `pnpm exec playwright install chromium firefox`.
 
 ## Hinweis
 
