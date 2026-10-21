@@ -1,6 +1,6 @@
 # Fakten-Briefing: Antworten
 
-Stand: 2026-10-21. Antworten wörtlich von Leon Heinrich. Nummerierung wie in `briefing-fragen.md`.
+Stand: 2026-10-21. Antworten wörtlich von Leon Heinrich. FREIGABE 1 am 2026-10-21 ohne Antworten auf die Fragen erteilt („weiter freigegeben“); alle 28 Fragen bleiben offen. Folge: Die Texte nennen keine Zahlen, keine Dauern, kein Gründungsjahr, keine Kundenstimmen; Fälle sind als Beispiele gekennzeichnet. Antworten können jederzeit nachgetragen werden, dann werden die betroffenen Texte angepasst. Nummerierung wie in `briefing-fragen.md`.
 Status je Frage: **offen** (keine Antwort, im Text keine Zahl und kein Fakt dazu), **beantwortet**, **gestrichen**.
 
 | Nr. | Status | Antwort (wörtlich) |

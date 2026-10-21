@@ -14,8 +14,8 @@ Stand: 2026-10-21. Interne Dokumentation.
 
 | Thema | Empfehlung des Tools | Entscheidung für Signal |
 |---|---|---|
-| Spacing-Skala | 4 / 8 / 16 / 24 / 32 / 48 / 64 px (`--space-xs` bis `--space-3xl`) | übernommen als Raster (4er-Basis, Stufen 4, 8, 16, 24, 32, 48, 64). Für Szenenabstände zwischen Stationen sind größere Werte in `vh` zulässig, weil der Scrollweg in Bildschirmhöhen geplant ist. |
-| Typo-Skala | Keine eigene Skala. Nur Inter für Überschrift und Text, Fließtext 16 px. | abweichend, Grund: Schrift ist per Spec festgelegt (Schibsted Grotesk, JetBrains Mono). Übernommen wird nur die Mindestgröße von 16 px für Fließtext. |
+| Spacing-Skala | 4 / 8 / 16 / 24 / 32 / 48 / 64 px (`--space-xs` bis `--space-3xl`) | übernommen als Raster (4er-Basis, Stufen 4, 8, 16, 24, 32, 48, 64). Neue Entscheidung (nicht aus dem Tool): Für Szenenabstände zwischen Stationen sind größere Werte in `vh` zulässig, weil der Scrollweg in Bildschirmhöhen geplant ist. |
+| Typo-Skala | Keine eigene Skala. Nur Inter für Überschrift und Text, Fließtext 16 px. | abweichend, Grund: Schrift ist per Spec festgelegt (Schibsted Grotesk, JetBrains Mono). Die Mindestgröße von 16 px für Fließtext ist eine Projektentscheidung, kein Befund des Tools. Eine konkrete Typo-Skala legt Task 6 in den Tokens fest. |
 | Farben | Primär `#0F172A`, Hintergrund `#020617`, Akzent `#16A34A`, Muted `#94A3B8`, zusätzlich Destructive `#DC2626` | abweichend, Grund: Palette ist per Spec festgelegt (`#050607`, `#141618`, `#DDFF4D`, `#7A8A8A`, `#F4F6F5`). Kein zweiter Akzent, auch keine Fehlerfarbe als zusätzlicher Akzent. Fehlerzustände werden über Text und Symbol gekennzeichnet. |
 | Schrift laden | Google-Fonts-Import per `@import` | abweichend, Grund: Spec verlangt lokale woff2-Dateien ohne Abrufe zur Laufzeit. |
 | Schatten | Vier Stufen `--shadow-sm` bis `--shadow-xl` | abweichend, Grund: Auf `#050607` sind Schlagschatten kaum sichtbar. Tiefe entsteht über Flächenfarbe `#141618` und die Ausleuchtung der Szene. |
@@ -24,8 +24,8 @@ Stand: 2026-10-21. Interne Dokumentation.
 | Anti-Patterns: fehlender `cursor: pointer` | Auf allen klickbaren Elementen setzen | übernommen. |
 | Anti-Patterns: Layout-Sprünge bei Hover | Keine Scale-Transforms, die das Layout verschieben | übernommen. |
 | Anti-Patterns: Zustandswechsel ohne Übergang | Übergänge von 150 bis 300 ms | übernommen für UI-Elemente. Szenen-Animationen folgen der Scroll-Fahrt und sind davon ausgenommen. |
-| Anti-Patterns: unsichtbarer Fokus | Fokus muss sichtbar sein | übernommen. Fokusring in Akzent `#DDFF4D`. |
-| Anti-Patterns: langsame Dashboards, dekorative Charts, versteckte Fehlerzustände | Vermeiden | übernommen, soweit relevant. Die Seite enthält keine Dashboards oder Charts. |
+| Anti-Patterns: unsichtbarer Fokus | Fokus muss sichtbar sein | übernommen. Neue Entscheidung (nicht aus dem Tool): Fokusring in Akzent `#DDFF4D`. |
+| Anti-Patterns: langsame Dashboards, dekorative Charts, versteckte Fehlerzustände | Vermeiden | übernommen, soweit relevant. Vorgesehen sind keine Dashboards oder Charts. |
 | Seitenmuster | "Real-Time / Operations Landing" mit Live-Telemetrie, Demo-CTA, Metrik-Block | abweichend, Grund: Die Seite ist eine geführte Scroll-Fahrt mit Stationen, keine Live-Ansicht. Übernommen wird nur: Statisches Standbild bei `prefers-reduced-motion`, Tastatursteuerung, CTA in der Navigation. Es werden keine Live-Zahlen gezeigt, die nicht aus einer echten Quelle stammen. |
 | Checkliste: kein Emoji als Icon, konsistentes Icon-Set | Prüfpunkt | übernommen. |
 | Checkliste: `cursor-pointer`, Hover-Übergänge 150 bis 300 ms | Prüfpunkt | übernommen. |
@@ -55,3 +55,5 @@ Ergebnis: `#7A8A8A` erfüllt WCAG AA (mindestens 4.5) auf allen drei Hintergrün
 ## Marken-Board
 
 Übersprungen. In dieser Sitzung stand keine Bildgenerierung zur Verfügung, deshalb gibt es kein `docs/brand/signal-board.png`.
+
+Nicht verglichen: die Komponenten-Spezifikationen des Tools (Buttons, Cards, Formulare). Sie werden gegen die Komponenten aus Task 15 bis 18 geprüft, sobald diese existieren.
