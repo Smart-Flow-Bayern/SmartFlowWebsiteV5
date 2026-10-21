@@ -1,6 +1,6 @@
 # Performance-Messung 2026-10-21
 
-Stand: Commit `59e64ed` plus Budget- und Konfigurationsdateien dieser Messung. Alle Werte sind unverändert aus den Läufen übernommen. Nicht erreichte Ziele sind mit **verfehlt** markiert.
+Stand: Task 22 abgeschlossen, 2026-10-21. Alle Werte sind unverändert aus den Läufen übernommen. Nicht erreichte Ziele sind mit **verfehlt** markiert.
 
 ## Umgebung
 
@@ -22,7 +22,8 @@ Stand: Commit `59e64ed` plus Budget- und Konfigurationsdateien dieser Messung. A
 | Lighthouse Accessibility | >= 95 | 100 | nicht gefordert, 100 | beide Umgebungen |
 | Lighthouse Best Practices | >= 95 | 100 | nicht gefordert, 100 | beide Umgebungen |
 | Lighthouse SEO | >= 95 | 100 | nicht gefordert, 100 | beide Umgebungen |
-| FCP | < 2 s auf simuliertem 4G | 753 ms (SwiftShader und echter Chrome) | 204 bis 207 ms | Lighthouse-Median |
+| FCP, Median | < 2 s auf simuliertem 4G | 753 ms (SwiftShader und echter Chrome) | 204 ms (Echt-Chrome-Median), 205 ms (SwiftShader-Median) | Lighthouse-Median |
+| FCP, Bereich über alle Läufe | < 2 s auf simuliertem 4G | 753 bis 756 ms | 204 bis 207 ms | Lighthouse, 3 Läufe je Umgebung |
 | LCP | keine Vorgabe | 4 756 ms (SwiftShader), 2 953 ms (echter Chrome) | 1 365 ms (SwiftShader), 541 ms (echter Chrome) | Lighthouse |
 | TBT | keine Vorgabe | 2 629 ms (SwiftShader), 169 ms (echter Chrome) | 647 ms (SwiftShader), 0 ms (echter Chrome) | Lighthouse |
 | CLS | keine Vorgabe | 0 | 0 | Lighthouse |
@@ -61,6 +62,10 @@ export CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome
 pnpm lighthouse           # mobil, SwiftShader, startet pnpm start -p 3006 selbst
 pnpm lighthouse:desktop   # Desktop-Preset, SwiftShader
 pnpm start -p 3006        # in einem zweiten Terminal, dann:
+# Echter Chrome mit GPU (Server auf 3006 läuft), ohne SwiftShader-Flags. Gemessen wurde mit einer temporären Config
+# (collect.url, numberOfRuns 3, settings.chromeFlags "--headless=new"), die diese Optionen setzt:
+pnpm exec lhci collect --url=http://localhost:3006/ --numberOfRuns=3 --settings.chromeFlags="--headless=new"
+# Desktop: zusätzlich --settings.preset=desktop
 pnpm measure:frames       # Frame-Zeiten mit echter GPU, Fenster erscheint kurz
 ```
 

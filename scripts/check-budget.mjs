@@ -17,7 +17,7 @@ const SCRIPT_TAG = /<script\b[^>]*>/g
 const SRC = /src="\/_next\/(static\/chunks\/[^"?]+\.js)/
 
 /** Skript-Pfade der HTML; nomodule-Polyfills laden moderne Browser nicht und zählen nicht. */
-function htmlScripts(html) {
+export function scriptsFromHtml(html) {
   return [...html.matchAll(SCRIPT_TAG)]
     .filter((m) => !/\bnoModule\b/i.test(m[0]))
     .map((m) => SRC.exec(m[0])?.[1])
@@ -31,7 +31,7 @@ function htmlScripts(html) {
  * Next 16 (Turbopack) schreibt kein app-build-manifest.json; die HTML ist die verlässliche Quelle.
  */
 export function routeChunks(html, allChunks, readText) {
-  const initial = new Set(htmlScripts(html))
+  const initial = new Set(scriptsFromHtml(html))
   const total = new Set(initial)
   const queue = [...initial]
   while (queue.length) {
@@ -66,7 +66,16 @@ function main() {
   const rows = []
   let failed = false
   for (const [route, file] of Object.entries(routes)) {
-    const html = readFileSync(join(next, 'server', 'app', file), 'utf8')
+    const htmlPath = join(next, 'server', 'app', file)
+    if (!existsSync(htmlPath)) {
+      console.error(`Fehlt: ${htmlPath} – erst pnpm build ausführen`)
+      process.exit(2)
+    }
+    const html = readFileSync(htmlPath, 'utf8')
+    if (scriptsFromHtml(html).length === 0) {
+      console.error(`Keine Skripte in ${file} gefunden – Parser prüfen`)
+      process.exit(1)
+    }
     const { initial, total } = routeChunks(html, allChunks, readText)
     const initialBytes = sumGzip(initial, read)
     const totalBytes = sumGzip(total, read)
