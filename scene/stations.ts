@@ -46,5 +46,6 @@ export function localProgress(progress: number, w: { start: number; end: number 
 
 /** Scroll-Offset in px für den Start eines Fensters bei gegebenem maximalem Scrollweg. */
 export function stationOffset(start: number, limit: number): number {
-  return Math.round(start * limit)
+  // Aufrunden: gerundet unter den Start landet der Fortschritt knapp in der Vorgängerstation (Epsilon gegen Float-Rauschen).
+  return Math.max(0, Math.ceil(start * limit - 1e-6))
 }

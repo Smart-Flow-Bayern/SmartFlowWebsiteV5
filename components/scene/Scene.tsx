@@ -89,6 +89,7 @@ export default function Scene() {
   return (
     <Canvas
       aria-hidden
+      onCreated={({ gl }) => gl.domElement.setAttribute('aria-hidden', 'true')}
       frameloop="always"
       dpr={[1, 1.5]}
       gl={{ alpha: true, antialias: true }}

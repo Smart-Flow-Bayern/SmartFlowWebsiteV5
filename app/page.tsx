@@ -1,3 +1,4 @@
+import { SiteNav } from '@/components/nav/SiteNav'
 import { ScrollProvider } from '@/components/scroll/ScrollProvider'
 import SceneGate from '@/components/scene/SceneGate'
 import { About } from '@/components/stations/About'
@@ -24,6 +25,7 @@ export default function Home() {
       <div aria-hidden style={{ height: `calc(${SCROLL_HEIGHTS - 1} * 100svh)` }} />
       {/* Nach #stage: ScrollTrigger hüllt #stage beim Pinnen um, Einfügen davor bräche React. */}
       <SceneGate />
+      <SiteNav />
     </ScrollProvider>
   )
 }

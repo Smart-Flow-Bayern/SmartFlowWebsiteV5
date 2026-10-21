@@ -15,13 +15,13 @@ function maxScroll(): number {
   return Math.max(0, document.documentElement.scrollHeight - window.innerHeight)
 }
 
-export function scrollToStation(id: StationId): void {
+export function scrollToStation(id: StationId, opts?: { immediate?: boolean }): void {
   const station = STATIONS.find((s) => s.id === id)
   if (!station) return
   const target = stationOffset(station.start, lenisInstance ? lenisInstance.limit : maxScroll())
   if (lenisInstance) {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    lenisInstance.scrollTo(target, reduced ? { immediate: true } : undefined)
+    lenisInstance.scrollTo(target, reduced || opts?.immediate ? { immediate: true } : undefined)
   } else {
     window.scrollTo(0, target)
   }
@@ -52,6 +52,13 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
       onUpdate: (self) => progressStore.set(self.progress),
     })
     progressStore.set(trigger.progress)
+
+    // Deep Link: #slug springt nach dem Refresh direkt zur Station; unbekannte Hashes werden ignoriert.
+    const linked = STATIONS.find((s) => s.slug === decodeURIComponent(location.hash.slice(1)))
+    if (linked) {
+      ScrollTrigger.refresh()
+      scrollToStation(linked.id, { immediate: true })
+    }
 
     let timer: ReturnType<typeof setTimeout> | undefined
     const onResize = () => {

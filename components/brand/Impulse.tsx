@@ -5,6 +5,8 @@ type ImpulseProps = {
   size?: number;
   animated?: boolean;
   className?: string;
+  /** Rein dekorativ: aria-hidden statt role="img". */
+  decorative?: boolean;
 };
 
 const trace = {
@@ -17,11 +19,10 @@ const trace = {
 
 // Bildmarke: Impuls auf einer Leiterbahn. Mit `animated` läuft ein heller Abschnitt
 // die Bahn entlang (.impulse-run in app/globals.css, aus bei prefers-reduced-motion).
-export function Impulse({ size = 32, animated = false, className }: ImpulseProps) {
+export function Impulse({ size = 32, animated = false, className, decorative = false }: ImpulseProps) {
   return (
     <svg
-      role="img"
-      aria-label="Smart Flow"
+      {...(decorative ? { "aria-hidden": true } : { role: "img", "aria-label": "Smart Flow" })}
       viewBox={IMPULSE_VIEWBOX}
       width={size}
       height={size}

@@ -1,0 +1,104 @@
+import { expect, test } from '@playwright/test'
+import { de } from '../../content/de'
+import { STATIONS, stationWindow } from '../../scene/stations'
+
+// scrollToStation landet auf dem Fenster-Start der Station (0.86); der Brief nannte > 0.9, das passt nicht zu STATIONS.
+const KONTAKT_START = stationWindow('kontakt').start - 0.005
+
+const progress = (page: import('@playwright/test').Page) =>
+  page.evaluate(() => window.__sf?.progress ?? 0)
+
+test.describe('Feste Navigation', () => {
+  test('Klick auf den Punkt Kontakt fährt ans Ende und setzt den Hash', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.locator('html')).toHaveAttribute('data-mode', '3d')
+    await page.getByRole('link', { name: de.nav.labels.kontakt, exact: true }).click()
+    // Section #kontakt kommt in Task 17; bis dahin zählt der Fortschritt.
+    await expect.poll(() => progress(page), { timeout: 2500 }).toBeGreaterThan(KONTAKT_START)
+    expect(new URL(page.url()).hash).toBe('#kontakt')
+    await expect(page.getByRole('link', { name: de.nav.labels.kontakt, exact: true })).toHaveAttribute(
+      'aria-current',
+      'true',
+    )
+  })
+
+  test('CTA fährt zu Kontakt', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.locator('html')).toHaveAttribute('data-mode', '3d')
+    await page.getByRole('button', { name: de.nav.cta }).click()
+    await expect.poll(() => progress(page), { timeout: 3000 }).toBeGreaterThan(KONTAKT_START)
+  })
+
+  test('Deep Link /#automatik landet in der Station GPU', async ({ page }) => {
+    await page.goto('/#automatik')
+    await expect(page.locator('html')).toHaveAttribute('data-mode', '3d')
+    await expect
+      .poll(() => progress(page), { timeout: 5000 })
+      .toBeGreaterThan(0.56)
+    const p = await progress(page)
+    expect(p).toBeLessThan(0.7)
+    await expect(page.getByRole('link', { name: de.nav.labels.gpu, exact: true })).toHaveAttribute(
+      'aria-current',
+      'true',
+    )
+  })
+
+  test('unbekannter Hash wird ignoriert', async ({ page }) => {
+    await page.goto('/#gibt-es-nicht')
+    await expect(page.locator('html')).toHaveAttribute('data-mode', '3d')
+    await page.waitForTimeout(500)
+    expect(await progress(page)).toBeLessThan(0.001)
+  })
+
+  test('Tab erreicht Wortmarke, sieben Punkte und CTA in dieser Reihenfolge', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.locator('html')).toHaveAttribute('data-mode', '3d')
+    const expected = [
+      'Smart Flow – zum Anfang',
+      ...STATIONS.map((s) => de.nav.labels[s.id]),
+      de.nav.cta,
+    ]
+    const seen: (string | null)[] = []
+    for (let i = 0; i < expected.length; i++) {
+      await page.keyboard.press('Tab')
+      seen.push(
+        await page.evaluate(
+          () =>
+            document.activeElement?.getAttribute('aria-label') ??
+            document.activeElement?.textContent?.trim() ??
+            null,
+        ),
+      )
+    }
+    expect(seen).toEqual(expected)
+  })
+
+  test('Enter auf Werkzeuge fährt zur RAM-Station', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.locator('html')).toHaveAttribute('data-mode', '3d')
+    const dot = page.getByRole('link', { name: de.nav.labels.ram, exact: true })
+    await dot.focus()
+    await page.keyboard.press('Enter')
+    await expect.poll(() => progress(page), { timeout: 3000 }).toBeGreaterThan(0.42)
+    await expect.poll(() => progress(page)).toBeLessThan(0.56)
+    expect(new URL(page.url()).hash).toBe('#werkzeuge')
+  })
+
+  test('Linie unten erscheint erst nach 5 % Fortschritt', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.locator('html')).toHaveAttribute('data-mode', '3d')
+    const header = page.locator('header')
+    await expect(header).toHaveAttribute('data-scrolled', 'false')
+    await page.getByRole('link', { name: de.nav.labels.cpu, exact: true }).click()
+    await expect(header).toHaveAttribute('data-scrolled', 'true')
+  })
+
+  test('Canvas ist aria-hidden und nicht fokussierbar; nur eine Wortmarke mit role=img', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.locator('html')).toHaveAttribute('data-mode', '3d')
+    const canvas = page.locator('canvas')
+    await expect(canvas).toHaveAttribute('aria-hidden', 'true')
+    expect(await canvas.getAttribute('tabindex')).toBeNull()
+    await expect(page.getByRole('img', { name: 'Smart Flow' })).toHaveCount(1)
+  })
+})

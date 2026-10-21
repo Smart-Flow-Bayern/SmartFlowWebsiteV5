@@ -95,7 +95,9 @@ h3 {
     width: min(520px, 100% - 2 * 6vw);
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: safe center;
+    /* Platz für die feste Navigation (--nav-h, siehe SiteNav); mobil überschrieben. */
+    padding-top: var(--nav-h);
     pointer-events: none;
     opacity: 0;
     visibility: hidden;
@@ -279,6 +281,151 @@ h3 {
     .station-overlay,
     .reveal-item {
       transform: none;
+    }
+  }
+}
+
+
+/* Feste Navigation (components/nav/SiteNav.tsx). Höhe in --nav-h, damit Overlays nicht darunter laufen. */
+:root {
+  --nav-h: 64px;
+}
+
+@layer components {
+  .nav-bar {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 20;
+    height: var(--nav-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-inline: 6vw;
+    pointer-events: none;
+  }
+
+  .nav-bar::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    border-bottom: 1px solid var(--color-surface);
+    opacity: 0;
+    transition: opacity 200ms ease;
+  }
+
+  .nav-bar[data-scrolled='true']::after {
+    opacity: 1;
+  }
+
+  .nav-link,
+  .nav-cta {
+    pointer-events: auto;
+  }
+
+  .nav-link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .nav-brand {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+  }
+
+  .nav-stations {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .nav-station {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 24px;
+    padding: 4px 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    transition: color 200ms ease;
+  }
+
+  .nav-station:hover,
+  .nav-station[aria-current='true'] {
+    color: var(--color-text);
+  }
+
+  .nav-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    transition:
+      background-color 200ms ease,
+      transform 200ms ease;
+  }
+
+  .nav-station[aria-current='true'] .nav-dot {
+    background: var(--color-accent);
+    transform: scale(1.35);
+  }
+
+  .nav-cta {
+    min-height: 36px;
+    padding: 0 16px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-bg);
+    background: var(--color-accent);
+    border: 0;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  @media (max-width: 768px) {
+    /* Zwei Zeilen: Wortmarke und CTA oben, sieben Punkte (je 24 px Fläche) darunter. */
+    .nav-bar {
+      --nav-h: 84px;
+      flex-wrap: wrap;
+      align-content: center;
+      row-gap: 4px;
+      padding-inline: 16px;
+    }
+
+    .nav-stations {
+      order: 3;
+      width: 100%;
+      justify-content: space-between;
+      gap: 0;
+    }
+
+    .nav-station {
+      padding: 4px;
+      min-width: 24px;
+      justify-content: center;
+    }
+
+    .nav-label {
+      display: none;
+    }
+
+    .nav-cta {
+      padding: 0 10px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-bar::after,
+    .nav-station,
+    .nav-dot {
+      transition: none;
     }
   }
 }

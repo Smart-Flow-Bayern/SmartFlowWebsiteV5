@@ -51,5 +51,7 @@ describe('stations', () => {
     expect(stationOffset(0, 9000)).toBe(0)
     expect(stationOffset(0.28, 9000)).toBe(2520)
     expect(stationOffset(1, 8123)).toBe(8123)
+    // Nie unter dem Fensterstart: 0.56 * 8123 = 4548.88 muss auf 4549 aufrunden.
+    expect(stationOffset(0.56, 8123)).toBe(4549)
   })
 })

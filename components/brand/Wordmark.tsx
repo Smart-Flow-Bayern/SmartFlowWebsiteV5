@@ -17,6 +17,8 @@ type WordmarkProps = {
   /** Höhe in Pixeln; die Breite folgt aus dem Seitenverhältnis der Variante. */
   size?: number;
   className?: string;
+  /** Rein dekorativ (z. B. in einem Link, der selbst beschriftet ist): aria-hidden statt role="img". */
+  decorative?: boolean;
 };
 
 const textStyle = {
@@ -25,14 +27,13 @@ const textStyle = {
   letterSpacing: WORDMARK_LETTER_SPACING,
 } as const;
 
-export function Wordmark({ variant, size = 32, className }: WordmarkProps) {
+export function Wordmark({ variant, size = 32, className, decorative = false }: WordmarkProps) {
   const { box } = variant === "underscore" ? UNDERSCORE : IMPULSE_WORDMARK;
   const width = Math.round((size * box.width) / box.height);
 
   return (
     <svg
-      role="img"
-      aria-label="Smart Flow"
+      {...(decorative ? { "aria-hidden": true } : { role: "img", "aria-label": "Smart Flow" })}
       viewBox={variant === "underscore" ? UNDERSCORE_VIEWBOX : IMPULSE_WORDMARK_VIEWBOX}
       width={width}
       height={size}
