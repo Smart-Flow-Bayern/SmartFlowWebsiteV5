@@ -13,7 +13,7 @@ export const de: SiteContent = {
       mainboard: 'Überblick',
       cpu: 'Abläufe',
       ram: 'Werkzeuge',
-      gpu: 'Automatik',
+      gpu: 'Automatisch',
       ssd: 'Vorgehen',
       kontakt: 'Kontakt',
     },
@@ -24,15 +24,15 @@ export const de: SiteContent = {
     scrollHint: 'Scrollen',
   },
   station1: {
-    claim: 'Weniger Lärm. Abläufe, die laufen.',
-    labels: ['Abläufe', 'Werkzeuge', 'Automatik', 'Zusammenarbeit', 'Kontakt'],
+    claim: 'Weniger Lärm. Mehr erledigt.',
+    labels: ['Abläufe', 'Werkzeuge', 'Automatisch', 'Vorgehen', 'Kontakt'],
   },
   about: {
-    heading: 'Wer dahinter steht',
+    heading: 'Wer dahintersteht',
     sentences: [
       'Smart Flow ist Leon Heinrich aus Regensburg.',
-      'Sie sprechen vom ersten Gespräch bis zum laufenden Ablauf mit derselben Person.',
-      'Die Frage dabei ist immer dieselbe: Was spart Ihrem Betrieb Arbeit, und was ist nur laut?',
+      'Ihr Ansprechpartner bleibt vom ersten Gespräch bis zum laufenden Ablauf derselbe.',
+      'Die Frage ist jedes Mal: Was spart Ihrem Betrieb Arbeit, und was ist nur laut?',
     ],
   },
   cpu: {
@@ -42,15 +42,15 @@ export const de: SiteContent = {
     examples: [
       {
         branch: 'Handwerk',
-        text: 'Beispiel: Ein Auftrag wird im Büro aufgenommen, auf der Baustelle neu notiert und abends für die Rechnung noch einmal abgetippt. Danach gibt es eine Erfassung, und alle arbeiten mit denselben Angaben.',
+        text: 'Beispiel: Ein Auftrag wird im Büro aufgenommen, auf der Baustelle neu notiert und abends für die Rechnung noch einmal abgetippt. Danach wird der Auftrag einmal erfasst, und alle arbeiten mit denselben Angaben.',
       },
       {
         branch: 'Praxis',
-        text: 'Beispiel: Das Telefon klingelt während der Behandlung, Terminwünsche landen auf Zetteln. Danach kommen Anfragen an einer festen Stelle an, und das Team ruft gesammelt zurück.',
+        text: 'Beispiel: Mitten in der Behandlung kommt ein Anruf, der Terminwunsch landet auf einem Zettel. Danach kommen Anfragen an einer festen Stelle an, und das Team ruft gesammelt zurück.',
       },
       {
         branch: 'Hausverwaltung',
-        text: 'Beispiel: Eine Schadensmeldung wandert durch mehrere Postfächer, bis sich jemand zuständig fühlt. Danach ist klar, wer sie bekommt und wann der Mieter Bescheid hört.',
+        text: 'Beispiel: Eine Schadensmeldung wandert durch mehrere Postfächer, bis sich jemand zuständig fühlt. Danach ist klar, wer sie bekommt und wann der Mieter Bescheid bekommt.',
       },
     ],
   },
@@ -84,8 +84,8 @@ export const de: SiteContent = {
       {
         name: 'Analyse',
         happens:
-          'Wir sehen uns Ihre Abläufe an, vor Ort oder per Video, und sprechen mit den Leuten, die sie täglich machen.',
-        deliverable: 'Eine Übersicht, wo Zeit verloren geht und was zuerst drankommt.',
+          'Wir gehen Ihren Arbeitstag mit den Leuten durch, die täglich damit arbeiten, bei Ihnen oder per Video.',
+        deliverable: 'Eine Liste, was Sie am meisten aufhält, und womit wir anfangen.',
         duration: 'nach Absprache',
       },
       {
@@ -102,7 +102,7 @@ export const de: SiteContent = {
       },
       {
         name: 'Optimierung',
-        happens: 'Nach dem Start prüfen wir, was im Alltag hakt, und stellen nach.',
+        happens: 'Wenn alles läuft, schauen wir, wo es im Alltag noch hakt, und bessern nach.',
         deliverable: 'Ein Ablauf, der sich im Betrieb bewährt hat, nicht nur auf dem Papier.',
         duration: 'nach Absprache',
       },
@@ -110,10 +110,10 @@ export const de: SiteContent = {
   },
   contact: {
     title: 'Reden wir über Ihren Betrieb.',
-    text: 'Erzählen Sie, wo es bei Ihnen hakt. Sie bekommen eine klare Antwort, ob und wie wir helfen können.',
+    text: 'Erzählen Sie, wo es bei Ihnen hakt. Sie hören danach klar, ob wir helfen können und womit wir anfangen würden.',
     calCta: 'Termin wählen',
     calConsent:
-      'Ein Klick lädt den Buchungskalender von Cal.com. Dabei werden Daten an Cal.com übertragen; Einzelheiten stehen in der Datenschutzerklärung.',
+      'Der Kalender von Cal.com erscheint erst, wenn Sie klicken. Dann gehen Daten an Cal.com; mehr dazu in der Datenschutzerklärung.',
   },
   footer: {
     legal: [

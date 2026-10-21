@@ -47,10 +47,14 @@ describe('de', () => {
     expect(de.about.sentences.length).toBeLessThanOrEqual(3)
   })
 
+  it('leitet jedes CPU-Beispiel mit „Beispiel:“ ein', () => {
+    for (const ex of de.cpu.examples) expect(ex.text.startsWith('Beispiel:'), ex.branch).toBe(true)
+  })
+
   it('erfindet keine Dauern', () => {
     const erlaubt = briefingAntworten()
     for (const block of de.ssd.blocks) {
-      const ok = block.duration === 'nach Absprache' || erlaubt.some((a) => a.includes(block.duration))
+      const ok = block.duration === 'nach Absprache' || erlaubt.includes(block.duration)
       expect(ok, `duration "${block.duration}"`).toBe(true)
     }
   })
