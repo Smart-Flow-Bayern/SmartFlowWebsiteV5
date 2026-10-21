@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { activePart, ambientAt, backgroundAt, partEmissive } from '@/scene/lighting'
+import { EMISSIVE_PEAK, EMISSIVE_SIBLING, activePart, ambientAt, backgroundAt, partEmissive } from '@/scene/lighting'
 
 describe('lighting', () => {
   it('Hintergrund läuft von #050607 nach #1a1d20', () => {
@@ -17,13 +17,13 @@ describe('lighting', () => {
   })
 
   it('aktives Teil leuchtet am stärksten, andere kaum', () => {
-    expect(partEmissive('cpu', 0.35)).toBe(1.4)
+    expect(partEmissive('cpu', 0.35)).toBe(EMISSIVE_PEAK)
     expect(partEmissive('gpu', 0.35)).toBe(0.05)
   })
 
-  it('RAM-Geschwister leuchten mit 1.0', () => {
+  it('RAM-Geschwister leuchten mit 0.7 der Spitze', () => {
     expect(activePart(0.5)).toBe('ram_0')
-    expect(partEmissive('ram_2', 0.5)).toBe(1.0)
+    expect(partEmissive('ram_2', 0.5)).toBe(EMISSIVE_SIBLING)
   })
 
   it('traces: 0.25 Grundwert, 0.75 am Mainboard', () => {

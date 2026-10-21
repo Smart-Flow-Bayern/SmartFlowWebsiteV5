@@ -24,11 +24,16 @@ export function activePart(progress: number): PartName | null {
 
 const isRam = (part: PartName) => part.startsWith('ram_')
 
-/** Leuchtstärke eines Teils: aktives Teil 1.4, Geschwister 1.0, Leiterbahnen 0.25 (+0.5 am Mainboard), sonst 0.05. */
+/** Spitze der Leuchtstärke des aktiven Teils; höher übersteuert die Akzentfarbe zu flachem Gelbweiß und nimmt die Schattierung. */
+export const EMISSIVE_PEAK = 0.4
+/** RAM-Geschwister leuchten mit diesem Anteil der Spitze. */
+export const EMISSIVE_SIBLING = EMISSIVE_PEAK * 0.7
+
+/** Leuchtstärke eines Teils: aktives Teil EMISSIVE_PEAK, RAM-Geschwister 0.7 davon, Leiterbahnen 0.25 (+0.5 am Mainboard), sonst 0.05. */
 export function partEmissive(part: PartName, progress: number): number {
   const active = activePart(progress)
-  if (part === active) return 1.4
-  if (active && isRam(active) && isRam(part)) return 1.0
+  if (part === active) return EMISSIVE_PEAK
+  if (active && isRam(active) && isRam(part)) return EMISSIVE_SIBLING
   if (part === 'traces') return stationAt(progress).id === 'mainboard' ? 0.75 : 0.25
   return 0.05
 }
