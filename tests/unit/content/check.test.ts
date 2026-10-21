@@ -7,7 +7,7 @@ function fixture(): SiteContent {
   return {
     locale: 'de',
     meta: { title: 'Titel', description: 'Beschreibung' },
-    nav: { labels, cta: 'Gespräch buchen' },
+    nav: { labels, cta: 'Gespräch buchen', homeLabel: 'Start', stationsLabel: 'Stationen' },
     station0: { sentence: 'Wir räumen Abläufe auf.', scrollHint: 'Scrollen' },
     station1: { claim: 'Fünf Bausteine.', labels: ['a', 'b', 'c', 'd', 'e'] },
     about: { heading: 'Über', sentences: ['Erster Satz.', 'Zweiter Satz.'] },
@@ -21,7 +21,13 @@ function fixture(): SiteContent {
       ],
     },
     ram: { title: 'RAM', intro: 'Intro', sticks: ['eins', 'zwei', 'drei'] },
-    gpu: { title: 'GPU', intro: 'Intro', before: ['v1', 'v2', 'v3'], after: ['n1', 'n2', 'n3'] },
+    gpu: {
+      title: 'GPU',
+      intro: 'Intro',
+      beforeLabel: 'Vorher',
+      afterLabel: 'Nachher',
+      before: ['v1', 'v2', 'v3'], after: ['n1', 'n2', 'n3'],
+    },
     ssd: {
       title: 'SSD',
       blocks: [1, 2, 3, 4].map((n) => ({
@@ -31,10 +37,17 @@ function fixture(): SiteContent {
         duration: `${n} Tage`,
       })),
     },
-    contact: { title: 'Kontakt', text: 'Text', calCta: 'Termin', calConsent: 'Einwilligung' },
+    contact: {
+      title: 'Kontakt',
+      text: 'Text',
+      calCta: 'Termin', calConsent: 'Einwilligung',
+      calTitle: 'Kalender',
+      calOpenNewTab: 'Neuer Tab',
+    },
     footer: {
       legal: [{ label: 'Impressum', href: '/impressum' }],
       languageSwitch: { label: 'English', href: '/en' },
+      legalLabel: 'Rechtliches',
     },
   }
 }

@@ -18,6 +18,8 @@ export const de: SiteContent = {
       kontakt: 'Kontakt',
     },
     cta: 'Erstgespräch',
+    homeLabel: 'Smart Flow – zum Anfang',
+    stationsLabel: 'Stationen',
   },
   station0: {
     sentence: 'Jede Woche ein neues Werkzeug. Dabei soll Ihr Betrieb einfach laufen.',
@@ -67,6 +69,8 @@ export const de: SiteContent = {
   gpu: {
     title: 'Automatisierung',
     intro: 'Manches muss niemand mehr anfassen. Es läuft im Hintergrund, während Sie arbeiten.',
+    beforeLabel: 'Vorher',
+    afterLabel: 'Nachher',
     before: [
       'Rechnungen werden am Monatsende nachgeschrieben.',
       'Termine werden am Telefon hin und her geschoben.',
@@ -114,6 +118,8 @@ export const de: SiteContent = {
     calCta: 'Termin wählen',
     calConsent:
       'Der Kalender von Cal.com erscheint erst, wenn Sie klicken. Dann gehen Daten an Cal.com; mehr dazu in der Datenschutzerklärung.',
+    calTitle: 'Terminbuchung bei Cal.com',
+    calOpenNewTab: 'Kalender in neuem Tab öffnen',
   },
   footer: {
     legal: [
@@ -122,5 +128,6 @@ export const de: SiteContent = {
       { label: 'AGB', href: '/agb.html' },
     ],
     languageSwitch: { label: 'English', href: '/en' },
+    legalLabel: 'Rechtliches',
   },
 }

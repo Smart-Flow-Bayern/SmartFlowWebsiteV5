@@ -11,7 +11,7 @@ import { StationContact } from '@/components/stations/StationContact'
 import { StationSsd } from '@/components/stations/StationSsd'
 import { SCROLL_HEIGHTS } from '@/scene/stations'
 
-export default function Home() {
+export function HomePage() {
   return (
     <ScrollProvider>
       <main id="stage" style={{ height: '100svh', position: 'relative', zIndex: 1 }}>

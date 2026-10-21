@@ -13,10 +13,26 @@ export const FLOSKELN: readonly string[] = [
   'in zeiten von',
 ]
 
+/** Englische Sperrliste (Task 18), kleingeschrieben. */
+export const FLOSKELN_EN: readonly string[] = [
+  'holistic',
+  'tailored',
+  'innovative',
+  'solutions',
+  'added value',
+  'sustainable',
+  'future-proof',
+  'synergies',
+  'state of the art',
+  'in times of',
+]
+
 /** Wortstamm, falls er vom Listeneintrag abweicht (Plural-Einträge treffen auch Singular und Komposita). */
 const STAMM: Readonly<Record<string, string>> = {
   lösungen: 'lösung',
   synergien: 'synergie',
+  solutions: 'solution',
+  synergies: 'synerg',
 }
 
 function muster(eintrag: string): RegExp {
@@ -26,9 +42,20 @@ function muster(eintrag: string): RegExp {
   return new RegExp(`(?<![\\p{L}\\p{N}])${teile.join('\\s+')}`, 'iu')
 }
 
-const MUSTER = FLOSKELN.map((eintrag) => ({ eintrag, re: muster(eintrag) }))
+const MUSTER = new Map<readonly string[], { eintrag: string; re: RegExp }[]>()
 
-/** Treffer der Sperrliste in `text`, in Reihenfolge von FLOSKELN, je höchstens einmal. */
-export function findeFloskeln(text: string): string[] {
-  return MUSTER.filter(({ re }) => re.test(text)).map(({ eintrag }) => eintrag)
+function musterFuer(liste: readonly string[]): { eintrag: string; re: RegExp }[] {
+  let m = MUSTER.get(liste)
+  if (!m) {
+    m = liste.map((eintrag) => ({ eintrag, re: muster(eintrag) }))
+    MUSTER.set(liste, m)
+  }
+  return m
+}
+
+/** Treffer der Sperrliste in `text`, in Reihenfolge der Liste, je höchstens einmal. */
+export function findeFloskeln(text: string, liste: readonly string[] = FLOSKELN): string[] {
+  return musterFuer(liste)
+    .filter(({ re }) => re.test(text))
+    .map(({ eintrag }) => eintrag)
 }

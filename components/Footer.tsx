@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore } from 'react'
 import { CONTACT } from '@/content/contact'
-import { de } from '@/content/de'
+import { useContent } from '@/components/content/ContentProvider'
 
 const noopSubscribe = () => () => {}
 
@@ -12,7 +12,9 @@ function useYear(): number | null {
 }
 
 export function Footer() {
+  const content = useContent()
   const year = useYear()
+  const other = content.locale === 'de' ? 'en' : 'de'
   return (
     <footer className="site-footer">
       <address className="font-mono">
@@ -22,14 +24,14 @@ export function Footer() {
         <br />
         {CONTACT.zip} {CONTACT.city}
       </address>
-      <nav aria-label="Rechtliches" className="font-mono">
-        {de.footer.legal.map((l) => (
+      <nav aria-label={content.footer.legalLabel} className="font-mono">
+        {content.footer.legal.map((l) => (
           <a key={l.href} href={l.href}>
             {l.label}
           </a>
         ))}
-        <a href={de.footer.languageSwitch.href} hrefLang="en" lang="en">
-          {de.footer.languageSwitch.label}
+        <a href={content.footer.languageSwitch.href} hrefLang={other} lang={other}>
+          {content.footer.languageSwitch.label}
         </a>
       </nav>
       <p className="font-mono">© {year} Smart Flow</p>

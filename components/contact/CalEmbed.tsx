@@ -2,10 +2,11 @@
 
 import { useState } from 'react'
 import { CONTACT } from '@/content/contact'
-import { de } from '@/content/de'
+import { useContent } from '@/components/content/ContentProvider'
 
 /** Click-to-load: vor dem Klick gibt es keinen Request an Cal.com. */
 export function CalEmbed() {
+  const content = useContent()
   const [loaded, setLoaded] = useState(false)
   return (
     <div className="cal-embed">
@@ -13,18 +14,18 @@ export function CalEmbed() {
         <iframe
           className="cal-frame"
           src={`${CONTACT.calUrl}?embed=true&theme=dark`}
-          title="Terminbuchung bei Cal.com"
+          title={content.contact.calTitle}
         />
       ) : (
         <>
           <button type="button" className="cal-button" onClick={() => setLoaded(true)}>
-            {de.contact.calCta}
+            {content.contact.calCta}
           </button>
-          <p className="station-text">{de.contact.calConsent}</p>
+          <p className="station-text">{content.contact.calConsent}</p>
         </>
       )}
       <a className="station-link" href={CONTACT.calUrl} target="_blank" rel="noopener noreferrer">
-        Kalender in neuem Tab öffnen
+        {content.contact.calOpenNewTab}
       </a>
     </div>
   )

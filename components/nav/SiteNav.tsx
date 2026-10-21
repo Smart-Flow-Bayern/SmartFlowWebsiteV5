@@ -2,7 +2,7 @@
 
 import { Wordmark } from '@/components/brand/Wordmark'
 import { scrollToStation } from '@/components/scroll/ScrollProvider'
-import { de } from '@/content/de'
+import { useContent } from '@/components/content/ContentProvider'
 import { wordmarkVariant } from '@/lib/brand/tokens'
 import { useProgressSelector } from '@/lib/scroll/progress'
 import { STATIONS, stationAt } from '@/scene/stations'
@@ -25,6 +25,7 @@ function focusWhenReady(elementId: string, stationId = 'kontakt'): void {
 }
 
 export function SiteNav() {
+  const content = useContent()
   const activeId = useProgressSelector((p) => stationAt(p).id)
   const scrolled = useProgressSelector((p) => p > SCROLLED_AFTER)
 
@@ -32,7 +33,7 @@ export function SiteNav() {
     <header className="nav-bar" data-scrolled={scrolled}>
       <a
         href="#start"
-        aria-label="Smart Flow – zum Anfang"
+        aria-label={content.nav.homeLabel}
         className="nav-link nav-brand"
         onClick={(event) => {
           event.preventDefault()
@@ -42,12 +43,12 @@ export function SiteNav() {
       >
         <Wordmark variant={wordmarkVariant} size={24} decorative />
       </a>
-      <nav aria-label="Stationen" className="nav-stations">
+      <nav aria-label={content.nav.stationsLabel} className="nav-stations">
         {STATIONS.map(({ id, slug }) => (
           <a
             key={id}
             href={`#${slug}`}
-            aria-label={de.nav.labels[id]}
+            aria-label={content.nav.labels[id]}
             aria-current={id === activeId ? 'true' : undefined}
             className="nav-link nav-station"
             onClick={(event) => {
@@ -58,7 +59,7 @@ export function SiteNav() {
           >
             <span className="nav-dot" aria-hidden="true" />
             <span className="nav-label" aria-hidden="true">
-              {de.nav.labels[id]}
+              {content.nav.labels[id]}
             </span>
           </a>
         ))}
@@ -68,7 +69,7 @@ export function SiteNav() {
           focusWhenReady('kontakt-title')
         }}
       >
-        {de.nav.cta}
+        {content.nav.cta}
       </button>
     </header>
   )

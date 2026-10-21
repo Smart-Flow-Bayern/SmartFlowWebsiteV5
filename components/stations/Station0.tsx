@@ -2,7 +2,7 @@
 
 import { Impulse } from '@/components/brand/Impulse'
 import { Wordmark } from '@/components/brand/Wordmark'
-import { de } from '@/content/de'
+import { useContent } from '@/components/content/ContentProvider'
 import { useProgressSelector } from '@/lib/scroll/progress'
 import { overlayState } from '@/lib/scroll/visibility'
 import { stationWindow } from '@/scene/stations'
@@ -19,6 +19,7 @@ function station0State(progress: number): 'visible' | 'leaving' | 'hidden' {
 }
 
 export function Station0() {
+  const content = useContent()
   const state = useProgressSelector(station0State)
   return (
     <div
@@ -35,7 +36,7 @@ export function Station0() {
           className="font-sans max-w-md text-xl font-normal md:text-2xl"
           style={{ color: colors.text }}
         >
-          {de.station0.sentence}
+          {content.station0.sentence}
         </h1>
       </div>
       <div
@@ -45,7 +46,7 @@ export function Station0() {
         <span aria-hidden="true">
           <Impulse size={20} animated />
         </span>
-        <span>{de.station0.scrollHint}</span>
+        <span>{content.station0.scrollHint}</span>
       </div>
     </div>
   )

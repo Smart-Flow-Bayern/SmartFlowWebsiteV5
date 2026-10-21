@@ -15,10 +15,11 @@ interface Props {
   range: ProgressWindow
   align: 'left' | 'right'
   className?: string
+  scrollable?: boolean
   children: ReactNode
 }
 
-export function StationOverlay({ id, range, align, className, children }: Props) {
+export function StationOverlay({ id, range, align, className, scrollable, children }: Props) {
   const state = useOverlayState(range)
   return (
     <section
@@ -29,7 +30,9 @@ export function StationOverlay({ id, range, align, className, children }: Props)
       data-align={align}
       inert={state === 'hidden'}
     >
-      <div className="station-overlay-body" data-lenis-prevent={className ? '' : undefined}>{children}</div>
+      <div className="station-overlay-body" data-lenis-prevent={scrollable ? '' : undefined}>
+        {children}
+      </div>
     </section>
   )
 }
