@@ -1,5 +1,5 @@
 import { revealIndex } from '@/lib/scroll/visibility'
-import { easeInOutCubic } from './camera'
+import { easeInOutCubic } from './easing'
 import { localProgress, stationWindow } from './stations'
 
 const MAINBOARD = stationWindow('mainboard')

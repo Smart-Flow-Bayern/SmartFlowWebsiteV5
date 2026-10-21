@@ -1,5 +1,6 @@
 import { CatmullRomCurve3, MathUtils, Vector3 } from 'three'
 import type { StationId } from '@/content/types'
+import { easeInOutCubic } from './easing'
 import { STATIONS } from './stations'
 
 export interface Pose {
@@ -35,9 +36,7 @@ const PARKS = STATIONS.map((s) => {
 
 const scratch = new Vector3()
 
-export function easeInOutCubic(t: number): number {
-  return t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2
-}
+export { easeInOutCubic }
 
 function newPose(): Pose {
   return { position: [0, 0, 0], target: [0, 0, 0], fov: 0 }
