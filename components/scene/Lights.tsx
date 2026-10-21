@@ -27,6 +27,8 @@ const ACCENT_HEX = colors.accent.slice(1).toLowerCase()
 const ACCENT_OFFSET_Z = 0.12
 const ACCENT_INTENSITY = 0.02
 const KEY_INTENSITY = 8
+const FILL_INTENSITY = 0.01
+const FILL_POSITION: [number, number, number] = [0.3, 0.3, 0.5]
 /** Reihenfolge, in der der Mainboard-Sweep die Bauteile kurz aufleuchten lässt (Index aus mainboardLabelIndex). */
 const SWEEP_PARTS: readonly PartName[] = ['cpu', 'ram_0', 'gpu', 'ssd', 'ioPanel']
 /** Zusatz auf die Grundleuchtstärke des Sweep-Teils; der Brief-Wert 2.0 übersteuert unter ACES. */
@@ -90,7 +92,7 @@ function dampSsdBlocks(blocks: readonly MeshStandardMaterial[], progress: number
 }
 
 /** Licht-Dramaturgie: Hintergrund, Umgebungslicht, Akzentlicht am aktiven Teil, Leuchtstärke der Teile. */
-export default function Lights({ computer }: { computer: Group }) {
+export default function Lights({ computer, pointLights = 2 }: { computer: Group; pointLights?: number }) {
   const ambient = useRef<AmbientLight>(null)
   const accent = useRef<PointLight>(null)
   const accentPlaced = useRef(false)
@@ -145,6 +147,9 @@ export default function Lights({ computer }: { computer: Group }) {
       <ambientLight ref={ambient} intensity={ambientAt(0)} />
       <directionalLight position={[0.3, 0.6, 1]} intensity={KEY_INTENSITY} color={colors.text} />
       <pointLight ref={accent} color={colors.accent} intensity={ACCENT_INTENSITY} distance={0.6} decay={2} />
+      {pointLights >= 2 && (
+        <pointLight position={FILL_POSITION} color={colors.text} intensity={FILL_INTENSITY} distance={1} decay={2} />
+      )}
     </>
   )
 }

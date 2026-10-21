@@ -8,6 +8,7 @@ import { overlayState } from '@/lib/scroll/visibility'
 import { stationWindow } from '@/scene/stations'
 import { colors, wordmarkVariant } from '@/lib/brand/tokens'
 import { CaseSilhouette } from './CaseSilhouette'
+import { useQuality } from '@/lib/device/useQuality'
 import { NoiseField } from './NoiseField'
 
 const WINDOW = stationWindow('gehaeuse')
@@ -21,6 +22,7 @@ function station0State(progress: number): 'visible' | 'leaving' | 'hidden' {
 export function Station0() {
   const content = useContent()
   const state = useProgressSelector(station0State)
+  const quality = useQuality()
   return (
     <div
       id="station0"
@@ -29,7 +31,7 @@ export function Station0() {
       className="station-fade pointer-events-none absolute inset-0 overflow-hidden"
     >
       <CaseSilhouette />
-      <NoiseField />
+      <NoiseField count={quality.noiseCount} />
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 px-6 text-center">
         <Wordmark variant={wordmarkVariant} size={32} />
         <h1

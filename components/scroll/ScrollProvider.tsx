@@ -6,6 +6,7 @@ import Lenis from 'lenis'
 import { useEffect, type ReactNode } from 'react'
 import type { StationId } from '@/content/types'
 import { progressStore } from '@/lib/scroll/progress'
+import { shouldRefresh, type Size } from '@/lib/scroll/resize'
 import { STATIONS, stationOffset } from '@/scene/stations'
 
 let lenisInstance: Lenis | null = null
@@ -78,9 +79,19 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
     window.addEventListener('hashchange', onHashChange)
 
     let timer: ReturnType<typeof setTimeout> | undefined
+    let lastSize: Size = { w: window.innerWidth, h: window.innerHeight }
     const onResize = () => {
       clearTimeout(timer)
-      timer = setTimeout(() => ScrollTrigger.refresh(), 150)
+      timer = setTimeout(() => {
+        const next: Size = { w: window.innerWidth, h: window.innerHeight }
+        if (!shouldRefresh(lastSize, next)) return
+        lastSize = next
+        const prev = progressStore.get()
+        ScrollTrigger.refresh()
+        lenis.resize()
+        lenis.scrollTo(prev * lenis.limit, { immediate: true, force: true })
+        ScrollTrigger.update()
+      }, 150)
     }
     window.addEventListener('resize', onResize)
 

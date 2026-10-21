@@ -10,6 +10,7 @@ import { preloadComputer } from '@/scene/loadComputer'
 import { IDLE_GRACE_MS } from '@/scene/timing'
 import type { PartName } from '@/scene/model/parts'
 import { stationAt } from '@/scene/stations'
+import { useQuality } from '@/lib/device/useQuality'
 import CameraRig from './CameraRig'
 import Computer from './Computer'
 import { SceneErrorBoundary } from './SceneErrorBoundary'
@@ -86,6 +87,7 @@ export default function Scene() {
   // Computer suspendiert sofort beim Mount, daher erst nach dem Preload-Trigger rendern.
   const streaming = usePreload()
   useDebugState()
+  const quality = useQuality()
 
   return (
     <Canvas
@@ -98,14 +100,14 @@ export default function Scene() {
         })
       }}
       frameloop="always"
-      dpr={[1, 1.5]}
+      dpr={quality.dpr}
       gl={{ alpha: true, antialias: true }}
       camera={{ fov: 40, near: 0.01, far: 20 }}
       style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}
     >
       <CameraRig />
       <SceneErrorBoundary>
-        <Suspense fallback={null}>{streaming && <Computer />}</Suspense>
+        <Suspense fallback={null}>{streaming && <Computer pointLights={quality.pointLights} />}</Suspense>
       </SceneErrorBoundary>
     </Canvas>
   )

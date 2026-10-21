@@ -161,7 +161,7 @@ function animate(rig: Rig, progress: number, delta: number, impulseVisible: bool
 }
 
 /** Das Modell blendet beim ersten Frame nach dem Laden über 600 ms ein. */
-export default function Computer() {
+export default function Computer({ pointLights }: { pointLights?: number }) {
   const { scene } = useComputer()
   const fade = useRef(0)
   const targets = useMemo(() => fadeTargets(scene), [scene])
@@ -199,7 +199,7 @@ export default function Computer() {
       <primitive object={scene} />
       <primitive object={rig.cable} />
       <primitive object={rig.sphere} />
-      <Lights computer={scene} />
+      <Lights computer={scene} pointLights={pointLights} />
     </>
   )
 }
