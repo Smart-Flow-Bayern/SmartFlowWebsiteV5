@@ -82,6 +82,16 @@ function Computer({
     return () => applyHighlight(scene, traces, null)
   }, [scene, part, selected])
 
+  // Abheben-Vorschau: bei gewählter CPU hebt der Kühler um 0.12 nach vorn (+z) ab
+  useEffect(() => {
+    if (selected !== 'cpu') return
+    const cooler = part('cpuCooler')
+    cooler.position.z += 0.12
+    return () => {
+      cooler.position.z -= 0.12
+    }
+  }, [part, selected])
+
   useEffect(onLoaded, [onLoaded])
 
   return <primitive object={scene} />

@@ -1,4 +1,4 @@
-import { Box3, BufferGeometry, LineBasicMaterial, LineSegments, Mesh, MeshStandardMaterial, Object3D, Vector3 } from 'three'
+import { Box3, BufferGeometry, Group, LineBasicMaterial, LineSegments, Mesh, MeshStandardMaterial, Object3D, Vector3 } from 'three'
 import { describe, expect, it } from 'vitest'
 import { STATION_IDS } from '@/content/types'
 import { buildComputer } from '@/scene/model/buildComputer'
@@ -41,11 +41,47 @@ describe('buildComputer', () => {
     }
   })
 
-  it('builds the cpu cooler from a base and exactly 8 fins', () => {
-    // cpuCooler ist ein gemergtes Mesh: Grundplatte + 8 Lamellen = 9 Boxen à 24 Eckpunkte
-    const cooler = group.getObjectByName('cpuCooler')
-    expect(cooler).toBeInstanceOf(Mesh)
-    expect((cooler as Mesh).geometry.getAttribute('position').count / 24 - 1).toBe(8)
+  it('builds the cpu cooler as a group of base, 12 fins, 4 heatpipes and a fan ring', () => {
+    const cooler = group.getObjectByName('cpuCooler')!
+    expect(cooler).toBeInstanceOf(Group)
+    expect(cooler.parent).toBe(group)
+    const names = cooler.children.map((c) => c.name)
+    expect(names.filter((n) => /^coolerFin_\d+$/.test(n))).toHaveLength(12)
+    expect(names.filter((n) => /^heatpipe_\d+$/.test(n))).toHaveLength(4)
+    expect(names.filter((n) => n === 'coolerFanRing')).toHaveLength(1)
+    expect(names.filter((n) => n === 'coolerBase')).toHaveLength(1)
+    expect(cooler.children.every((c) => c instanceof Mesh)).toBe(true)
+  })
+
+  it('seats the cooler base directly on the cpu front, centred on the cpu', () => {
+    group.updateMatrixWorld(true)
+    const cpuBox = new Box3().setFromObject(group.getObjectByName('cpu')!)
+    const base = new Box3().setFromObject(group.getObjectByName('coolerBase')!)
+    expect(Math.abs(base.min.z - cpuBox.max.z)).toBeLessThanOrEqual(0.001)
+    expect(Math.abs(base.getCenter(new Vector3()).x - cpuBox.getCenter(new Vector3()).x)).toBeLessThanOrEqual(0.001)
+    expect(Math.abs(base.getCenter(new Vector3()).y - cpuBox.getCenter(new Vector3()).y)).toBeLessThanOrEqual(0.001)
+  })
+
+  it('has 8 capacitors cap_0..7 on the mainboard', () => {
+    const caps = group.getObjectByName('mainboard')!.children.filter((c) => /^cap_\d+$/.test(c.name))
+    expect(caps).toHaveLength(8)
+    expect(new Set(caps.map((c) => c.name)).size).toBe(8)
+  })
+
+  it('has 6 case vent slots on the case', () => {
+    expect(group.getObjectByName('case')!.children.filter((c) => c.name.startsWith('caseVent_'))).toHaveLength(6)
+  })
+
+  it('gives each ram module a notch: two halves with a 0.004 gap', () => {
+    for (let i = 0; i < 4; i++) {
+      const ram = group.getObjectByName(`ram_${i}`) as Mesh
+      expect(ram).toBeInstanceOf(Mesh)
+      // zwei gerundete Boxen gemergt: um die Riegelmitte (y = 0.1) bleibt eine Lücke von 0.004
+      const position = ram.geometry.getAttribute('position')
+      let nearest = Infinity
+      for (let v = 0; v < position.count; v++) nearest = Math.min(nearest, Math.abs(position.getY(v) - 0.1))
+      expect(nearest, `ram_${i}`).toBeCloseTo(0.002, 4)
+    }
   })
 
   it('has exactly 6 io slots, one named ioSlot_cable', () => {
@@ -124,14 +160,14 @@ describe('buildComputer', () => {
     expect((traces as LineSegments).geometry.getAttribute('position').count / 2).toBeGreaterThanOrEqual(40)
   })
 
-  it('stays under 60 000 triangles', () => {
+  it('stays within 8 000 triangles', () => {
     let triangles = 0
     group.traverse((o) => {
       if (!(o instanceof Mesh)) return
       const geometry = o.geometry as BufferGeometry
       triangles += (geometry.index ? geometry.index.count : geometry.getAttribute('position').count) / 3
     })
-    expect(triangles).toBeLessThan(60_000)
+    expect(triangles).toBeLessThanOrEqual(8000)
   })
 })
 
