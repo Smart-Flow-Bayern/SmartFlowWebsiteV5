@@ -6,19 +6,19 @@ import Lenis from 'lenis'
 import { useEffect, type ReactNode } from 'react'
 import type { StationId } from '@/content/types'
 import { progressStore } from '@/lib/scroll/progress'
-import { SCROLL_HEIGHTS, STATIONS } from '@/scene/stations'
+import { STATIONS, stationOffset } from '@/scene/stations'
 
 let lenisInstance: Lenis | null = null
 
-/** Scrollweg, über den der Fortschritt von 0 auf 1 läuft (Bühne bleibt eine Höhe stehen). */
-function travelDistance(): number {
-  return (SCROLL_HEIGHTS - 1) * window.innerHeight
+/** Maximal möglicher Scrollweg der Seite (unabhängig von svh/innerHeight-Abweichungen). */
+function maxScroll(): number {
+  return Math.max(0, document.documentElement.scrollHeight - window.innerHeight)
 }
 
 export function scrollToStation(id: StationId): void {
   const station = STATIONS.find((s) => s.id === id)
   if (!station) return
-  const target = station.start * travelDistance()
+  const target = stationOffset(station.start, lenisInstance ? lenisInstance.limit : maxScroll())
   if (lenisInstance) {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     lenisInstance.scrollTo(target, reduced ? { immediate: true } : undefined)
@@ -31,7 +31,10 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger)
 
-    const lenis = new Lenis({ autoRaf: false })
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const lenis = new Lenis(
+      reduced ? { autoRaf: false, smoothWheel: false, lerp: 1 } : { autoRaf: false },
+    )
     lenisInstance = lenis
     lenis.on('scroll', ScrollTrigger.update)
 
@@ -42,12 +45,13 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
     const trigger = ScrollTrigger.create({
       trigger: '#stage',
       start: 'top top',
-      end: () => `+=${travelDistance()}`,
+      end: 'max',
       pin: true,
       pinSpacing: false, // Platz liefert der Spacer in app/page.tsx
       invalidateOnRefresh: true,
       onUpdate: (self) => progressStore.set(self.progress),
     })
+    progressStore.set(trigger.progress)
 
     let timer: ReturnType<typeof setTimeout> | undefined
     const onResize = () => {
@@ -60,6 +64,7 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
       clearTimeout(timer)
       window.removeEventListener('resize', onResize)
       trigger.kill()
+      progressStore.set(0)
       gsap.ticker.remove(tick)
       lenis.off('scroll', ScrollTrigger.update)
       lenis.destroy()

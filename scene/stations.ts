@@ -37,3 +37,8 @@ export function localProgress(progress: number, w: { start: number; end: number 
   const t = (progress - w.start) / (w.end - w.start)
   return Math.min(1, Math.max(0, t))
 }
+
+/** Scroll-Offset in px für den Start eines Fensters bei gegebenem maximalem Scrollweg. */
+export function stationOffset(start: number, limit: number): number {
+  return Math.round(start * limit)
+}

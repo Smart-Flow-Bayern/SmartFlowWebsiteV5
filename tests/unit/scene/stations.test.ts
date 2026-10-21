@@ -6,6 +6,7 @@ import {
   STATIONS,
   localProgress,
   stationAt,
+  stationOffset,
 } from '@/scene/stations'
 
 describe('stations', () => {
@@ -44,5 +45,11 @@ describe('stations', () => {
     expect(localProgress(0.35, STATIONS[2])).toBeCloseTo(0.5)
     expect(localProgress(0.9, STATIONS[2])).toBe(1)
     expect(localProgress(0.1, STATIONS[2])).toBe(0)
+  })
+
+  it('stationOffset skaliert den Start auf den maximalen Scrollweg', () => {
+    expect(stationOffset(0, 9000)).toBe(0)
+    expect(stationOffset(0.28, 9000)).toBe(2520)
+    expect(stationOffset(1, 8123)).toBe(8123)
   })
 })
