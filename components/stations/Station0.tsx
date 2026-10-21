@@ -25,7 +25,9 @@ export function Station0() {
         className="font-mono absolute bottom-8 left-1/2 flex -translate-x-1/2 items-center gap-3 text-sm"
         style={{ color: colors.muted }}
       >
-        <Impulse size={20} animated />
+        <span aria-hidden="true">
+          <Impulse size={20} animated />
+        </span>
         <span>{de.station0.scrollHint}</span>
       </div>
     </div>
