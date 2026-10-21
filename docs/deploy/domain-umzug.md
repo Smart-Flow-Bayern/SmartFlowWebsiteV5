@@ -8,6 +8,7 @@ Voraussetzungen vor dem Start:
 
 - Preview geprüft, `docs/abnahme/checkliste.md` abgearbeitet, Freigabe von Dir gegeben.
 - Englische Fassung unter `/en` ist fertig (Startbedingung laut Projektvorgabe).
+- Rechtstexte ergänzen, bevor die Domain umzieht: Abschnitt „3. Hosting“ in `public/datenschutz.html` und `public/en/privacy-policy.html` nennt keinen Anbieter (Vercel, AVV); offene Punkte stehen in `docs/content/rechtstexte-offen.md`. Der Text selbst ist Deine Sache bzw. die Deines Anwalts.
 - Production-Sperre aufgehoben (siehe `docs/deploy/vercel-einrichten.md`, Abschnitt 3): Production Branch wieder `main`, `vercel.json` ohne Sperre. Die Aufhebung geht über einen eigenen Commit; wann `preview/abnahme` nach `main` gemergt wird, entscheidest Du.
 
 ## Ausgangslage (aus dem alten Repository gelesen)

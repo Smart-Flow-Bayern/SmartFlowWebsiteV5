@@ -14,7 +14,7 @@ Nichts davon ist bisher passiert: Es gibt kein Vercel-Konto, kein Projekt und ke
 
 ## 1. Konto
 
-1. Auf vercel.com ein Konto anlegen oder anmelden. Plan: fehlt (prüfen: Der Hobby-Plan erlaubt eventuell keine Repositories aus GitHub-Organisationen; dann wäre Pro nötig).
+1. Auf vercel.com ein Konto anlegen oder anmelden. Plan: fehlt (prüfen).
 2. Vercel mit dem GitHub-Konto verbinden, das Zugriff auf die Organisation `Smart-Flow-Bayern` hat. Das Repository ist privat; die GitHub-App von Vercel braucht dafür die Freigabe für genau dieses Repository.
 
 ## 2. Projekt anlegen, ohne zu deployen
@@ -28,7 +28,7 @@ npx vercel link
 
 `vercel link` legt das Projekt an und verknüpft den Ordner. Es baut nichts. Beim Anlegen: Framework Next.js, Root Directory `./`.
 
-Alternative: im Dashboard **Add New, Project, Import Git Repository**. Das ist **nicht empfohlen**: Der Import baut sofort einmal `origin/main` (nur das Gerüst) als Production auf einer vercel.app-Adresse, noch bevor Du eine Sperre setzen kannst. Das Importfenster hat kein Feld für den Production Branch.
+Alternative: im Dashboard **Add New, Project, Import Git Repository**. Das ist **nicht empfohlen**. Erwartung, nicht geprüft: Der Import baut sofort einmal `origin/main` (nur das Gerüst) als Production auf einer vercel.app-Adresse, noch bevor Du eine Sperre setzen kannst, und das Importfenster hat kein Feld für den Production Branch.
 
 ## 3. Production sperren, bevor gepusht wird
 

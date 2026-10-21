@@ -33,7 +33,7 @@ Prüfpunkte je Browser:
 5. **Tastatur-Durchgang:** Tab erreicht Wortmarke, sieben Stationspunkte und Erstgespräch-Button in dieser Reihenfolge, Fokus ist sichtbar, Enter springt zur Station, Kontakt-Bereich ist per Tastatur bedienbar. Safari: Option+Tab.
 6. **Reduced Motion:** Systemeinstellung „Bewegung reduzieren“ an: keine Kamerafahrt, pro Station ein Standbild, alle Texte lesbar.
 7. **320 px:** Fensterbreite 320 px (oder kleinstes Gerät): kein horizontales Scrollen, nichts abgeschnitten.
-8. **Konsole leer:** Keine Fehler und keine Meldung mit „Content Security Policy“ oder „Refused to“.
+8. **Konsole leer:** Keine Fehler und keine Meldung mit „Content Security Policy“ oder „Refused to“. Eine Deprecation-Warnung von three/R3F zu `THREE.Clock` ist erwartet und kein Fehler.
 
 | Browser | 1 Station 0 | 2 Fahrt | 3 Stationen | 4 Cal.com | 5 Tastatur | 6 Reduced Motion | 7 320 px | 8 Konsole |
 |---|---|---|---|---|---|---|---|---|
@@ -62,4 +62,18 @@ Auf Touch-Geräten statt Tastatur (Punkt 5): Navigation per Tipp, Cal.com-Button
 - Lighthouse gegen die Preview, mobil und Desktop (Ziele: mobil Performance ≥ 70, Accessibility ≥ 95, Best Practices ≥ 95, SEO ≥ 95; Desktop Performance ≥ 90): steht aus, braucht die Preview-URL. Werte danach in `docs/performance/2026-10-messung.md` ergänzen. Befehl: `pnpm exec lhci collect --url=<Preview-URL> --numberOfRuns=3`, Desktop zusätzlich `--settings.preset=desktop`. Ist Deployment Protection aktiv, braucht Lighthouse einen Bypass.
 - Frame-Zeiten auf echter GPU im Zielbrowser (p95 ≤ 33 ms): lokal mit `pnpm measure:frames` gemessen (siehe Messdokument), auf Preview und auf echten Mobilgeräten nicht geprüft.
 - Schema.org-Felder, die nur Du liefern kannst: `docs/content/seo-offen.md`.
+- JS-Budget (Abweichung von der Spec): Spec §3 verlangt „unter 350 kB gzipped inklusive Three.js“. Gemessen: Initial-JS 195 912 B (Gate, erfüllt), gesamt inklusive 3D-Szene 464 361 B (verfehlt). Entscheidung Leon: Spec auf „Initial-JS < 350 kB, 3D-Szene lazy, Gesamtwert informativ“ anpassen oder ein neues Gesamtlimit festlegen. Details: `docs/performance/2026-10-messung.md`.
+- Rechtstexte ergänzen, bevor die Domain umzieht: Abschnitt „3. Hosting“ in `public/datenschutz.html` und `public/en/privacy-policy.html` nennt keinen Anbieter (Vercel, AVV); offene Punkte stehen in `docs/content/rechtstexte-offen.md`. Der Text selbst ist Deine Sache bzw. die Deines Anwalts.
 - Freigabe 5: fehlt (Leon).
+
+### Inszenierung (FREIGABE 4, offen)
+
+Abweichungen von der Inszenierung laut Spec, die Du gemeinsam entscheiden sollst:
+
+- Station 0: „leichte Drehung“ fehlt, es steht die Silhouette.
+- RAM: „Fahrt entlang der Riegel“ fehlt, die Kamera parkt.
+- Kontakt: „Fahrt hinaus“ läuft stattdessen näher heran (`scene/camera.ts`).
+- Text erscheint ab 30 % des Fensters, die Kamera parkt ab 35 % (`lib/scroll/visibility.ts`, `scene/camera.ts`).
+- Screenreader erreichen im 3D-Modus nur die aktuelle Station (übrige Overlays sind `inert`). Alternative: Link zur Textfassung, der in den statischen Modus führt.
+
+Freigabe/Entscheidung: fehlt (Leon).
