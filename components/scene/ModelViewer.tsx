@@ -10,7 +10,10 @@ import { preloadComputer, useComputer } from '@/scene/loadComputer'
 
 const HIGHLIGHT = 1.5
 const BUTTON_CLASS =
-  'w-full px-3 py-1 text-left font-mono text-[14px] text-muted hover:text-text disabled:opacity-40 aria-pressed:bg-surface aria-pressed:text-accent'
+  'w-full px-3 py-1 text-left font-mono text-[14px] text-muted hover:text-text disabled:opacity-40 aria-pressed:bg-surface aria-pressed:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
+/** Geteilte Materialien ohne eigene Emission; die Hervorhebung fasst sie nie an. */
+const SHARED_MATERIALS = new Set(['surface', 'case'])
+const ACCENT_HEX = colors.accent.slice(1).toLowerCase()
 
 preloadComputer()
 
@@ -22,18 +25,27 @@ function forEachMaterial(root: Object3D, visit: (material: unknown) => void) {
   })
 }
 
+/** Eigenes Emissionsmaterial eines Teils: Akzent als emissive, nicht eines der geteilten Materialien. */
+function isOwnEmissive(material: unknown): material is MeshStandardMaterial {
+  return (
+    material instanceof MeshStandardMaterial &&
+    !SHARED_MATERIALS.has(material.name) &&
+    material.emissive.getHexString() === ACCENT_HEX
+  )
+}
+
 /**
- * Setzt emissiveIntensity aller MeshStandardMaterials auf 0 und im Teilbaum des gewählten Teils auf 1.5.
- * Hinweis: Gehäuse, Kühler, Lüfter und Netzteil teilen Materialien ohne Emissionsfarbe; dort ist die
- * Hervorhebung unsichtbar.
+ * Setzt emissiveIntensity aller eigenen Emissionsmaterialien auf 0 und im Teilbaum des gewählten Teils auf 1.5.
+ * Geteilte Materialien (surface, case) bleiben unberührt; gpu leuchtet daher ohne seine Lüfter.
+ * Gehäuse, Seitenwand, Kühler, Lüfter und Netzteil haben kein eigenes Emissionsmaterial und zeigen keine Hervorhebung.
  */
 function applyHighlight(scene: Object3D, traces: Object3D, selected: Object3D | null) {
   forEachMaterial(scene, (material) => {
-    if (material instanceof MeshStandardMaterial) material.emissiveIntensity = 0
+    if (isOwnEmissive(material)) material.emissiveIntensity = 0
   })
   if (selected) {
     forEachMaterial(selected, (material) => {
-      if (material instanceof MeshStandardMaterial) material.emissiveIntensity = HIGHLIGHT
+      if (isOwnEmissive(material)) material.emissiveIntensity = HIGHLIGHT
     })
   }
   // traces (LineBasicMaterial, keine Emission): Akzent ohne Auswahl oder wenn gewählt, Gedimmt wenn ein anderes Teil gewählt ist
@@ -54,12 +66,20 @@ function Computer({
 }) {
   const { scene, part } = useComputer()
 
+  // Die Szene ist der geteilte glb-Cache (nicht geklont): jede Änderung wird beim Aufräumen zurückgesetzt,
+  // damit spätere Nutzer von useComputer() eine unveränderte Szene bekommen.
   useEffect(() => {
-    part('sidePanel').visible = sidePanel
+    const panel = part('sidePanel')
+    panel.visible = sidePanel
+    return () => {
+      panel.visible = true
+    }
   }, [part, sidePanel])
 
   useEffect(() => {
-    applyHighlight(scene, part('traces'), selected ? part(selected) : null)
+    const traces = part('traces')
+    applyHighlight(scene, traces, selected ? part(selected) : null)
+    return () => applyHighlight(scene, traces, null)
   }, [scene, part, selected])
 
   useEffect(onLoaded, [onLoaded])
@@ -90,7 +110,7 @@ export default function ModelViewer() {
         </Suspense>
         <OrbitControls makeDefault target={[0, 0, 0]} />
       </Canvas>
-      <nav className="absolute top-6 left-6 flex max-h-[calc(100dvh-3rem)] flex-col gap-4 overflow-y-auto">
+      <nav aria-label="Bauteile" className="absolute top-6 left-6 flex max-h-[calc(100dvh-3rem)] flex-col gap-4 overflow-y-auto">
         <button
           type="button"
           aria-pressed={sidePanel}
