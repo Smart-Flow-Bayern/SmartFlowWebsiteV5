@@ -7,6 +7,8 @@ test.describe('Szene', () => {
       await route.continue()
     })
     await page.goto('/')
+    await expect(page.locator('html')).toHaveAttribute('data-mode', '3d')
+    await expect(page.locator('canvas')).toHaveCount(1)
     await page.evaluate(() =>
       window.scrollTo(0, 0.35 * (document.documentElement.scrollHeight - window.innerHeight)),
     )

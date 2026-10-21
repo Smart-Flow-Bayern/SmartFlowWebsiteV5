@@ -26,7 +26,8 @@ declare global {
 const PRELOAD_PROGRESS = 0.02
 const IDLE_TIMEOUT_MS = 2500
 const IDLE_FALLBACK_MS = 1500
-const IDLE_GRACE_MS = 800
+/** Schonfrist vor der Idle-Anfrage; Station 0 bleibt so mindestens diese Zeit ohne glb-Request. */
+export const IDLE_GRACE_MS = 800
 
 function syncDebug(modelLoaded: boolean) {
   const p = progressStore.get()

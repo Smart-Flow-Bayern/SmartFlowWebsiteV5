@@ -1,5 +1,8 @@
 import { expect, test } from '@playwright/test'
 import { de } from '../../content/de'
+import { IDLE_GRACE_MS } from '../../components/scene/Scene'
+
+const GUARD_MS = 500
 
 test.describe('Station 0', () => {
   test('zeigt Satz, KI-Lärm und Wortmarke ohne Scrollen', async ({ page }) => {
@@ -14,7 +17,9 @@ test.describe('Station 0', () => {
     const requests: string[] = []
     page.on('request', (r) => requests.push(r.url()))
     await page.goto('/', { waitUntil: 'domcontentloaded' })
-    await page.waitForTimeout(500)
+    // Das Fenster muss innerhalb der Schonfrist liegen, sonst prüft der Test nichts.
+    expect(GUARD_MS).toBeLessThan(IDLE_GRACE_MS)
+    await page.waitForTimeout(GUARD_MS)
     expect(requests.filter((u) => u.includes('/models/computer.glb'))).toHaveLength(0)
   })
 

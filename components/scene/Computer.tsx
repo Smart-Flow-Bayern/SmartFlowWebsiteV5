@@ -7,6 +7,8 @@ import { useComputer } from '@/scene/loadComputer'
 import Lights from './Lights'
 
 const FADE_SECONDS = 0.6
+/** Der erste Frame nach dem Laden hat ein großes delta; ohne Klemme wäre die Einblendung übersprungen. */
+const MAX_FADE_STEP = 0.1
 
 /**
  * Nur Mesh-Materialien (MeshStandardMaterial) werden eingeblendet. Die Traces
@@ -41,15 +43,15 @@ function setFade(targets: ReturnType<typeof fadeTargets>, f: number) {
 export default function Computer() {
   const { scene } = useComputer()
   const fade = useRef(0)
-  const targets = useMemo(() => {
-    const t = fadeTargets(scene)
-    setFade(t, 0)
-    return t
-  }, [scene])
+  const targets = useMemo(() => fadeTargets(scene), [scene])
+
+  useEffect(() => {
+    setFade(targets, 0)
+  }, [targets])
 
   useFrame((_, delta) => {
     if (fade.current >= 1) return
-    fade.current = Math.min(1, fade.current + delta / FADE_SECONDS)
+    fade.current = Math.min(1, fade.current + Math.min(delta, MAX_FADE_STEP) / FADE_SECONDS)
     setFade(targets, MathUtils.smoothstep(fade.current, 0, 1))
   })
 

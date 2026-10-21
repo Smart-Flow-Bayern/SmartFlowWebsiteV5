@@ -22,7 +22,9 @@ const LAMBDA = 6
 /** Geteilte Materialien ohne eigene Emission; sie werden nie angefasst. */
 const SHARED_MATERIALS = new Set(['surface', 'case'])
 const ACCENT_HEX = colors.accent.slice(1).toLowerCase()
-const ACCENT_OFFSET_Z = 0.05
+const ACCENT_OFFSET_Z = 0.12
+const ACCENT_INTENSITY = 0.02
+const KEY_INTENSITY = 8
 
 interface Driven {
   part: PartName
@@ -110,7 +112,8 @@ export default function Lights({ computer }: { computer: Group }) {
   return (
     <>
       <ambientLight ref={ambient} intensity={ambientAt(0)} />
-      <pointLight ref={accent} color={colors.accent} intensity={2} distance={0.6} decay={2} />
+      <directionalLight position={[0.3, 0.6, 1]} intensity={KEY_INTENSITY} color="#F4F6F5" />
+      <pointLight ref={accent} color={colors.accent} intensity={ACCENT_INTENSITY} distance={0.6} decay={2} />
     </>
   )
 }
