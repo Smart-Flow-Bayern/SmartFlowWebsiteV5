@@ -27,3 +27,28 @@ h3 {
   font-weight: 800;
   letter-spacing: -0.03em;
 }
+
+/* Bildmarke, Variante animated: heller Abschnitt läuft die Leiterbahn entlang (pathLength = 100) */
+@layer components {
+  .impulse-run {
+    stroke-dasharray: 12 100;
+    stroke-dashoffset: 12;
+    animation: impulse-run 2.4s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .impulse-run {
+      animation: none;
+      display: none;
+    }
+  }
+}
+
+@keyframes impulse-run {
+  from {
+    stroke-dashoffset: 12;
+  }
+  to {
+    stroke-dashoffset: -100;
+  }
+}
