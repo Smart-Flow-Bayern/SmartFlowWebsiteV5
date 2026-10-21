@@ -46,11 +46,11 @@ export const de: SiteContent = {
       },
       {
         branch: 'Praxis',
-        text: 'Beispiel: Mitten in der Behandlung kommt ein Anruf, der Terminwunsch landet auf einem Zettel. Danach kommen Anfragen an einer festen Stelle an, und das Team ruft gesammelt zurück.',
+        text: 'Beispiel: Terminwünsche kommen per Anruf, Zettel und Nachricht herein, und niemand weiß, welche schon bestätigt sind. Danach kommen Anfragen an einer festen Stelle an, und das Team ruft gesammelt zurück.',
       },
       {
         branch: 'Hausverwaltung',
-        text: 'Beispiel: Eine Schadensmeldung wandert durch mehrere Postfächer, bis sich jemand zuständig fühlt. Danach ist klar, wer sie bekommt und wann der Mieter Bescheid bekommt.',
+        text: 'Beispiel: Eine Schadensmeldung wandert durch mehrere Postfächer, bis sich jemand zuständig fühlt. Danach ist klar, wer sie bekommt und wann der Mieter eine Antwort hat.',
       },
     ],
   },
