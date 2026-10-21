@@ -28,7 +28,17 @@ test.describe('Statischer Modus', () => {
     }
 
     // Station 0 zeigt die Gehäuse-Silhouette statt eines Standbilds.
-    await expect(page.locator('#start > svg')).toHaveCount(1)
+    await expect(page.locator('#start .static-silhouette svg')).toHaveCount(1)
+    // Die Silhouette bleibt in ihrem Stationsblock, statt frei im Viewport zu schweben.
+    const block = await page.locator('#start .static-silhouette').boundingBox()
+    const svg = await page.locator('#start .static-silhouette svg').boundingBox()
+    expect(block).not.toBeNull()
+    expect(svg).not.toBeNull()
+    expect(block!.height).toBeGreaterThan(200)
+    expect(svg!.x).toBeGreaterThanOrEqual(block!.x - 1)
+    expect(svg!.x + svg!.width).toBeLessThanOrEqual(block!.x + block!.width + 1)
+    expect(svg!.y).toBeGreaterThanOrEqual(block!.y - 1)
+    expect(svg!.y + svg!.height).toBeLessThanOrEqual(block!.y + block!.height + 1)
     for (const [i] of STATION_IDS.entries()) {
       if (i === 0) continue
       const img = page.locator(`img[src="/stations/station-${i}.webp"]`)

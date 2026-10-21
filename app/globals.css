@@ -627,6 +627,14 @@ h3 {
     background: #141618;
   }
 
+  /* Station 0: Silhouette statt Standbild; der Container positioniert das absolute SVG. */
+  .static-silhouette {
+    position: relative;
+    height: 60vh;
+    min-height: 320px;
+    overflow: hidden;
+  }
+
   .static-station-text {
     display: flex;
     flex-direction: column;

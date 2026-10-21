@@ -84,7 +84,13 @@ export function StaticStations() {
       {STATIONS.map(({ id, slug }, index) => (
         // Bei slug === id (kontakt) trägt schon die Sektion den Anker; doppelte ids vermeiden.
         <div key={id} id={slug === id ? undefined : slug} className="static-station">
-          {index === 0 ? <CaseSilhouette /> : <StationImage index={index} />}
+          {index === 0 ? (
+            <div className="static-silhouette" aria-hidden="true">
+              <CaseSilhouette />
+            </div>
+          ) : (
+            <StationImage index={index} />
+          )}
           <div className="static-station-text">{bodies[index]}</div>
         </div>
       ))}
