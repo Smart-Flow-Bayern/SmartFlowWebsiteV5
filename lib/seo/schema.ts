@@ -1,7 +1,8 @@
+import { SITE_ORIGIN } from '@/lib/seo/site'
 import { CONTACT } from '@/content/contact'
 import type { SiteContent } from '@/content/types'
 
-const ORIGIN = 'https://smartflow.bayern'
+const ORIGIN = SITE_ORIGIN
 const BUSINESS_ID = `${ORIGIN}/#business`
 const PERSON_ID = `${ORIGIN}/#leon`
 const CONTEXT = 'https://schema.org'
@@ -12,7 +13,6 @@ const CONTEXT = 'https://schema.org'
  */
 export function buildSchema(locale: 'de' | 'en', content: SiteContent): object[] {
   const url = locale === 'de' ? `${ORIGIN}/` : `${ORIGIN}/en`
-  const inLanguage = locale
 
   const business = {
     '@context': CONTEXT,
@@ -30,7 +30,6 @@ export function buildSchema(locale: 'de' | 'en', content: SiteContent): object[]
       addressCountry: 'DE',
     },
     founder: { '@id': PERSON_ID },
-    inLanguage,
   }
 
   const person = {
@@ -47,7 +46,6 @@ export function buildSchema(locale: 'de' | 'en', content: SiteContent): object[]
     name: s.title,
     description: s.intro,
     provider: { '@id': BUSINESS_ID },
-    inLanguage,
   }))
 
   return [business, person, ...services]

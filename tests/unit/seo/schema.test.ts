@@ -3,8 +3,20 @@ import { buildSchema } from '@/lib/seo/schema'
 import { de } from '@/content/de'
 import { en } from '@/content/en'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Obj = Record<string, any>
+type Obj = {
+  '@context'?: string
+  '@type': string
+  '@id'?: string
+  name?: string
+  description?: string
+  url?: string
+  telephone?: string
+  email?: string
+  address?: Record<string, string>
+  founder?: { '@id': string }
+  worksFor?: { '@id': string }
+  provider?: { '@id': string }
+}
 const byType = (objs: object[], t: string) => (objs as Obj[]).filter((o) => o['@type'] === t)
 
 function keysDeep(v: unknown, out: Set<string> = new Set()): Set<string> {
@@ -26,10 +38,10 @@ describe('buildSchema', () => {
     expect(lb[0].name).toBe('Smart Flow')
     expect(lb[0].telephone).toBe('+49 173 4487550')
     expect(lb[0].email).toBe('info@smartflow.bayern')
-    expect(lb[0].address.streetAddress).toBe('Arnulfsplatz 2')
-    expect(lb[0].address.postalCode).toBe('93047')
-    expect(lb[0].address.addressLocality).toBe('Regensburg')
-    expect(lb[0].address.addressCountry).toBe('DE')
+    expect(lb[0].address!.streetAddress).toBe('Arnulfsplatz 2')
+    expect(lb[0].address!.postalCode).toBe('93047')
+    expect(lb[0].address!.addressLocality).toBe('Regensburg')
+    expect(lb[0].address!.addressCountry).toBe('DE')
     expect(lb[0].url).toBe('https://smartflow.bayern/')
   })
 
@@ -55,18 +67,21 @@ describe('buildSchema', () => {
   })
 
   it('is JSON round-trip stable', () => {
-    expect(JSON.parse(JSON.stringify(schema))).toEqual(schema)
-    const e = buildSchema('en', en)
-    expect(JSON.parse(JSON.stringify(e))).toEqual(e)
+    for (const s of [buildSchema('de', de), buildSchema('en', en)]) {
+      const json = JSON.stringify(s)
+      expect(json).not.toContain('undefined')
+      expect(json).not.toContain('null')
+      expect(JSON.parse(json)).toStrictEqual(s)
+    }
   })
 
   it('every @id reference resolves to an existing @id', () => {
     for (const s of [schema, buildSchema('en', en) as Obj[]]) {
       const ids = new Set(s.map((o) => o['@id']).filter(Boolean))
       const refs = [
-        ...s.filter((o) => o.founder).map((o) => o.founder['@id']),
-        ...s.filter((o) => o.worksFor).map((o) => o.worksFor['@id']),
-        ...s.filter((o) => o.provider).map((o) => o.provider['@id']),
+        ...s.filter((o) => o.founder).map((o) => o.founder!['@id']),
+        ...s.filter((o) => o.worksFor).map((o) => o.worksFor!['@id']),
+        ...s.filter((o) => o.provider).map((o) => o.provider!['@id']),
       ]
       expect(refs.length).toBe(5)
       for (const r of refs) expect(ids.has(r)).toBe(true)

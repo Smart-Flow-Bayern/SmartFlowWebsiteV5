@@ -1,3 +1,4 @@
+import { SITE_ORIGIN } from '@/lib/seo/site'
 import type { Metadata } from 'next'
 import { CONTENT } from '@/content'
 import { alternates, type Locale } from '@/lib/i18n'
@@ -8,7 +9,7 @@ export function siteMetadata(locale: Locale): Metadata {
   const { meta } = CONTENT[locale]
   const url = locale === 'de' ? '/' : '/en'
   return {
-    metadataBase: new URL('https://smartflow.bayern'),
+    metadataBase: new URL(SITE_ORIGIN),
     title: meta.title,
     description: meta.description,
     alternates: alternates(locale),
