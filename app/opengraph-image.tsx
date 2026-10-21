@@ -1,8 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
-import { UNDERSCORE } from "@/lib/brand/marks";
-import { colors } from "@/lib/brand/tokens";
+import { IMPULSE_WORDMARK, UNDERSCORE } from "@/lib/brand/marks";
+import { colors, wordmarkVariant } from "@/lib/brand/tokens";
 
 // Läuft in der Node-Laufzeit (Standard). `export const runtime` ist mit cacheComponents nicht erlaubt.
 
@@ -14,12 +14,12 @@ const WORDMARK_HEIGHT = 120;
 
 export default async function Image() {
   const [wordmark, mono] = await Promise.all([
-    // Wortmarke A mit Text als Pfaden, unabhängig vom Schrift-Renderer
-    readFile(join(process.cwd(), "public/brand/wordmark-underscore.svg")),
+    // Freigegebene Wortmarke mit Text als Pfaden, unabhängig vom Schrift-Renderer
+    readFile(join(process.cwd(), `public/brand/wordmark-${wordmarkVariant}.svg`)),
     // Satori liest kein woff2, deshalb die statische woff-Instanz (600)
     readFile(join(process.cwd(), "public/fonts/jetbrains-mono-latin-600.woff")),
   ]);
-  const { width, height } = UNDERSCORE.box;
+  const { width, height } = (wordmarkVariant === "underscore" ? UNDERSCORE : IMPULSE_WORDMARK).box;
 
   return new ImageResponse(
     (

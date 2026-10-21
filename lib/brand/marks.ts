@@ -25,19 +25,22 @@ export const UNDERSCORE = {
   box: { x: 72, y: -730, width: 5544, height: 859 },
 } as const
 
-// B · impulse: Bildmarke auf 46 skaliert, Unterkante auf der Grundlinie, Oberkante auf
-// x-Höhe (12 × 46 = 552), danach 300 Abstand bis zur Tintenkante von „s“
+// B · impulse: „smart“, dann die Bildmarke in der Zelle des Unterstrichs (Index 5), dann „flow“.
+// Lücke zwischen „t“ (Tinte bis 4 × 560 + 527 = 2767) und „f“ (Tinte ab 6 × 560 + 55 = 3415),
+// Mitte 3091. Bildmarke mit Strich 4 (Tinte x 0..32, y 8..22) auf 16 skaliert: 512 breit,
+// 224 hoch, mittig in der Lücke, Unterkante auf der Grundlinie.
 export const IMPULSE_IN_WORDMARK = {
-  scale: 46,
-  // lokale Tintenkante links (x = 1) auf 0, untere Strichkante (y = 21) auf die Grundlinie
-  translateX: -46,
-  translateY: -966,
+  scale: 16,
+  stroke: 4,
+  translateX: 2835,
+  translateY: -352,
 } as const
 
 export const IMPULSE_WORDMARK = {
+  // Das Leerzeichen hält die Zelle frei, in der die Bildmarke sitzt.
   text: 'smart flow',
-  textX: 1608,
-  box: { x: 0, y: -730, width: 7224, height: 740 },
+  textX: 0,
+  box: { x: 72, y: -730, width: 5544, height: 730 },
 } as const
 
 export const UNDERSCORE_VIEWBOX = viewBox(UNDERSCORE.box)

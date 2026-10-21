@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import opentype from 'opentype.js'
 import {
+  IMPULSE_IN_WORDMARK,
   IMPULSE_PATH,
   IMPULSE_STROKE,
   IMPULSE_TRANSFORM,
@@ -35,7 +36,8 @@ function glyphs(text: string, originX: number, indices: number[]): string {
 
 const range = (text: string) => [...text].map((_, i) => i)
 
-const traceAttrs = `fill="none" stroke="${colors.accent}" stroke-width="${IMPULSE_STROKE}" stroke-linecap="square" stroke-linejoin="miter"`
+const traceAttrs = (strokeWidth: number) =>
+  `fill="none" stroke="${colors.accent}" stroke-width="${strokeWidth}" stroke-linecap="square" stroke-linejoin="miter"`
 
 function svg(viewBox: string, body: string): string {
   // Standardgröße 64 px hoch, Breite aus dem Seitenverhältnis
@@ -54,11 +56,11 @@ const underscore = svg(
 const b = IMPULSE_WORDMARK.text
 const impulseWordmark = svg(
   IMPULSE_WORDMARK_VIEWBOX,
-  `<path d="${IMPULSE_PATH}" transform="${IMPULSE_TRANSFORM}" ${traceAttrs}/>` +
+  `<path d="${IMPULSE_PATH}" transform="${IMPULSE_TRANSFORM}" ${traceAttrs(IMPULSE_IN_WORDMARK.stroke)}/>` +
     `<path fill="${colors.text}" d="${glyphs(b, IMPULSE_WORDMARK.textX, range(b))}"/>`,
 )
 
-const impulse = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${IMPULSE_VIEWBOX}" width="32" height="32" role="img" aria-label="Smart Flow"><path d="${IMPULSE_PATH}" ${traceAttrs}/></svg>\n`
+const impulse = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${IMPULSE_VIEWBOX}" width="32" height="32" role="img" aria-label="Smart Flow"><path d="${IMPULSE_PATH}" ${traceAttrs(IMPULSE_STROKE)}/></svg>\n`
 
 for (const [name, content] of [
   ['wordmark-underscore.svg', underscore],

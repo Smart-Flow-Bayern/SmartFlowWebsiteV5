@@ -34,9 +34,15 @@ describe('Wordmark', () => {
     expect(screen.getByRole('img', { name: 'Smart Flow' }).textContent).toContain('smart_flow')
   })
 
-  it('Variante impulse enthält den Text smart flow', () => {
+  it('Variante impulse setzt die Bildmarke in die Zelle zwischen smart und flow', () => {
     render(<Wordmark variant="impulse" />)
-    expect(screen.getByRole('img', { name: 'Smart Flow' }).textContent).toContain('smart flow')
+    const svg = screen.getByRole('img', { name: 'Smart Flow' })
+    // Ein Leerzeichen hält die sechste Zelle frei, in der der Pfad der Bildmarke sitzt
+    expect(svg.textContent).toContain('smart flow')
+    const path = svg.querySelector('path')
+    expect(path).not.toBeNull()
+    expect(path).toHaveAttribute('transform', 'translate(2835 -352) scale(16)')
+    expect(path).toHaveAttribute('stroke-width', '4')
   })
 
   it.each(['underscore', 'impulse'] as const)(

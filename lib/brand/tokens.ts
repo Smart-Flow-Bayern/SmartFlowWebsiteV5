@@ -11,3 +11,6 @@ export const fonts = {
   sans: 'var(--font-sans)',
   mono: 'var(--font-mono)',
 } as const
+
+// FREIGABE 1 (2026-10-21): Variante B, Bildmarke zwischen „smart“ und „flow“.
+export const wordmarkVariant: 'underscore' | 'impulse' = 'impulse'

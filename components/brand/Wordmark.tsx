@@ -1,7 +1,7 @@
 import { colors, fonts } from "@/lib/brand/tokens";
 import {
+  IMPULSE_IN_WORDMARK,
   IMPULSE_PATH,
-  IMPULSE_STROKE,
   IMPULSE_TRANSFORM,
   IMPULSE_WORDMARK,
   IMPULSE_WORDMARK_VIEWBOX,
@@ -49,7 +49,7 @@ export function Wordmark({ variant, size = 32, className }: WordmarkProps) {
             transform={IMPULSE_TRANSFORM}
             fill="none"
             stroke={colors.accent}
-            strokeWidth={IMPULSE_STROKE}
+            strokeWidth={IMPULSE_IN_WORDMARK.stroke}
             strokeLinecap="square"
             strokeLinejoin="miter"
           />

@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 };
 
 const wordmarks = [
-  { variant: "underscore", label: "A · underscore" },
-  { variant: "impulse", label: "B · impulse" },
+  { variant: "underscore", label: "A · underscore (nicht gewählt)" },
+  { variant: "impulse", label: "B · impulse (freigegeben, Bildmarke zwischen den Wörtern)" },
 ] as const;
 
 const grounds = [
@@ -83,8 +83,8 @@ export default function BrandPage() {
         <p className="font-mono text-[14px] text-muted">Richtung „Signal“ · Arbeitsstand</p>
         <h1 className="text-[56px] leading-none">Marke</h1>
         <p className="max-w-[60ch] text-[18px] text-muted">
-          Diese Seite zeigt Wortmarke, Bildmarke, Farben und Schrift zur Freigabe. Bitte
-          nennen Sie bei der Wortmarke die Variante, die Sie verwenden möchten: A oder B.
+          Diese Seite zeigt Wortmarke, Bildmarke, Farben und Schrift. Freigegeben ist
+          Variante B mit der Bildmarke an der Stelle des Unterstrichs.
         </p>
       </header>
 
