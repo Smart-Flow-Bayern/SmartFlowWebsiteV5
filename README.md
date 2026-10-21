@@ -6,7 +6,7 @@ Neue Unternehmenswebsite von Smart Flow (smartflow.bayern): eine Scroll-Fahrt du
 
 - Next.js 16 (App Router), React 19, TypeScript
 - Tailwind CSS 4
-- React Three Fiber für die Szene
+- Three.js (Modell), React Three Fiber für die Szene (ab Task 9)
 - Vitest und Testing Library (Unit-Tests), Playwright (E2E)
 - pnpm
 
@@ -20,6 +20,7 @@ Neue Unternehmenswebsite von Smart Flow (smartflow.bayern): eine Scroll-Fahrt du
 | `pnpm typecheck` | TypeScript-Prüfung |
 | `pnpm test` | Unit-Tests (Vitest) |
 | `pnpm test:watch` | Vitest im Watch-Modus |
+| `pnpm model:export` | Erzeugt `public/models/computer.glb` aus `scene/model/buildComputer.ts` (Meshopt-komprimiert) |
 | `pnpm e2e` | E2E-Tests (Playwright, startet den Dev-Server auf Port 3005) |
 
 Einmalig vor dem ersten E2E-Lauf: `pnpm exec playwright install chromium`.
