@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { de } from '../../content/de'
-import { IDLE_GRACE_MS } from '../../components/scene/Scene'
+import { IDLE_GRACE_MS } from '../../scene/timing'
 
 const GUARD_MS = 500
 

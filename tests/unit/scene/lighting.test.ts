@@ -26,6 +26,11 @@ describe('lighting', () => {
     expect(partEmissive('ram_2', 0.5)).toBe(EMISSIVE_SIBLING)
   })
 
+  it('EMISSIVE_PEAK bleibt unter 0.7', () => {
+    // Höhere Werte übersteuern die Akzentfarbe unter ACES zu flachem Gelbweiß und nehmen dem Teil die Schattierung.
+    expect(EMISSIVE_PEAK).toBeLessThanOrEqual(0.7)
+  })
+
   it('traces: 0.25 Grundwert, 0.75 am Mainboard', () => {
     expect(partEmissive('traces', 0.35)).toBe(0.25)
     expect(partEmissive('traces', 0.15)).toBe(0.75)

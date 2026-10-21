@@ -14,7 +14,10 @@ import {
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { colors } from '../../lib/brand/tokens.ts'
+import { BOARD, BOARD_FRONT, CPU, IMPULSE_TRACE, SSD, TRACE_Z, ssdTrace } from './layout.ts'
 import type { PartName } from './parts.ts'
+
+export { IMPULSE_TRACE }
 
 // Einheiten in Metern. Gehäuse 0.45 × 0.45 × 0.20 (x × y × z), zentriert im Ursprung.
 // Die offene Seite liegt bei z = +0.10 (Seitenwand), das Mainboard bei z = −0.08; die Kamera blickt entlang −z hinein.
@@ -22,10 +25,6 @@ const CASE = { width: 0.45, height: 0.45, depth: 0.2 }
 const WALL = 0.004
 const CASE_COLOR = '#0B0D0F'
 
-const BOARD = { x: -0.03, y: 0.03, z: -0.08, width: 0.3, height: 0.34, thickness: 0.003 }
-/** Vorderfläche des Mainboards (z), auf der alle Bauteile sitzen. */
-const BOARD_FRONT = BOARD.z + BOARD.thickness / 2
-const CPU = { x: -0.05, y: 0.1, size: 0.04, thickness: 0.006 }
 const SOCKET_THICKNESS = 0.003
 
 const caseMaterial = new MeshStandardMaterial({ name: 'case', color: CASE_COLOR, roughness: 0.6, metalness: 0.4 })
@@ -206,8 +205,6 @@ function buildGpu(): Mesh {
   return gpu
 }
 
-const SSD = { x: -0.05, y: -0.105, width: 0.08, height: 0.022, thickness: 0.003 }
-
 function buildSsd(): Mesh {
   const material = emissiveMaterial('ssd')
   const ssd = mesh('ssd', new BoxGeometry(SSD.width, SSD.height, SSD.thickness), material)
@@ -259,7 +256,7 @@ function buildIoPanel(): Mesh {
 
 /** Leiterbahnen auf der Mainboard-Fläche: Busse von der CPU zu RAM, GPU und SSD. */
 function buildTraces(): LineSegments {
-  const z = BOARD_FRONT + 0.0005
+  const z = TRACE_Z
   const half = CPU.size / 2
   const vertices: number[] = []
   const polyline = (points: [number, number][]) => {
@@ -272,10 +269,7 @@ function buildTraces(): LineSegments {
     polyline([[x, CPU.y - half], [x, GPU.y + GPU.height / 2]]) // zur GPU
   }
   for (let i = 0; i < 8; i++) {
-    const y = CPU.y - 0.0175 + i * 0.005
-    const x = CPU.x - half - 0.07 - i * 0.005
-    const ssdY = SSD.y - 0.0035 + i * 0.001
-    polyline([[CPU.x - half, y], [x, y], [x, ssdY], [SSD.x - SSD.width / 2, ssdY]]) // zur SSD
+    polyline(ssdTrace(i)) // zur SSD
   }
   const geometry = new BufferGeometry()
   geometry.setAttribute('position', new Float32BufferAttribute(vertices, 3))

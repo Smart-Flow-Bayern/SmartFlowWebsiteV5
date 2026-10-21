@@ -1,7 +1,7 @@
 import { Box3, BufferGeometry, Group, LineBasicMaterial, LineSegments, Mesh, MeshStandardMaterial, Object3D, Vector3 } from 'three'
 import { describe, expect, it } from 'vitest'
 import { STATION_IDS } from '@/content/types'
-import { buildComputer } from '@/scene/model/buildComputer'
+import { IMPULSE_TRACE, buildComputer } from '@/scene/model/buildComputer'
 import { EMISSIVE_PARTS, PART_NAMES, STATION_PART } from '@/scene/model/parts'
 
 const group = buildComputer()
@@ -178,5 +178,19 @@ describe('STATION_PART', () => {
       expect(part === null || PART_NAMES.includes(part), id).toBe(true)
     }
     expect(STATION_PART.kontakt).toBe('ioPanel')
+  })
+})
+
+describe('IMPULSE_TRACE', () => {
+  it('liegt vollständig auf der Leiterbahn-Geometrie', () => {
+    const position = (group.getObjectByName('traces') as LineSegments).geometry.getAttribute('position')
+    for (const [x, y, z] of IMPULSE_TRACE) {
+      let found = false
+      for (let i = 0; i < position.count && !found; i++) {
+        found =
+          Math.abs(position.getX(i) - x) < 1e-6 && Math.abs(position.getY(i) - y) < 1e-6 && Math.abs(position.getZ(i) - z) < 1e-6
+      }
+      expect(found, `${x},${y},${z}`).toBe(true)
+    }
   })
 })

@@ -6,6 +6,7 @@ import type { StationId } from '@/content/types'
 import { progressStore } from '@/lib/scroll/progress'
 import { activePart } from '@/scene/lighting'
 import { preloadComputer } from '@/scene/loadComputer'
+import { IDLE_GRACE_MS } from '@/scene/timing'
 import type { PartName } from '@/scene/model/parts'
 import { stationAt } from '@/scene/stations'
 import CameraRig from './CameraRig'
@@ -26,8 +27,6 @@ declare global {
 const PRELOAD_PROGRESS = 0.02
 const IDLE_TIMEOUT_MS = 2500
 const IDLE_FALLBACK_MS = 1500
-/** Schonfrist vor der Idle-Anfrage; Station 0 bleibt so mindestens diese Zeit ohne glb-Request. */
-export const IDLE_GRACE_MS = 800
 
 function syncDebug(modelLoaded: boolean) {
   const p = progressStore.get()
