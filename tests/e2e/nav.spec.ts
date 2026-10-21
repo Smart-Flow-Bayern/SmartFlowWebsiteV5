@@ -46,8 +46,29 @@ test.describe('Feste Navigation', () => {
   test('unbekannter Hash wird ignoriert', async ({ page }) => {
     await page.goto('/#gibt-es-nicht')
     await expect(page.locator('html')).toHaveAttribute('data-mode', '3d')
-    await page.waitForTimeout(500)
-    expect(await progress(page)).toBeLessThan(0.001)
+    await expect.poll(() => progress(page)).toBeLessThan(0.001)
+  })
+
+  test('kaputter Hash wirft keinen Fehler, Seite funktioniert weiter', async ({ page }) => {
+    const errors: string[] = []
+    page.on('pageerror', (e) => errors.push(e.message))
+    await page.goto('/#%E0%A4%A')
+    await expect(page.locator('html')).toHaveAttribute('data-mode', '3d')
+    await expect.poll(() => progress(page)).toBeLessThan(0.001)
+    // Mount-Effekt lief durch: Navigation reagiert noch.
+    await page.getByRole('link', { name: de.nav.labels.cpu, exact: true }).click()
+    await expect.poll(() => progress(page), { timeout: 2500 }).toBeGreaterThan(0.27)
+    expect(errors).toEqual([])
+  })
+
+  test('hashchange fährt zur Station', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.locator('html')).toHaveAttribute('data-mode', '3d')
+    await page.evaluate(() => {
+      location.hash = '#werkzeuge'
+    })
+    await expect.poll(() => progress(page), { timeout: 2500 }).toBeGreaterThan(stationWindow('ram').start - 0.005)
+    expect(await progress(page)).toBeLessThan(stationWindow('ram').end)
   })
 
   test('Tab erreicht Wortmarke, sieben Punkte und CTA in dieser Reihenfolge', async ({ page }) => {

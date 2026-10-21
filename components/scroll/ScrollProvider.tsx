@@ -15,6 +15,16 @@ function maxScroll(): number {
   return Math.max(0, document.documentElement.scrollHeight - window.innerHeight)
 }
 
+function stationFromHash() {
+  let slug = location.hash.slice(1)
+  try {
+    slug = decodeURIComponent(slug)
+  } catch {
+    return undefined // kaputte Prozentkodierung: wie unbekannter Hash
+  }
+  return STATIONS.find((s) => s.slug === slug)
+}
+
 export function scrollToStation(id: StationId, opts?: { immediate?: boolean }): void {
   const station = STATIONS.find((s) => s.id === id)
   if (!station) return
@@ -53,12 +63,18 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
     })
     progressStore.set(trigger.progress)
 
-    // Deep Link: #slug springt nach dem Refresh direkt zur Station; unbekannte Hashes werden ignoriert.
-    const linked = STATIONS.find((s) => s.slug === decodeURIComponent(location.hash.slice(1)))
+    // Deep Link: #slug springt nach dem Refresh direkt zur Station; unbekannte oder kaputte Hashes werden ignoriert.
+    const linked = stationFromHash()
     if (linked) {
       ScrollTrigger.refresh()
       scrollToStation(linked.id, { immediate: true })
     }
+    // Nur echte Hash-Wechsel (Adressleiste, Zurück/Vor); history.replaceState der Punkte löst keinen aus.
+    const onHashChange = () => {
+      const target = stationFromHash()
+      if (target) scrollToStation(target.id)
+    }
+    window.addEventListener('hashchange', onHashChange)
 
     let timer: ReturnType<typeof setTimeout> | undefined
     const onResize = () => {
@@ -70,6 +86,7 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
     return () => {
       clearTimeout(timer)
       window.removeEventListener('resize', onResize)
+      window.removeEventListener('hashchange', onHashChange)
       trigger.kill()
       progressStore.set(0)
       gsap.ticker.remove(tick)

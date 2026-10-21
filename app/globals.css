@@ -140,10 +140,10 @@ h3 {
   }
 
   .station-title {
-    font-size: clamp(40px, 4.4vw, 56px);
+    font-size: clamp(36px, 3.6vw, 44px);
     line-height: 1.05;
-    overflow-wrap: break-word;
-    hyphens: auto;
+    overflow-wrap: break-word; /* nur letztes Netz */
+    hyphens: manual;
   }
 
   .station-intro {
@@ -285,7 +285,6 @@ h3 {
   }
 }
 
-
 /* Feste Navigation (components/nav/SiteNav.tsx). Höhe in --nav-h, damit Overlays nicht darunter laufen. */
 :root {
   --nav-h: 64px;
@@ -391,8 +390,11 @@ h3 {
 
   @media (max-width: 768px) {
     /* Zwei Zeilen: Wortmarke und CTA oben, sieben Punkte (je 24 px Fläche) darunter. */
-    .nav-bar {
+    :root {
       --nav-h: 84px;
+    }
+
+    .nav-bar {
       flex-wrap: wrap;
       align-content: center;
       row-gap: 4px;
@@ -429,4 +431,3 @@ h3 {
     }
   }
 }
-
