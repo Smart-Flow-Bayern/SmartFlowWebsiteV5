@@ -1,5 +1,5 @@
-// CSP-Prüfung gegen den Production-Build: lädt / und /en, scrollt in 14 Schritten durch die Fahrt,
-// öffnet nach dem Scrollen ans Ende den Cal.com-Embed und schlägt bei jeder CSP-Verletzung fehl.
+// CSP-Prüfung gegen den Production-Build: lädt / und /en,
+// scrollt in 15 Schritten (0 bis 14 einschließlich) bis ans Ende, öffnet dann den Cal.com-Embed und schlägt bei jeder CSP-Verletzung fehl.
 // Aufruf: pnpm build && pnpm start -p 3006 (anderes Terminal), dann `pnpm check:csp [baseUrl]`.
 // Erfasst Konsolenmeldungen ("Content Security Policy", "Refused to") und securitypolicyviolation-Events.
 // Nicht Teil der e2e-Suite.
@@ -50,9 +50,14 @@ for (const p of pages) {
   }
   await page.waitForTimeout(1000)
   await page.getByRole('button', { name: p.cta }).click()
-  const frame = page.locator('iframe[title]').first()
-  await frame.waitFor({ state: 'attached', timeout: 10_000 })
-  calFrame += 1
+  const calSrc = page.locator('iframe[src^="https://cal.com/"], iframe[src^="https://app.cal.com/"], iframe[src*=".cal.com/"]')
+  try {
+    await calSrc.first().waitFor({ state: 'attached', timeout: 10_000 })
+    calFrame += 1
+  } catch {
+    const srcs = await page.locator('iframe').evaluateAll((els) => els.map((e) => e.getAttribute('src')))
+    violations.push(tag(`kein Cal.com-iframe (src von cal.com) nach dem Klick; vorhandene iframes: ${JSON.stringify(srcs)}`))
+  }
   await page.waitForTimeout(8000) // Cal.com lädt eigene Skripte und Stile im iframe
   await context.close()
 }

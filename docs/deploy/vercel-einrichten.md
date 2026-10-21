@@ -8,34 +8,49 @@ Nichts davon ist bisher passiert: Es gibt kein Vercel-Konto, kein Projekt und ke
 
 - `vercel.json` sperrt Deployments für den Branch `main` (`git.deploymentEnabled.main: false`) und enthält drei Weiterleitungen für alte Pfade (`/index.html`, `/en/index.html`, `/404.html`).
 - Die Sicherheits-Header (inklusive Content-Security-Policy) stehen in `next.config.ts`, nicht in `vercel.json`. Sie gelten damit lokal und auf Vercel gleich.
-- Der Branch für die Abnahme heißt `preview/abnahme`. Er wird nach dem Final-Review aus dem lokalen Stand gepusht (nicht von Dir und nicht von diesem Dokument).
+- Der Branch für die Abnahme heißt `preview/abnahme`. Er wird für Dich gepusht, sobald der Stand geprüft ist; Du musst ihn nicht selbst anlegen.
 
-## 1. Konto und Projekt
+**Wichtig zur Reihenfolge:** Auf GitHub liegt in `origin/main` bisher nur das Gerüst, `vercel.json` ist dort noch nicht enthalten. Die Sperre aus `vercel.json` greift deshalb erst, wenn die Datei auf `main` liegt, also nach dem Merge. Bis dahin ist die Einstellung im Dashboard (Production Branch auf `release`) die einzige Sperre. Darum wird das Projekt zuerst ohne Deployment angelegt und gesperrt, und erst danach wird gepusht.
 
-1. Auf vercel.com ein Konto anlegen oder anmelden. Hobby reicht für die Preview; ob für den Live-Betrieb ein anderer Tarif nötig ist, entscheidest Du nach den Vercel-Bedingungen: fehlt (nicht geprüft).
-2. Vercel mit dem GitHub-Konto verbinden, das Zugriff auf die Organisation `Smart-Flow-Bayern` hat. Das Repository ist privat; Vercel braucht dafür die Freigabe der GitHub-App für genau dieses Repository.
-3. **Add New, Project, Import Git Repository**: `Smart-Flow-Bayern/SmartFlowWebsiteV5` wählen.
+## 1. Konto
 
-## 2. Projekteinstellungen beim Import
+1. Auf vercel.com ein Konto anlegen oder anmelden. Plan: fehlt (prüfen: Der Hobby-Plan erlaubt eventuell keine Repositories aus GitHub-Organisationen; dann wäre Pro nötig).
+2. Vercel mit dem GitHub-Konto verbinden, das Zugriff auf die Organisation `Smart-Flow-Bayern` hat. Das Repository ist privat; die GitHub-App von Vercel braucht dafür die Freigabe für genau dieses Repository.
+
+## 2. Projekt anlegen, ohne zu deployen
+
+Im Repository-Ordner:
+
+```bash
+npx vercel login
+npx vercel link
+```
+
+`vercel link` legt das Projekt an und verknüpft den Ordner. Es baut nichts. Beim Anlegen: Framework Next.js, Root Directory `./`.
+
+Alternative: im Dashboard **Add New, Project, Import Git Repository**. Das ist **nicht empfohlen**: Der Import baut sofort einmal `origin/main` (nur das Gerüst) als Production auf einer vercel.app-Adresse, noch bevor Du eine Sperre setzen kannst. Das Importfenster hat kein Feld für den Production Branch.
+
+## 3. Production sperren, bevor gepusht wird
+
+Dashboard, Projekt, Settings, Git:
+
+1. Repository `Smart-Flow-Bayern/SmartFlowWebsiteV5` verbinden (Connect Git Repository).
+2. **Production Branch** auf `release` setzen (ein Branch, den es nicht gibt). Damit kann nichts als Production gebaut werden.
+3. Preview-Deployments für alle Branches aktiv lassen (Standard).
+
+Dazu die Projekteinstellungen (Settings, General bzw. Build and Development):
 
 | Feld | Wert |
 |---|---|
-| Framework Preset | Next.js (wird erkannt) |
+| Framework Preset | Next.js |
 | Root Directory | `./` |
 | Build Command | `pnpm build` |
-| Install Command | `pnpm install` (Standard; Vercel liest `packageManager: pnpm@10.21.0` aus `package.json`) |
+| Install Command | `pnpm install` (Vercel liest `packageManager: pnpm@10.21.0` aus `package.json`) |
 | Output Directory | Standard (leer lassen) |
-| Node.js Version | 22.x oder neuer (`engines.node` verlangt `>=22.18`); unter Settings, General, Node.js Version prüfen |
+| Node.js Version | 22.x oder neuer (`engines.node` verlangt `>=22.18`) |
 | Environment Variables | keine nötig |
 
-Dann **Deploy** noch nicht anstoßen, falls Vercel das beim Import automatisch tut: Der erste Deploy würde `main` bauen. `vercel.json` verhindert das für `main`, siehe nächster Abschnitt. Falls Vercel trotzdem einen Build für `main` zeigt, abbrechen.
-
-## 3. Production-Deployments sperren
-
-Zwei Sicherungen, beide nötig bis zur Freigabe:
-
-1. **Im Repository:** `vercel.json` enthält `"git": { "deploymentEnabled": { "main": false } }`. Pushes nach `main` lösen keinen Deploy aus.
-2. **In den Einstellungen:** Settings, Git, **Production Branch** vorübergehend auf `release` setzen (ein Branch, den es nicht gibt). Damit kann auch ein manuell angestoßener Deploy nicht versehentlich als Production gelten.
+Erst wenn Schritt 3 gesetzt ist, wird `preview/abnahme` gepusht (Abschnitt 4).
 
 Nach FREIGABE 5 (Du hast die Preview geprüft und gibst frei) drehst Du beides zurück:
 
@@ -46,7 +61,7 @@ Danach geht es mit `docs/deploy/domain-umzug.md` weiter.
 
 ## 4. Preview für `preview/abnahme`
 
-1. Warten, bis der Branch `preview/abnahme` im Repository liegt (Controller pusht ihn nach dem Final-Review).
+1. Der Branch `preview/abnahme` wird für Dich gepusht, sobald Schritt 3 erledigt ist. Der Push erzeugt das erste Preview-Deployment.
 2. Vercel baut ihn automatisch als Preview-Deployment. Settings, Git: Preview-Deployments für alle Branches müssen aktiv sein (Standard).
 3. Die Preview-URL steht im Vercel-Dashboard unter Deployments. Sie hat die Form `<projekt>-git-preview-abnahme-<team>.vercel.app`; der genaue Wert ist erst nach dem ersten Build bekannt: fehlt.
 4. Preview-Schutz: Vercel schützt Previews standardmäßig per Anmeldung (Deployment Protection). Wenn die Preview nur Dir und ausgewählten Personen zugänglich sein soll, ist das gewollt. Für Lighthouse gegen die Preview brauchst Du ggf. einen Bypass-Token oder schaltest den Schutz kurz ab: Entscheidung bei Dir.
