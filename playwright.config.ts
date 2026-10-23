@@ -14,6 +14,6 @@ export default defineConfig({
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] }, testIgnore: /mobile\.spec\.ts/ },
     { name: 'firefox', use: { ...devices['Desktop Firefox'] }, testIgnore: /mobile\.spec\.ts/ },
-    { name: 'mobile', use: { ...devices['iPhone 13'] }, testMatch: /(mobile|smoke)\.spec\.ts/ },
+    { name: 'mobile', use: { ...devices['iPhone 13'] }, testMatch: /(mobile|smoke|motion)\.spec\.ts/ },
   ],
 })

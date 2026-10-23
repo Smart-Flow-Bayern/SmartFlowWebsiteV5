@@ -2,7 +2,7 @@
 
 import gsap from 'gsap'
 import { useEffect, useRef } from 'react'
-import { collectStage, num, stageAttrs, writeStage } from '@/components/process/stage-dom'
+import { collectStage, cssTransform, num, stageAttrs, writeStage } from '@/components/process/stage-dom'
 import { progressStore } from '@/lib/scroll/progress'
 import { EDGE_KEYS, SMOOTHING, STILL_PROGRESS, frame } from '@/scene/process/frame'
 import { FRAGMENTS, NODE_NAMES, VIEWBOX, ZONES } from '@/scene/process/layouts'
@@ -16,6 +16,16 @@ const SNAP = 0.001
 
 /** Standbild Zustand 3: Server-Render, erster Client-Render und Reduced Motion. */
 const STILL = stageAttrs(frame(STILL_PROGRESS, 0, { mobile: false, reduced: true }), false)
+/**
+ * Transform des Standbilds je Breakpoint, beide serverseitig aus frame() abgeleitet. Bis der erste Frame
+ * geschrieben ist (ohne JS: immer), setzt globals.css damit den Transform von g.root per Media Query; mobil
+ * also zentriert mit Skalierung 1 statt der Desktop-Verschiebung. Danach gilt das transform-Attribut.
+ */
+const STILL_ROOT_VARS = {
+  '--stage-bg': STILL.background,
+  '--root-desktop': cssTransform(STILL.transform),
+  '--root-mobile': cssTransform(stageAttrs(frame(STILL_PROGRESS, 0, { mobile: true, reduced: true }), true).transform),
+} as React.CSSProperties
 
 function motionReduced(): boolean {
   return (
@@ -35,6 +45,10 @@ export function ProcessStage() {
     const mobileQuery = window.matchMedia(MOBILE_QUERY)
 
     const reduced = motionReduced()
+    // Nach dem ersten geschriebenen Frame übernimmt das transform-Attribut (CSS-Standbild aus, kein Sprung).
+    const live = () => {
+      if (!stage.hasAttribute('data-live')) stage.setAttribute('data-live', '')
+    }
 
     // Bildschirmpixel je ViewBox-Einheit (preserveAspectRatio meet), nur bei Größenänderung gemessen.
     let pxPerUnit = 0
@@ -46,6 +60,7 @@ export function ProcessStage() {
     const writeStill = () => {
       const mobile = mobileQuery.matches
       writeStage(els, stageAttrs(frame(STILL_PROGRESS, 0, { mobile, reduced: true }), mobile, pxPerUnit))
+      live()
     }
     const onResize = () => {
       measure()
@@ -64,6 +79,7 @@ export function ProcessStage() {
       if (Math.abs(target - shown) < SNAP) shown = target
       const mobile = mobileQuery.matches
       writeStage(els, stageAttrs(frame(shown, time, { mobile, reduced: false }), mobile, pxPerUnit))
+      live()
     }
     if (!reduced) gsap.ticker.add(tick)
     return () => {
@@ -73,7 +89,7 @@ export function ProcessStage() {
   }, [])
 
   return (
-    <div ref={stageRef} className="stage" style={{ '--stage-bg': STILL.background } as React.CSSProperties}>
+    <div ref={stageRef} className="stage" style={STILL_ROOT_VARS}>
       <svg
         className="process-stage"
         viewBox={`0 0 ${VIEWBOX.width} ${VIEWBOX.height}`}

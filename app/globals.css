@@ -484,6 +484,15 @@ h2 {
     height: 100%;
   }
 
+  /* Standbild vor dem ersten Frame und ohne JS: Transform je Breakpoint aus --root-desktop/--root-mobile
+     (serverseitig aus frame() gesetzt, ProcessStage). Mobil: zentriert, Skalierung 1, keine Verschiebung.
+     Sobald der Ticker schreibt (data-live), gilt das transform-Attribut. */
+  .stage:not([data-live]) .root {
+    transform-box: view-box;
+    transform-origin: 0 0;
+    transform: var(--root-desktop);
+  }
+
   .story > .scene:first-of-type {
     margin-top: -100svh;
   }
@@ -576,6 +585,10 @@ h2 {
 
     .story > .scene:first-of-type {
       margin-top: -52svh;
+    }
+
+    .stage:not([data-live]) .root {
+      transform: var(--root-mobile);
     }
 
     .label {

@@ -16,6 +16,14 @@ export function roundNumbers(s: string): string {
   return s.replace(/-?\d+(?:\.\d+)?(?:e[-+]?\d+)?/gi, (m) => num(Number(m)))
 }
 
+/**
+ * SVG-Transform (`translate(x y) scale(s) translate(x y)`) als CSS-Transform mit Einheiten, für das
+ * serverseitige Standbild je Breakpoint (CSS-Custom-Properties in globals.css, .stage:not([data-live])).
+ */
+export function cssTransform(svgTransform: string): string {
+  return svgTransform.replace(/translate\((\S+) (\S+)\)/g, 'translate($1px, $2px)')
+}
+
 /** Knoten als Quadrat um die Mitte. */
 export function nodePath(x: number, y: number, r: number): string {
   return `M${num(x - r)} ${num(y - r)}h${num(2 * r)}v${num(2 * r)}h${num(-2 * r)}z`

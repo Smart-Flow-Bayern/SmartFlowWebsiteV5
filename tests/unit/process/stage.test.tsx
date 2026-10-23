@@ -3,7 +3,7 @@ import gsap from 'gsap'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { ProcessStage } from '@/components/process/ProcessStage'
-import { collectStage, screenFactor, stageAttrs, writeStage } from '@/components/process/stage-dom'
+import { collectStage, cssTransform, screenFactor, stageAttrs, writeStage } from '@/components/process/stage-dom'
 import { progressStore } from '@/lib/scroll/progress'
 import { EDGE_KEYS, STILL_PROGRESS, frame } from '@/scene/process/frame'
 
@@ -24,6 +24,22 @@ describe('ProcessStage (SSR-Standbild)', () => {
     expect(html).toContain(`transform="${still.transform}"`)
     expect(html).toContain('Anfrage')
     expect(html).not.toContain('opacity="NaN"')
+  })
+  it('gibt das Standbild je Breakpoint als CSS-Transform aus: mobil ohne Verschiebung, Skalierung 1', () => {
+    expect(html).not.toContain('data-live')
+    const desktop = cssTransform(frame(STILL_PROGRESS, 0, { mobile: false, reduced: true }).transform)
+    const mobile = cssTransform(frame(STILL_PROGRESS, 0, { mobile: true, reduced: true }).transform)
+    expect(html).toContain(`--root-desktop:${desktop}`)
+    expect(html).toContain(`--root-mobile:${mobile}`)
+    expect(mobile).toBe('translate(500px, 300px) scale(1) translate(-500px, -300px)')
+  })
+})
+
+describe('cssTransform', () => {
+  it('setzt Einheiten und Kommas, Skalierung bleibt', () => {
+    expect(cssTransform('translate(790 300) scale(0.58) translate(-500 -300)')).toBe(
+      'translate(790px, 300px) scale(0.58) translate(-500px, -300px)',
+    )
   })
 })
 
