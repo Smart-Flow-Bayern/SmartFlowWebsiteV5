@@ -3,8 +3,8 @@ import { colors } from '@/lib/brand/tokens'
 import { STATION_PART, type PartName } from './model/parts'
 import { stationAt } from './stations'
 
-const FROM = new Color(colors.bg)
-const TO = new Color(colors.bgLight)
+const FROM = new Color(colors.ground)
+const TO = new Color(colors.groundEnd)
 const mixed = new Color()
 
 const clamp01 = (p: number) => Math.min(1, Math.max(0, p))

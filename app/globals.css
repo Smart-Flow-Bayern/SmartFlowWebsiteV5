@@ -1,12 +1,14 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #050607;
-  --color-bg-light: #1A1D20;
-  --color-surface: #141618;
-  --color-accent: #DDFF4D;
-  --color-muted: #7A8A8A;
-  --color-text: #F4F6F5;
+  --color-ground: #07090b;
+  --color-ground-end: #171b1f;
+  --color-ink: #f1f3f2;
+  --color-muted: #8d9794;
+  --color-line: rgba(241,243,242,.16);
+  --color-node-stroke: #d7dcda;
+  --color-accent: #ddff4d;
+  --color-accent-ink: #07090b;
   --font-sans: var(--font-schibsted), system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 }
@@ -15,17 +17,82 @@
   color-scheme: dark;
 }
 
+html {
+  scroll-behavior: auto;
+}
+
 body {
-  background: var(--color-bg);
-  color: var(--color-text);
+  background: var(--color-ground);
+  color: var(--color-ink);
   font-family: var(--font-sans);
+  font-size: 18px;
+  line-height: 1.55;
+}
+
+@media (max-width: 719px) {
+  body {
+    font-size: 17px;
+  }
 }
 
 h1,
 h2,
 h3 {
   font-weight: 800;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: clamp(40px, min(7vw, 11vh), 96px);
+  line-height: 1.05;
+}
+
+h2 {
+  font-size: clamp(28px, 4vw, 48px);
+  line-height: 1.1;
+}
+
+.prose {
+  max-width: 36rem;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+@layer components {
+  .btn,
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 24px;
+    font-family: var(--font-mono);
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 0;
+    cursor: pointer;
+  }
+
+  .btn {
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
+    border: 1px solid var(--color-accent);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--color-ink);
+    border: 1px solid var(--color-ink);
+  }
+
+  .scroll-hint {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    color: var(--color-muted);
+  }
 }
 
 /* Bildmarke, Variante animated: heller Abschnitt läuft die Leiterbahn entlang (pathLength = 100) */
@@ -50,578 +117,5 @@ h3 {
   }
   to {
     stroke-dashoffset: -100;
-  }
-}
-
-/* Stationen 1 bis 5 und Über: Zustand (data-state) kommt aus lib/scroll/visibility.ts */
-@layer components {
-  .station-overlay {
-    position: absolute;
-    inset-block: 0;
-    width: min(520px, 100% - 2 * 6vw);
-    display: flex;
-    flex-direction: column;
-    justify-content: safe center;
-    /* Platz für die feste Navigation (--nav-h, siehe SiteNav); mobil überschrieben. */
-    padding-top: var(--nav-h);
-    pointer-events: none;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(16px);
-    transition:
-      opacity 500ms ease,
-      transform 500ms ease,
-      visibility 0s linear 500ms;
-  }
-
-  .station-overlay[data-align='left'] {
-    left: 6vw;
-  }
-
-  .station-overlay[data-align='right'] {
-    right: 6vw;
-  }
-
-  .station-overlay[data-state='entering'],
-  .station-overlay[data-state='visible'] {
-    opacity: 1;
-    visibility: visible;
-    transform: none;
-    transition-delay: 0s;
-  }
-
-  .station-overlay[data-state='leaving'] {
-    transform: none;
-  }
-
-  .station-overlay[data-state='leaving'] .station-overlay-body {
-    pointer-events: none;
-  }
-
-  .station-overlay-body {
-    pointer-events: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .station-title {
-    font-size: clamp(36px, 3.6vw, 44px);
-    line-height: 1.05;
-    overflow-wrap: break-word; /* nur letztes Netz */
-    hyphens: manual;
-  }
-
-  .station-intro {
-    font-size: 18px;
-    line-height: 1.5;
-    color: var(--color-text);
-  }
-
-  .station-text {
-    font-size: 16px;
-    line-height: 1.5;
-    color: var(--color-text);
-  }
-
-  .station-wordmark {
-    color: var(--color-muted);
-  }
-
-  .station-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .station-mono {
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--color-muted);
-  }
-
-  .station-mono-accent {
-    color: var(--color-accent);
-  }
-
-  .station-labels {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 20px;
-    font-size: 13px;
-    color: var(--color-muted);
-  }
-
-  /* Das Label, dessen Bauteil in der Szene gerade aufleuchtet (mainboardLabelIndex). */
-  .station-labels .reveal-item[data-flash='true'] {
-    color: var(--color-accent);
-  }
-
-  .station-columns {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-  }
-
-  .station-block-name {
-    font-size: 20px;
-    line-height: 1.2;
-  }
-
-  .reveal-item {
-    opacity: 0;
-    transform: translateY(16px);
-    transition:
-      opacity 500ms ease,
-      transform 500ms ease,
-      color 300ms ease;
-  }
-
-  .reveal-item[data-revealed='true'] {
-    opacity: 1;
-    transform: none;
-  }
-
-  /* Station 0 blendet mit demselben Mechanismus aus, ist aber ohne Scroll sofort da. */
-  .station-fade {
-    transition:
-      opacity 500ms ease,
-      visibility 0s linear 500ms;
-  }
-
-  .station-fade[data-state='visible'] {
-    opacity: 1;
-    visibility: visible;
-    transition-delay: 0s;
-  }
-
-  .station-fade[data-state='leaving'],
-  .station-fade[data-state='hidden'] {
-    opacity: 0;
-    visibility: hidden;
-  }
-
-  @media (max-width: 768px) {
-    .station-overlay {
-      inset-block: auto 0;
-      left: 0;
-      right: 0;
-      width: auto;
-      max-height: 60vh;
-      overflow: hidden;
-      justify-content: flex-start;
-      padding: 12px 16px;
-      background: rgb(5 6 7 / 0.78);
-    }
-
-    .station-overlay[data-align] {
-      left: 0;
-      right: 0;
-    }
-
-    /* Intro plus längstes Beispiel passen bei 320x568 nicht in 60vh. */
-    #cpu {
-      max-height: 70vh;
-    }
-
-    .station-overlay-body {
-      gap: 8px;
-    }
-
-    .station-title {
-      font-size: 28px;
-      line-height: 1.05;
-    }
-
-    .station-list {
-      gap: 8px;
-    }
-
-    .station-columns {
-      grid-template-columns: 1fr;
-      gap: 8px;
-    }
-
-    /* Reveal-Listen zeigen mobil nur den aktuellen Eintrag; vor dem ersten Reveal keinen. */
-    [data-current='false'] {
-      display: none;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .station-overlay,
-    .reveal-item {
-      transform: none;
-    }
-  }
-}
-
-/* Feste Navigation (components/nav/SiteNav.tsx). Höhe in --nav-h, damit Overlays nicht darunter laufen.
-   --nav-h und sein Mobil-Override müssen im selben Layer stehen, sonst gewinnt die ungeschichtete Regel. */
-@layer components {
-  :root {
-    --nav-h: 64px;
-  }
-
-  .nav-bar {
-    position: fixed;
-    inset: 0 0 auto 0;
-    z-index: 20;
-    height: var(--nav-h);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding-inline: 6vw;
-    pointer-events: none;
-  }
-
-  .nav-bar::after {
-    content: '';
-    position: absolute;
-    inset: auto 0 0 0;
-    border-bottom: 1px solid var(--color-surface);
-    opacity: 0;
-    transition: opacity 200ms ease;
-  }
-
-  .nav-bar[data-scrolled='true']::after {
-    opacity: 1;
-  }
-
-  .nav-link,
-  .nav-cta {
-    pointer-events: auto;
-  }
-
-  .nav-link:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 3px;
-  }
-
-  .nav-brand {
-    display: inline-flex;
-    align-items: center;
-    min-height: 24px;
-  }
-
-  .nav-stations {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .nav-station {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    min-height: 24px;
-    padding: 4px 8px;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--color-muted);
-    transition: color 200ms ease;
-  }
-
-  .nav-station:hover,
-  .nav-station[aria-current='true'] {
-    color: var(--color-text);
-  }
-
-  .nav-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: currentColor;
-    transition:
-      background-color 200ms ease,
-      transform 200ms ease;
-  }
-
-  .nav-station[aria-current='true'] .nav-dot {
-    background: var(--color-accent);
-    transform: scale(1.35);
-  }
-
-  .nav-cta {
-    min-height: 36px;
-    padding: 0 16px;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--color-bg);
-    background: var(--color-accent);
-    border: 0;
-    border-radius: 2px;
-    cursor: pointer;
-  }
-
-  @media (max-width: 768px) {
-    /* Zwei Zeilen: Wortmarke und CTA oben, sieben Punkte (je 24 px Fläche) darunter. */
-    :root {
-      --nav-h: 84px;
-    }
-
-    .nav-bar {
-      flex-wrap: wrap;
-      align-content: center;
-      row-gap: 4px;
-      padding-inline: 16px;
-    }
-
-    .nav-stations {
-      order: 3;
-      width: 100%;
-      justify-content: space-between;
-      gap: 0;
-    }
-
-    .nav-station {
-      padding: 4px;
-      min-width: 24px;
-      justify-content: center;
-    }
-
-    .nav-label {
-      display: none;
-    }
-
-    .nav-cta {
-      padding: 0 10px;
-    }
-  }
-
-  @media (max-width: 359px) {
-    /* Wortmarke und CTA teilen sich bei 320 px eine Zeile innerhalb von 84 px. */
-    .nav-brand svg {
-      height: 18px;
-      width: auto;
-    }
-
-    .nav-cta {
-      min-height: 44px;
-      padding: 0 8px;
-      font-size: 11px;
-      letter-spacing: 0.02em;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .nav-bar::after,
-    .nav-station,
-    .nav-dot {
-      transition: none;
-    }
-  }
-}
-
-/* Kontakt-Station mit Cal.com-Embed und Footer (components/stations/StationContact.tsx) */
-@layer components {
-  .station-overlay--contact {
-    width: min(1100px, 100% - 2 * 6vw);
-    max-height: calc(100svh - var(--nav-h));
-    justify-content: flex-start;
-  }
-
-  .station-overlay--contact .station-overlay-body {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 24px;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    padding: 16px 24px;
-    background: rgb(5 6 7 / 0.78);
-  }
-
-  .contact-info,
-  .contact-direct {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .station-link {
-    color: var(--color-text);
-    text-decoration: underline;
-    text-underline-offset: 4px;
-    width: fit-content;
-  }
-
-  .station-link:hover,
-  .station-link:focus-visible {
-    color: var(--color-accent);
-  }
-
-  .cal-embed {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    align-items: flex-start;
-  }
-
-  .cal-button {
-    background: var(--color-accent);
-    color: var(--color-bg);
-    font-weight: 600;
-    padding: 12px 20px;
-    border-radius: 2px;
-    cursor: pointer;
-  }
-
-  .cal-button:hover {
-    filter: brightness(1.08);
-  }
-
-  .cal-frame {
-    width: 100%;
-    height: 560px;
-    border: 1px solid var(--color-surface);
-    background: var(--color-surface);
-  }
-
-  .site-footer {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding-top: 16px;
-    border-top: 1px solid var(--color-surface);
-    font-size: 12px;
-    color: var(--color-muted);
-  }
-
-  .site-footer address {
-    font-style: normal;
-  }
-
-  .site-footer nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px 16px;
-  }
-
-  .site-footer a {
-    color: var(--color-text);
-  }
-
-  .site-footer a:hover,
-  .site-footer a:focus-visible {
-    text-decoration: underline;
-    text-underline-offset: 4px;
-  }
-
-  @media (min-width: 1024px) {
-    .station-overlay--contact .station-overlay-body {
-      grid-template-columns: 1fr 1fr;
-      grid-template-areas:
-        'info cal'
-        'direct cal'
-        'footer cal';
-      align-content: start;
-      column-gap: 48px;
-    }
-
-    .contact-info {
-      grid-area: info;
-    }
-
-    .contact-direct {
-      grid-area: direct;
-    }
-
-    .contact-cal {
-      grid-area: cal;
-    }
-
-    .site-footer {
-      grid-area: footer;
-      align-self: end;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .station-overlay--contact {
-      max-height: calc(100svh - var(--nav-h));
-      top: var(--nav-h);
-      bottom: 0;
-      padding-top: 12px;
-    }
-
-    .cal-frame {
-      height: auto;
-      min-height: 70svh;
-    }
-  }
-}
-
-/* Statischer Modus (components/static/StaticStations.tsx): Standbilder und Texte im Dokumentfluss. */
-@layer components {
-  html[data-mode='static'] body {
-    background: #050607;
-  }
-
-  html[data-mode='static'] .nav-bar {
-    background: rgb(5 6 7 / 0.92);
-  }
-
-  .static-stations {
-    padding-top: var(--nav-h);
-  }
-
-  .static-station {
-    display: grid;
-    gap: 32px;
-    padding: 48px 6vw;
-    max-width: 1280px;
-    margin-inline: auto;
-    scroll-margin-top: var(--nav-h);
-  }
-
-  .static-station picture,
-  .static-station img {
-    display: block;
-    width: 100%;
-  }
-
-  .static-station img {
-    height: auto;
-    border-radius: 4px;
-    background: #141618;
-  }
-
-  /* Station 0: Silhouette statt Standbild; der Container positioniert das absolute SVG. */
-  .static-silhouette {
-    position: relative;
-    height: 60vh;
-    min-height: 320px;
-    overflow: hidden;
-  }
-
-  .static-station-text {
-    display: flex;
-    flex-direction: column;
-    gap: 48px;
-    min-width: 0;
-  }
-
-  .station-static {
-    max-width: 60ch;
-    scroll-margin-top: var(--nav-h);
-  }
-
-  /* Mobil blendet das Overlay-Layout alle Einträge außer dem aktuellen aus; im statischen Modus stehen alle. */
-  html[data-mode='static'] [data-current='false'] {
-    display: revert-layer;
-  }
-
-  @media (min-width: 1024px) {
-    .static-station {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      align-items: start;
-    }
   }
 }

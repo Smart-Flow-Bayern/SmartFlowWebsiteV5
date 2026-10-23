@@ -40,7 +40,7 @@ export function Wordmark({ variant, size = 32, className, decorative = false }: 
       className={className}
     >
       {variant === "underscore" ? (
-        <text x={UNDERSCORE.textX} y={0} fontSize={WORDMARK_FONT_SIZE} fill={colors.text} style={textStyle}>
+        <text x={UNDERSCORE.textX} y={0} fontSize={WORDMARK_FONT_SIZE} fill={colors.ink} style={textStyle}>
           smart<tspan fill={colors.accent}>_</tspan>flow
         </text>
       ) : (
@@ -54,7 +54,7 @@ export function Wordmark({ variant, size = 32, className, decorative = false }: 
             strokeLinecap="square"
             strokeLinejoin="miter"
           />
-          <text x={IMPULSE_WORDMARK.textX} y={0} fontSize={WORDMARK_FONT_SIZE} fill={colors.text} style={textStyle}>
+          <text x={IMPULSE_WORDMARK.textX} y={0} fontSize={WORDMARK_FONT_SIZE} fill={colors.ink} style={textStyle}>
             {IMPULSE_WORDMARK.text}
           </text>
         </>

@@ -29,7 +29,7 @@ export function Impulse({ size = 32, animated = false, className, decorative = f
       className={className}
     >
       <path {...trace} stroke={colors.accent} />
-      {animated && <path {...trace} className="impulse-run" pathLength={100} stroke={colors.text} />}
+      {animated && <path {...trace} className="impulse-run" pathLength={100} stroke={colors.ink} />}
     </svg>
   );
 }

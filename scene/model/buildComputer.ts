@@ -28,7 +28,7 @@ const CASE_COLOR = '#0B0D0F'
 const SOCKET_THICKNESS = 0.003
 
 const caseMaterial = new MeshStandardMaterial({ name: 'case', color: CASE_COLOR, roughness: 0.6, metalness: 0.4 })
-const surfaceMaterial = new MeshStandardMaterial({ name: 'surface', color: colors.surface, roughness: 0.7, metalness: 0.2 })
+const surfaceMaterial = new MeshStandardMaterial({ name: 'surface', color: colors.ground, roughness: 0.7, metalness: 0.2 })
 /** Etwas hellere Gehäusevariante für Lüftungsschlitze und Gitter; leuchtet nicht. */
 const ventMaterial = new MeshStandardMaterial({ name: 'caseVent', color: '#141618', roughness: 0.6, metalness: 0.4 })
 /** Kontaktleiste der GPU in Gedimmt; leuchtet nicht. */
@@ -38,7 +38,7 @@ const contactMaterial = new MeshStandardMaterial({ name: 'contacts', color: colo
 function emissiveMaterial(name: string): MeshStandardMaterial {
   return new MeshStandardMaterial({
     name,
-    color: colors.surface,
+    color: colors.ground,
     emissive: colors.accent,
     emissiveIntensity: 0,
     roughness: 0.6,

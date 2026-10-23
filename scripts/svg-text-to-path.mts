@@ -49,7 +49,7 @@ function svg(viewBox: string, body: string): string {
 const { text: a, accentIndex } = UNDERSCORE
 const underscore = svg(
   UNDERSCORE_VIEWBOX,
-  `<path fill="${colors.text}" d="${glyphs(a, UNDERSCORE.textX, range(a).filter((i) => i !== accentIndex))}"/>` +
+  `<path fill="${colors.ink}" d="${glyphs(a, UNDERSCORE.textX, range(a).filter((i) => i !== accentIndex))}"/>` +
     `<path fill="${colors.accent}" d="${glyphs(a, UNDERSCORE.textX, [accentIndex])}"/>`,
 )
 
@@ -57,7 +57,7 @@ const b = IMPULSE_WORDMARK.text
 const impulseWordmark = svg(
   IMPULSE_WORDMARK_VIEWBOX,
   `<path d="${IMPULSE_PATH}" transform="${IMPULSE_TRANSFORM}" ${traceAttrs(IMPULSE_IN_WORDMARK.stroke)}/>` +
-    `<path fill="${colors.text}" d="${glyphs(b, IMPULSE_WORDMARK.textX, range(b))}"/>`,
+    `<path fill="${colors.ink}" d="${glyphs(b, IMPULSE_WORDMARK.textX, range(b))}"/>`,
 )
 
 const impulse = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${IMPULSE_VIEWBOX}" width="32" height="32" role="img" aria-label="Smart Flow"><path d="${IMPULSE_PATH}" ${traceAttrs(IMPULSE_STROKE)}/></svg>\n`

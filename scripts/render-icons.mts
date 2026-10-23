@@ -18,7 +18,7 @@ function iconSvg(edge: number, share: number): string {
   const ty = edge / 2 - (INK.y + INK.height / 2) * scale
   return (
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${edge} ${edge}" width="${edge}" height="${edge}">` +
-    `<rect width="${edge}" height="${edge}" fill="${colors.bg}"/>` +
+    `<rect width="${edge}" height="${edge}" fill="${colors.ground}"/>` +
     `<g transform="translate(${tx} ${ty}) scale(${scale})">${trace}</g></svg>\n`
   )
 }
@@ -26,7 +26,7 @@ function iconSvg(edge: number, share: number): string {
 // Favicon: Originalraster, um 1 nach unten versetzt, damit die Tinte (y 9–21) mittig sitzt
 const icon =
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">` +
-  `<rect width="32" height="32" fill="${colors.bg}"/>` +
+  `<rect width="32" height="32" fill="${colors.ground}"/>` +
   `<g transform="translate(0 1)">${trace}</g></svg>\n`
 writeFileSync(join(root, 'app/icon.svg'), icon)
 

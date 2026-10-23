@@ -15,20 +15,20 @@ const wordmarks = [
 ] as const;
 
 const grounds = [
-  { color: colors.bg, name: "Hintergrund" },
-  { color: colors.surface, name: "Fläche" },
+  { color: colors.ground, name: "Hintergrund" },
+  { color: colors.groundEnd, name: "Grund-Ende" },
 ] as const;
 
 const palette = [
-  { name: "Hintergrund", hex: colors.bg, role: "Raum, Seite" },
-  { name: "Fläche", hex: colors.surface, role: "Bauteile gedimmt, Karten, Footer" },
+  { name: "Hintergrund", hex: colors.ground, role: "Raum, Seite" },
+  { name: "Grund-Ende", hex: colors.groundEnd, role: "Verlaufsende, Flächen" },
   {
     name: "Akzent",
     hex: colors.accent,
     role: "Das Signal. Aktives Bauteil, Links, CTA, Impuls. Einziger Akzent.",
   },
   { name: "Gedimmt", hex: colors.muted, role: "Sekundärtext, inaktive Labels" },
-  { name: "Text", hex: colors.text, role: "Fließtext, Überschriften" },
+  { name: "Tinte", hex: colors.ink, role: "Fließtext, Überschriften" },
 ] as const;
 
 const markSizes = [
@@ -98,7 +98,7 @@ export default function BrandPage() {
               {grounds.map(({ color, name }) => (
                 <figure key={color} className="flex flex-col gap-3">
                   <div
-                    className="flex min-h-[220px] flex-col items-start justify-center gap-10 border border-surface px-10 py-12"
+                    className="flex min-h-[220px] flex-col items-start justify-center gap-10 border border-line px-10 py-12"
                     style={{ background: color }}
                   >
                     <Wordmark variant={variant} size={48} className="h-auto max-w-full" />
@@ -120,7 +120,7 @@ export default function BrandPage() {
         <div className="flex flex-wrap items-end gap-x-12 gap-y-10">
           {markSizes.map(({ size, animated }) => (
             <figure key={`${size}-${animated}`} className="flex flex-col gap-3">
-              <div className="border border-surface p-6">
+              <div className="border border-line p-6">
                 <Impulse size={size} animated={animated} />
               </div>
               <figcaption>
@@ -137,7 +137,7 @@ export default function BrandPage() {
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {palette.map(({ name, hex, role }) => (
             <li key={hex} className="flex flex-col gap-3">
-              <div className="h-28 border border-surface" style={{ background: hex }} />
+              <div className="h-28 border border-line" style={{ background: hex }} />
               <p className="text-[16px] font-semibold">{name}</p>
               <p className="font-mono text-[14px]">{hex}</p>
               <p className="text-[14px] text-muted">{role}</p>
@@ -145,9 +145,9 @@ export default function BrandPage() {
           ))}
         </ul>
         <div className="flex items-center gap-4">
-          <div className="h-12 w-12 border border-surface" style={{ background: colors.bgLight }} />
+          <div className="h-12 w-12 border border-line" style={{ background: colors.groundEnd }} />
           <div className="flex flex-col gap-1">
-            <p className="font-mono text-[14px]">{colors.bgLight}</p>
+            <p className="font-mono text-[14px]">{colors.groundEnd}</p>
             <p className="text-[14px] text-muted">Hintergrund hell (Szenenende)</p>
           </div>
         </div>

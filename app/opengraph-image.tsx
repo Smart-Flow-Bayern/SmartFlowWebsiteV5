@@ -32,7 +32,7 @@ export default async function Image() {
           alignItems: "center",
           justifyContent: "center",
           gap: 48,
-          background: colors.bg,
+          background: colors.ground,
         }}
       >
         <img

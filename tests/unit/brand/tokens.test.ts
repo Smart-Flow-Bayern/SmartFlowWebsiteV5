@@ -6,7 +6,7 @@ import { colors, fonts } from '@/lib/brand/tokens'
 const root = process.cwd()
 const css = readFileSync(join(root, 'app/globals.css'), 'utf8').toLowerCase()
 
-describe('Signal-Tokens', () => {
+describe('Blaupause-Tokens', () => {
   it.each(Object.entries(colors))('globals.css enthält %s = %s', (_name, hex) => {
     expect(css).toContain(hex.toLowerCase())
   })
@@ -15,6 +15,16 @@ describe('Signal-Tokens', () => {
     expect(fonts).toEqual({ sans: 'var(--font-sans)', mono: 'var(--font-mono)' })
     expect(css).toContain('--font-schibsted')
     expect(css).toContain('--font-jetbrains')
+  })
+
+  it('setzt die Lesbarkeitsregeln', () => {
+    expect(css).toContain('font-size: 18px')
+    expect(css).toContain('line-height: 1.55')
+    expect(css).toContain('max-width: 36rem')
+    expect(css).toContain('min(7vw, 11vh)')
+    expect(css).toContain('min-height: 48px')
+    expect(css).toContain(':focus-visible')
+    expect(css).not.toContain('fonts.googleapis.com')
   })
 
   it('ruft keine Google Fonts ab', () => {
