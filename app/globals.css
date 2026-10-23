@@ -193,14 +193,33 @@ h2 {
     justify-self: end;
   }
 
+  /* Spalte mittig, Inhalt einheitlich linksbündig (Kontakt). */
   .scene[data-side="center"] {
     justify-items: center;
-    text-align: center;
   }
 
   .scene[data-side="center"] .scene-text {
-    align-items: center;
+    align-items: stretch;
     width: min(40rem, 100%);
+  }
+
+  .scene[data-side="center"] .scene-text > * {
+    align-self: flex-start;
+  }
+
+  .scene[data-side="center"] .scene-text > .contact-actions {
+    align-self: stretch;
+  }
+
+  /* Sprungziel (#kontakt, scrollIntoView): Abstand unter der festen Kopfzeile plus 32 px. */
+  #kontakt {
+    scroll-margin-top: calc(64px + 32px);
+  }
+
+  @media (max-width: 719px) {
+    #kontakt {
+      scroll-margin-top: calc(97px + 32px);
+    }
   }
 
   .scene .prose > * + * {

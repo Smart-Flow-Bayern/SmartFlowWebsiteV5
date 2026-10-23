@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Footer } from '@/components/Footer'
 import { Wordmark } from '@/components/brand/Wordmark'
+import { CONTENT } from '@/content'
 import { wordmarkVariant } from '@/lib/brand/tokens'
 
 // noindex setzt Next für die 404 selbst.
@@ -27,12 +28,15 @@ function BrokenChain() {
 export default function NotFound() {
   return (
     <>
+      <a className="skip-link" href="#main">
+        {CONTENT.nav.skipLabel}
+      </a>
       <header className="nav-bar">
         <Link href="/" className="nav-link nav-brand" aria-label="Smart Flow – zur Startseite">
           <Wordmark variant={wordmarkVariant} size={24} decorative />
         </Link>
       </header>
-      <main id="main" className="not-found">
+      <main id="main" className="not-found" tabIndex={-1}>
         <p className="kicker">
           <b>404</b> Seite nicht gefunden
         </p>

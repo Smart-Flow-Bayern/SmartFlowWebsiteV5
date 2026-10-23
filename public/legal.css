@@ -134,3 +134,33 @@ body > footer a {
 a:hover {
   text-decoration-thickness: 2px;
 }
+
+/* Inline-Links im Fließtext: Tap-Fläche mindestens 24 px hoch (WCAG 2.5.8). */
+.legal-content a {
+  padding-block: 2px;
+}
+
+/* Erster Tab-Stop, sichtbar nur mit Fokus. */
+.skip-link {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 10;
+  padding: 12px 16px;
+  background: #ddff4d; /* colors.accent */
+  color: #07090b; /* colors.accentInk */
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus-visible {
+  transform: none;
+  outline-color: #f4f6f5;
+}
+
+main:focus {
+  outline: none;
+}

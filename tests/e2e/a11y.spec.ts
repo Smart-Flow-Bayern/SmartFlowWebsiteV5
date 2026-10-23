@@ -32,3 +32,18 @@ test('Fokusring nach Tab sichtbar', async ({ page }) => {
   })
   expect(outline).not.toBe('none')
 })
+
+for (const path of ['/impressum.html', '/datenschutz.html', '/agb.html', '/gibt-es-nicht']) {
+  test(`${path}: Sprunglink ist erster Tab-Stop, #main fokussierbar, Links mindestens 24 px hoch`, async ({ page }) => {
+    await page.goto(path)
+    await page.keyboard.press('Tab')
+    const skip = page.getByRole('link', { name: 'Zum Inhalt springen' })
+    await expect(skip).toBeFocused()
+    await expect(skip).toBeInViewport()
+    await expect(page.locator('main#main')).toHaveAttribute('tabindex', '-1')
+    await page.keyboard.press('Enter')
+    await expect(page.locator('main#main')).toBeFocused()
+    const heights = await page.locator('main a').evaluateAll((els) => els.map((el) => el.getBoundingClientRect().height))
+    for (const h of heights) expect(h).toBeGreaterThanOrEqual(24)
+  })
+}

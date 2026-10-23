@@ -8,7 +8,7 @@ export function Kontakt() {
   return (
     <SceneSection id="kontakt" index={6} side="center">
       <Kicker number={s.number} kicker={s.kicker} />
-      <Claim />
+      <Claim subtitle={false} />
       <h2 id="kontakt-title" tabIndex={-1}>
         {s.title}
       </h2>
