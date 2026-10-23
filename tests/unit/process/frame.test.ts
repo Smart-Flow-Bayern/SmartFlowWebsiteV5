@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { EDGE_KEYS, STILL_PROGRESS, bezierPoint, ease, edgePath, frame } from '@/scene/process/frame'
+import { EDGE_KEYS, IDLE_AMP, STILL_PROGRESS, bezierPoint, ease, edgePath, frame } from '@/scene/process/frame'
 import { LAYOUTS } from '@/scene/process/layouts'
 
 const desktop = { mobile: false, reduced: false }
@@ -77,9 +77,32 @@ describe('frame', () => {
     expect(a.state).toBe(STILL_PROGRESS)
     expect(a.packets.every((p) => p.opacity === 0)).toBe(true)
   })
-  it('Idle-Versatz bleibt unter 7,2 Einheiten', () => {
-    const f = frame(0, 3.3, desktop)
-    f.nodes.forEach((n, i) => { expect(Math.abs(n.x - LAYOUTS[0].nodes[i][0])).toBeLessThanOrEqual(7.2) })
+  it('Treiben nur in Szene 01: Versatz unter etwa 2 px (1,75 Einheiten), bewegt sich', () => {
+    let moved = 0
+    for (const time of [0.4, 3.3, 7.9, 21.5]) {
+      for (const p of [0, 0.3, 0.7]) {
+        const still = frame(p, 0, desktop), f = frame(p, time, desktop)
+        f.nodes.forEach((n, i) => {
+          const d = Math.hypot(n.x - still.nodes[i].x, n.y - still.nodes[i].y)
+          expect(d).toBeLessThanOrEqual(IDLE_AMP * Math.SQRT2 + 1e-9)
+          expect(d).toBeLessThanOrEqual(1.75)
+          if (p === 0) moved = Math.max(moved, d)
+        })
+      }
+    }
+    expect(moved).toBeGreaterThan(0.1)
+  })
+  it('ab Zustand 1 stehen die Knoten still, unabhängig von time', () => {
+    for (const opts of [desktop, mobile]) {
+      for (const p of [1, 1.5, 2, 2.3, 3, 3.5, 4, 4.8, 5]) {
+        const still = frame(p, 0, opts)
+        for (const time of [0.4, 3.3, 7.9, 21.5, 1234.5]) {
+          const f = frame(p, time, opts)
+          f.nodes.forEach((n, i) => { expect(n.x).toBe(still.nodes[i].x); expect(n.y).toBe(still.nodes[i].y) })
+          f.edges.forEach((e, k) => expect(e.d).toBe(still.edges[k].d))
+        }
+      }
+    }
   })
   it('edgePath und bezierPoint passen zusammen', () => {
     expect(edgePath([0, 0], [10, 20], 0)).toBe('M0 0L10 20')

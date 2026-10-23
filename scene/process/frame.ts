@@ -46,6 +46,8 @@ export interface Frame {
 /** Zustand 3 (Struktur) als Standbild. */
 export const STILL_PROGRESS = 2
 export const SMOOTHING = 0.12
+/** Amplitude des Treibens in Szene 01 je Achse (ViewBox-Einheiten). */
+export const IDLE_AMP = 1.2
 
 const LAST = LAYOUTS.length - 1
 const COUNT = NODE_NAMES.length
@@ -128,7 +130,10 @@ export function frame(progress: number, time: number, opts: FrameOptions): Frame
   const B = LAYOUTS[next]
 
   // Knoten
-  const amp = time === 0 ? 0 : 1.2 + (state === 0 ? (1 - t) * 6 : 0)
+  // Treiben nur in Szene 01 (Spec 5.4: 1 bis 2 px, langsam), mit dem Übergang 0→1 ausblendend.
+  // IDLE_AMP je Achse; Betrag höchstens IDLE_AMP·√2 ≈ 1,7 Einheiten ≈ 2 px bei 1440 px und Skalierung 0,8.
+  // Ab Zustand 1 steht das Bild still (nichts bewegt sich beim Lesen).
+  const amp = time === 0 || state >= 1 ? 0 : IDLE_AMP * (1 - t)
   const r = state >= 4 ? NODE_RADIUS.compact : NODE_RADIUS.default
   // Mobil stehen die Gruppen in Zustand 1 zu dicht für Labels: erst in der zweiten Hälfte von 1→2 einblenden.
   // Mobil auch im Übergang 3→4: Labels in der ersten Hälfte ausblenden, bevor der enge Kreislauf und die
