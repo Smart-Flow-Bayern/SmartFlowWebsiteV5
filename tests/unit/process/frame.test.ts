@@ -58,6 +58,10 @@ describe('frame', () => {
     const g0 = frame(1.1, 0, desktop).nodes.filter((n) => n.active).length
     expect(g0).toBe(LAYOUTS[1].groups[0].length)
   })
+  it('aktiviert alle Knoten ab der zweiten Hälfte des Übergangs 4 nach 5', () => {
+    expect(frame(4.75, 0, desktop).nodes.every((n) => n.active)).toBe(true)
+    expect(frame(4.25, 0, desktop).nodes.every((n) => n.active)).toBe(false)
+  })
   it('verschiebt und skaliert nur auf dem Desktop', () => {
     expect(frame(2, 0, desktop).transform).toBe('translate(790 300) scale(0.58) translate(-500 -300)')
     expect(frame(2, 0, mobile).transform).toBe('translate(500 300) scale(1) translate(-500 -300)')

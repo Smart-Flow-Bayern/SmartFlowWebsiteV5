@@ -1,6 +1,12 @@
 // Reine Frame-Berechnung der Prozessgrafik: Scrollfortschritt (0..5) und Zeit
 // ergeben einen vollständigen, deterministischen Grafikzustand. Logik nach
 // docs/rebranding-v2/mockups/konzepte.html (render()).
+//
+// Hinweise für die Bühne (Task 6):
+// - Nicht-endlicher progress (NaN, ±Infinity) wird als 0 behandelt, sonst auf [0, 5] geklemmt.
+// - Unsichtbare Kanten (opacity 0) haben d = ''; sichtbare Kanten haben immer einen Pfad.
+// - reduced: Standbild frame(STILL_PROGRESS, 0); das Paket-Array behält seine volle Länge,
+//   alle Pakete haben opacity 0 (stabile Elementzahl).
 
 import {
   CENTER,
@@ -122,8 +128,9 @@ export function frame(progress: number, time: number, opts: FrameOptions): Frame
     const active =
       (state === 1 && GROUP_OF[i] === group) ||
       (state === 3 && Math.floor(time * 2 + i) % 7 === 0) ||
-      // Zustand 5 ist der Endzustand ohne Folgezustand, t ist dort immer 0; "t > 0.5" wäre
-      // unerreichbar. Daher sind im Endzustand alle Knoten aktiv.
+      // Ab der zweiten Hälfte des Übergangs 4→5 und im Endzustand 5 sind alle Knoten aktiv
+      // (in Zustand 5 selbst ist t immer 0, da es keinen Folgezustand gibt).
+      (state === 4 && t > 0.5) ||
       state === LAST
     nodes[i] = {
       x: lerp(a[0], b[0], t) + (amp === 0 ? 0 : Math.sin(time * 0.7 + i) * amp),
