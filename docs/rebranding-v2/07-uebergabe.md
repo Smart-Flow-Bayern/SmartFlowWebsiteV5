@@ -8,22 +8,22 @@ smartflow.bayern ist jetzt eine deutsche Ein-Seiten-Geschichte in sieben Szenen 
 
 ## Messwerte
 
-Letzter Lauf nach allen Fixes (Commit `1f3cafc`), lokal gegen den Production-Build.
+Letzter Lauf nach der Fix-Welle der Abschluss-Review (2026-10-23), lokal gegen den Production-Build. Lighthouse und axe-Jury-Lauf stammen aus dem Stand `1f3cafc` und wurden danach nicht wiederholt.
 
 | Messung | Wert |
 |---|---|
-| JS-Budget `/` (initial, gzip) | 198 236 Bytes (Grenze 220 000) |
+| JS-Budget `/` (initial, gzip) | 198 372 Bytes (Grenze 220 000) |
 | Lighthouse mobil | Performance 0,96 · Accessibility 1,00 · Best Practices 1,00 · SEO 1,00 |
 | Lighthouse Desktop | Performance 1,00 · Accessibility 1,00 · Best Practices 1,00 · SEO 1,00 |
-| Frame-Zeit p95 Desktop (1440×900) | 18,2 ms (Ziel ≤ 20 ms) |
-| Frame-Zeit p95 mobil (iPhone 13) | 18,1 ms (Ziel ≤ 33 ms) |
+| Frame-Zeit p95 Desktop (1440×900) | 18,3 ms (Ziel ≤ 20 ms; vorher 18,2 ms) |
+| Frame-Zeit p95 mobil (iPhone 13) | 18,6 ms (Ziel ≤ 33 ms; vorher 18,1 ms) |
 | axe, schwere Verstöße (serious/critical) | 0 (E2E bei Scroll 0 und bei `#kontakt`; Jury-Lauf 2 auf allen 5 Seiten) |
 | CSP-Prüfung | keine Verletzungen, Cal.com-Rahmen geöffnet |
-| E2E (Playwright, chromium/firefox/mobile) | 75 bestanden, 0 fehlgeschlagen |
-| Unit-Tests (Vitest) | 158 bestanden in 27 Dateien |
+| E2E (Playwright, chromium/firefox/mobile) | 77 bestanden, 0 fehlgeschlagen |
+| Unit-Tests (Vitest) | 164 bestanden in 27 Dateien |
 | Typecheck, Lint, Build | grün |
 
-Lighthouse: Median aus je 3 Läufen (`pnpm lighthouse`, `pnpm lighthouse:desktop`). Frame-Messung: 180 Frames je Gerät, Chromium ohne GPU-Beschleunigung (`pnpm measure:frames`).
+Lighthouse: Median aus je 3 Läufen (`pnpm lighthouse`, `pnpm lighthouse:desktop`). Frame-Messung: 180 Frames je Gerät (`pnpm measure:frames`, Chromium sichtbar). Der Median liegt bei 16,7 ms, also an der 60-Hz-Bildwiederholung; der p95 zeigt deshalb vor allem VSync-Schwankung und sank durch das Abschalten der Idle-Bewegung ab Szene 02 nicht messbar.
 
 ## Jury-Bewertung
 
@@ -49,6 +49,20 @@ Zwischen Runde 1 und 2 behoben (Commit `c42aed8`):
 
 Nach Runde 2 (ohne neue Bewertung, Commit `1f3cafc`): `#kontakt` mit Abstand unter der Kopfzeile, Kontaktblock linksbündig, doppelter Untertitel „Erst Ordnung, dann Entlastung, dann Wachstum.“ in Kontakt entfernt (Spec verlangt ihn nur in Szene 01), Inline-Links der Rechtsseiten 24 px hoch, Sprunglink auch auf Rechtsseiten und 404. Kontrast `muted` (#8d9794) geprüft: 6,6:1 auf `ground`, 5,8:1 auf `groundEnd`, also über 4,5:1; die 29 Treffer „contrastNeedsReview“ sind Text über der SVG-Bühne, den axe nicht selbst beurteilen kann, und wurden damit als geprüft vermerkt.
 
+## Nach der Abschluss-Review behoben
+
+- Grafik steht ab Szene 02 still; das Treiben in Szene 01 ist auf etwa 2 px begrenzt (Spec 5.4).
+- Ohne JavaScript und vor der Hydration zeigt das Handy das Standbild zentriert mit Skalierung 1 statt der Desktop-Verschiebung; der No-JS-Test läuft auch im Projekt `mobile`.
+- Favicon und Rechtsseiten (`public/legal.css`) auf den acht Blaupause-Tokens; Links der Rechtsseiten in Tinte statt Akzent, Stand-Zeile 16 px.
+- Vorschaubild mit Maßen und alt, 404 mit eigenem Titel und eigener Beschreibung für Open Graph.
+- Pakete mit `r`-Attribut als Fallback, Sprungziel `#start` und Footer-Jahr auch ohne JavaScript.
+
+## Abweichung von der Spec: Fortschrittsanzeige
+
+Spec Abschnitt 4 verlangt die Fortschrittsanzeige auf dem Desktop als sechs Zeilen mit Nummer und Wort, Abschnitt 5.2 „14 px Mono mit Wort, nicht nur Nummer“. Umgesetzt ist das nur ab 1600 px Breite; darunter, also auch auf dem Referenz-Desktop 1440×900, zeigt die Anzeige nur Balken in der Randspalte, ohne Nummer und ohne Wort (`app/globals.css`, `components/nav/ProgressNav.tsx`). Grund: In Jury-Runde 1 lag die beschriftete Anzeige bei 1440×900 über H1, Text und Footer, obwohl die H1 wie in Spec 5.2 vorgesehen auf 11vh begrenzt ist; die Spec wollte die Kollision über die H1-Größe lösen, das reichte nicht. Die Wörter der sechs Szenen stehen weiterhin in der Kopfnavigation (`SiteNav`), die aktuelle Szene ist dort hervorgehoben; die Balken bleiben klickbar und tragen ihre Beschriftung für Screenreader.
+
+**Entscheidung für Leon:** Heutige Lösung bestätigen (unter 1600 px nur Balken, Wörter in der Kopfnavigation) oder die Beschriftung ab 1280 px zurückholen, mit schmalerer Spalte für die Anzeige und entsprechend schmalerer Textspalte. Die Kollision mit dem Footer ist bereits über das Ausblenden am Footer gelöst; offen wäre nur der Abstand zu H1 und Text. Aufwand für die Alternative: etwa zwei bis drei Stunden mit Sichtprüfung bei 1280, 1440 und 1600 px.
+
 ## Offene Punkte
 
 | Punkt | Aufwand |
@@ -57,7 +71,7 @@ Nach Runde 2 (ohne neue Bewertung, Commit `1f3cafc`): `#kontakt` mit Abstand unt
 | Foto von Leon für „Über“ | Datei ablegen und `lib/brand/portrait.ts` eintragen, unter einer Stunde. |
 | Textkorrektur durch Leon | Alle Texte in `content/de.ts`, Rechtstexte in `public/*.html`; Lesedurchgang etwa eine Stunde. In der Datenschutzerklärung stehen drei Gedankenstriche und ein Satz, der in zwei Abschnitten vorkommt; beides ist Rechtstext und wurde nicht geändert. |
 | Production-Freigabe | Entscheidung durch Leon; danach Merge nach `main` und Deployment-Schalter in `vercel.json`. |
-| Jury 1: Mobil leere Bildschirme (m-02, m-03) | Bühne unter 768 px nicht mehr anheften, Grafik je Szene im Fluss über dem Text; einen halben bis ganzen Tag, betrifft Scroll-Zuordnung und Tests. |
+| Jury 1: Mobil leere Bildschirme (m-02, m-03) | Bühne unter 720 px nicht mehr anheften, Grafik je Szene im Fluss über dem Text; einen halben bis ganzen Tag, betrifft Scroll-Zuordnung und Tests. Mobil ist der Schlussmoment (Zustand 5, alle 14 Knoten aktiv als Zeile) derzeit durch die Kontakt-Section verdeckt; das wird mit dem Bühnenkonzept gelöst. |
 | Jury 2: Analyse-Cluster läuft in Kicker und H1 (d-02) | Verschiebung/Skalierung von Zustand 1 in `scene/process/layouts.ts` anpassen; etwa zwei Stunden mit Sichtprüfung. |
 | Jury 3: Wachstumsringe kreuzen den Text, bleiben bis „Über“ (d-05, d-06) | Ringe auf die rechte Spalte begrenzen und für „Über“ einen eigenen Zustand oder ein Ausblenden vorsehen; etwa einen halben Tag. |
 | Jury 4: Reduzierte Bewegung zeigt Struktur im Hero, danach keine Grafik | Pro Szene ein statisches Standbild ihres Zustands rendern; etwa einen halben Tag. |
