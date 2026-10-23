@@ -16,6 +16,7 @@ describe('ProcessStage (SSR-Standbild)', () => {
     expect(html.match(/class="label"/g)).toHaveLength(14)
     expect(html.match(/class="frag"/g)).toHaveLength(26)
     expect(html.match(/class="packet"/g)).toHaveLength(9)
+    expect(html.match(/class="packet"[^>]*r="3.5"/g)).toHaveLength(9)
     expect(html).toContain('aria-hidden="true"')
     expect(html).toContain('pathLength="1"')
   })

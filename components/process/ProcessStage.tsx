@@ -140,7 +140,7 @@ export function ProcessStage() {
           </g>
           <g className="packets">
             {STILL.packets.map((p, i) => (
-              <circle key={i} className="packet" cx={p.cx} cy={p.cy} opacity={p.opacity} />
+              <circle key={i} className="packet" cx={p.cx} cy={p.cy} r={3.5} opacity={p.opacity} />
             ))}
           </g>
           <g className="nodes">
