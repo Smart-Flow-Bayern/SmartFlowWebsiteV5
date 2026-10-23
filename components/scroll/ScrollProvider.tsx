@@ -6,12 +6,14 @@ import Lenis from 'lenis'
 import { useEffect, type ReactNode } from 'react'
 import type { SceneId } from '@/content/types'
 import { resolveSceneSlug } from '@/lib/scroll/hash'
+import { progressFromTops, scrollFromProgress } from '@/lib/scroll/map'
 import { progressStore } from '@/lib/scroll/progress'
 import { shouldRefresh, type Size } from '@/lib/scroll/resize'
-import { sceneOffset } from '@/scene/process/scenes'
+import { SCENES } from '@/scene/process/scenes'
 
 let lenisInstance: Lenis | null = null
-let storyTrigger: ScrollTrigger | null = null
+/** Gemessene Oberkanten der sieben Sections in Seitenpixeln, in Szenenreihenfolge. */
+let tops: number[] = []
 
 declare global {
   interface Window {
@@ -23,13 +25,15 @@ function reducedMotion(): boolean {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-/** Scrollbereich der Story in Seitenpixeln: von #story oben am Viewport bis #story unten am Viewport. */
-function storyRange(): { start: number; length: number } {
-  if (storyTrigger) return { start: storyTrigger.start, length: Math.max(0, storyTrigger.end - storyTrigger.start) }
-  const story = document.getElementById('story')
-  if (!story) return { start: 0, length: 0 }
-  const start = story.getBoundingClientRect().top + window.scrollY
-  return { start, length: Math.max(0, story.offsetHeight - window.innerHeight) }
+/** Misst die Oberkanten der Sections (`section.scene`, sortiert nach `data-scene`) relativ zum Dokument. */
+function measureTops(): number[] {
+  const sections = [...document.querySelectorAll<HTMLElement>('#story section.scene')]
+  sections.sort((a, b) => Number(a.dataset.scene) - Number(b.dataset.scene))
+  return sections.map((el) => Math.round(el.getBoundingClientRect().top + window.scrollY))
+}
+
+function currentScroll(): number {
+  return lenisInstance ? lenisInstance.scroll : window.scrollY
 }
 
 function sceneFromHash() {
@@ -42,10 +46,11 @@ function sceneFromHash() {
   return resolveSceneSlug(slug)
 }
 
-/** Scrollt an den Anfang des Szenenfensters (Kontakt: Story-Ende). Unter reduzierter Bewegung immer sofort. */
+/** Scrollt an die gemessene Oberkante der Section (auch Kontakt). Unter reduzierter Bewegung immer sofort. */
 export function scrollToScene(id: SceneId, opts?: { immediate?: boolean }): void {
-  const { start, length } = storyRange()
-  const target = start + sceneOffset(id, length)
+  const index = SCENES.findIndex((s) => s.id === id)
+  const measured = tops.length === SCENES.length ? tops : measureTops()
+  const target = index >= 0 && measured[index] !== undefined ? measured[index] : 0
   const immediate = reducedMotion() || opts?.immediate === true
   if (lenisInstance) {
     lenisInstance.scrollTo(target, immediate ? { immediate: true } : undefined)
@@ -62,22 +67,19 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
 
     const lenis = new Lenis(reducedMotion() ? { autoRaf: false, smoothWheel: false, lerp: 1 } : { autoRaf: false })
     lenisInstance = lenis
+    // ScrollTrigger bleibt mit Lenis synchron (für spätere Trigger), ist aber nicht mehr Quelle des Fortschritts.
     lenis.on('scroll', ScrollTrigger.update)
 
     const tick = (time: number) => lenis.raf(time * 1000)
     gsap.ticker.add(tick)
     gsap.ticker.lagSmoothing(0)
 
-    // Kein Pin: #story ist SCROLL_HEIGHTS Bildschirme hoch, Fortschritt 1, wenn die letzte Szene oben anliegt.
-    const trigger = ScrollTrigger.create({
-      trigger: '#story',
-      start: 'top top',
-      end: 'bottom bottom',
-      invalidateOnRefresh: true,
-      onUpdate: (self) => progressStore.set(self.progress),
-    })
-    storyTrigger = trigger
-    progressStore.set(trigger.progress)
+    // Kein Pin. Fortschritt stückweise linear über die gemessenen Section-Oberkanten:
+    // Szene i oben am Viewport ⇒ i/6, Kontakt oben ⇒ 1. So bleiben Grafik und Text synchron.
+    tops = measureTops()
+    const update = () => progressStore.set(progressFromTops(currentScroll(), tops))
+    lenis.on('scroll', update)
+    update()
 
     if (process.env.NODE_ENV !== 'production') {
       window.__sf = {
@@ -100,6 +102,21 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
     }
     window.addEventListener('hashchange', onHashChange)
 
+    /** Neu messen und den Fortschritt halten (gleiche Stelle der Geschichte, nicht gleiche Pixelposition). */
+    const remeasure = () => {
+      const prev = progressStore.get()
+      tops = measureTops()
+      ScrollTrigger.refresh()
+      lenis.resize()
+      lenis.scrollTo(scrollFromProgress(prev, tops), { immediate: true, force: true })
+      update()
+    }
+    let disposed = false
+    // Webfonts ändern Zeilenumbrüche und damit Section-Höhen: einmal nach dem Laden neu messen.
+    void document.fonts?.ready.then(() => {
+      if (!disposed) remeasure()
+    })
+
     let timer: ReturnType<typeof setTimeout> | undefined
     // lastSize wird nur beim Refresh aktualisiert: kleine Abweichungen summieren sich bis zur Schwelle.
     let lastSize: Size = { w: window.innerWidth, h: window.innerHeight }
@@ -109,24 +126,20 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
         const next: Size = { w: window.innerWidth, h: window.innerHeight }
         if (!shouldRefresh(lastSize, next)) return
         lastSize = next
-        const prev = progressStore.get()
-        ScrollTrigger.refresh()
-        lenis.resize()
-        // Fortschritt halten: gleiche Stelle der Story, nicht gleiche Pixelposition.
-        lenis.scrollTo(trigger.start + prev * (trigger.end - trigger.start), { immediate: true, force: true })
-        ScrollTrigger.update()
+        remeasure()
       }, 150)
     }
     window.addEventListener('resize', onResize)
 
     return () => {
+      disposed = true
       clearTimeout(timer)
       window.removeEventListener('resize', onResize)
       window.removeEventListener('hashchange', onHashChange)
-      trigger.kill()
-      if (storyTrigger === trigger) storyTrigger = null
+      tops = []
       progressStore.set(0)
       gsap.ticker.remove(tick)
+      lenis.off('scroll', update)
       lenis.off('scroll', ScrollTrigger.update)
       lenis.destroy()
       if (lenisInstance === lenis) lenisInstance = null
