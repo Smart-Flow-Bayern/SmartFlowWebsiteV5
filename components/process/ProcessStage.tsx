@@ -45,7 +45,7 @@ export function ProcessStage() {
     // Reduced Motion: kein Ticker, nur das Standbild (mobil ohne Desktop-Verschiebung), neu bei Größenänderung.
     const writeStill = () => {
       const mobile = mobileQuery.matches
-      writeStage(els, stageAttrs(frame(STILL_PROGRESS, 0, { mobile, reduced: true }), mobile), pxPerUnit)
+      writeStage(els, stageAttrs(frame(STILL_PROGRESS, 0, { mobile, reduced: true }), mobile, pxPerUnit))
     }
     const onResize = () => {
       measure()
@@ -63,7 +63,7 @@ export function ProcessStage() {
       shown = shown === undefined ? target : shown + (target - shown) * SMOOTHING
       if (Math.abs(target - shown) < SNAP) shown = target
       const mobile = mobileQuery.matches
-      writeStage(els, stageAttrs(frame(shown, time, { mobile, reduced: false }), mobile), pxPerUnit)
+      writeStage(els, stageAttrs(frame(shown, time, { mobile, reduced: false }), mobile, pxPerUnit))
     }
     if (!reduced) gsap.ticker.add(tick)
     return () => {

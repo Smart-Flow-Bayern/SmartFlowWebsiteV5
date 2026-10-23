@@ -276,10 +276,12 @@ h2 {
     z-index: 1;
   }
 
+  /* --stroke-k (vom Ticker gesetzt) gleicht die Skalierung der ViewBox aus: Striche ≥ 1,2 px auf dem Bildschirm
+     (Spec 5.2). Ohne JS gilt 1. */
   .node {
     fill: var(--color-ground);
     stroke: var(--color-node-stroke);
-    stroke-width: 1.2;
+    stroke-width: calc(1.2 * var(--stroke-k, 1));
   }
 
   .node[data-active="true"] {
@@ -291,12 +293,8 @@ h2 {
   .edge {
     fill: none;
     stroke: var(--color-node-stroke);
-    stroke-width: 1;
+    stroke-width: calc(1.2 * var(--stroke-k, 1));
     stroke-dasharray: 1 1;
-  }
-
-  .edge[data-strong="true"] {
-    stroke-width: 1.2;
   }
 
   .edge[data-dashed="true"] {
@@ -305,9 +303,14 @@ h2 {
 
   /* --label-k (vom Ticker gesetzt) gleicht die Skalierung der ViewBox aus: 13 px bzw. 12 px auf dem Bildschirm. */
   /* Volle Deckkraft kommt aus dem opacity-Attribut (1 oder 0 je Zustand); eine CSS-opacity würde es überschreiben. */
+  /* Halo in Hintergrundfarbe: Kanten und Pakete streichen die Buchstaben nicht durch. */
   .label {
     font: calc(13px * var(--label-k, 1)) var(--font-mono);
     fill: var(--color-ink);
+    paint-order: stroke;
+    stroke: var(--stage-bg, var(--color-ground));
+    stroke-width: calc(4 * var(--label-k, 1));
+    stroke-linejoin: round;
   }
 
   .frag {
@@ -317,7 +320,7 @@ h2 {
   .zone {
     fill: none;
     stroke: var(--color-line);
-    stroke-width: 1;
+    stroke-width: calc(1 * var(--stroke-k, 1));
   }
 
   .zone-label {

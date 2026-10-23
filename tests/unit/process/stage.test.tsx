@@ -3,7 +3,7 @@ import gsap from 'gsap'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { ProcessStage } from '@/components/process/ProcessStage'
-import { labelFactor, stageAttrs } from '@/components/process/stage-dom'
+import { collectStage, screenFactor, stageAttrs, writeStage } from '@/components/process/stage-dom'
 import { progressStore } from '@/lib/scroll/progress'
 import { EDGE_KEYS, STILL_PROGRESS, frame } from '@/scene/process/frame'
 
@@ -51,11 +51,46 @@ describe('stageAttrs', () => {
   })
 })
 
-describe('labelFactor', () => {
+describe('screenFactor', () => {
   it('gleicht ViewBox-Maßstab und Bühnenskalierung aus', () => {
-    expect(labelFactor('translate(790 300) scale(0.5) translate(-500 -300)', 1)).toBe('2')
-    expect(labelFactor('translate(500 300) scale(1) translate(-500 -300)', 0.4)).toBe('2.5')
-    expect(labelFactor('translate(500 300) scale(1) translate(-500 -300)', 0)).toBeUndefined()
+    expect(screenFactor('translate(790 300) scale(0.5) translate(-500 -300)', 1)).toBe(2)
+    expect(screenFactor('translate(500 300) scale(1) translate(-500 -300)', 0.4)).toBe(2.5)
+    expect(screenFactor('translate(500 300) scale(1) translate(-500 -300)', 0)).toBeUndefined()
+  })
+})
+
+describe('Bildschirmmaße (Spec 5.2)', () => {
+  const side = (d: string) => Number(/h(-?[\d.]+)/.exec(d)![1])
+  it('ohne Messung (SSR) bleiben Knoten und Labels auf Layoutgröße', () => {
+    const a = stageAttrs(frame(2, 0, { mobile: false, reduced: false }), false)
+    expect(a.screenK).toBeUndefined()
+    expect(side(a.nodes[0].d)).toBe(18)
+  })
+  it('mobil mindestens 12 px Knoten, Label rechts mit Abstand', () => {
+    const pxPerUnit = 0.39
+    const f = frame(2, 0, { mobile: true, reduced: false })
+    const a = stageAttrs(f, true, pxPerUnit)
+    expect(side(a.nodes[0].d) * pxPerUnit).toBeGreaterThanOrEqual(12 - 0.01)
+    const right = f.nodes[0].x + side(a.nodes[0].d) / 2
+    expect(Number(a.labels[0].x)).toBeGreaterThan(right)
+  })
+  it('Desktop Zustand 3 bleibt bei Knoten und Labelabstand unverändert', () => {
+    const f = frame(2, 0, { mobile: false, reduced: false })
+    const a = stageAttrs(f, false, 1.39)
+    expect(side(a.nodes[0].d)).toBe(18)
+    expect(Number(a.labels[0].x)).toBeCloseTo(f.nodes[0].x + 14, 1)
+  })
+  it('writeStage setzt --stroke-k und --label-k, abhängig von der Skalierung', () => {
+    // Reduced Motion: kein Ticker, der dazwischenschreibt
+    vi.stubGlobal('matchMedia', (query: string) => ({ matches: query.includes('reduce'), media: query }))
+    const { container } = render(<ProcessStage />)
+    vi.unstubAllGlobals()
+    const els = collectStage(container.querySelector<HTMLElement>('.stage')!)
+    writeStage(els, stageAttrs(frame(2, 0, { mobile: false, reduced: false }), false, 1))
+    expect(els.svg.style.getPropertyValue('--stroke-k')).toBe('1.72')
+    expect(els.svg.style.getPropertyValue('--label-k')).toBe('1.72')
+    writeStage(els, stageAttrs(frame(0, 0, { mobile: false, reduced: false }), false, 1))
+    expect(els.svg.style.getPropertyValue('--stroke-k')).toBe('1.25')
   })
 })
 

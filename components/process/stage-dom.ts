@@ -22,16 +22,26 @@ export function nodePath(x: number, y: number, r: number): string {
 }
 
 /**
- * Faktor für Labelgrößen, damit 13 px (mobil 12 px) auf dem Bildschirm ankommen: CSS-Pixel im SVG
- * sind ViewBox-Einheiten und schrumpfen mit der Bühne (`pxPerUnit`) und der Skalierung in `transform`.
+ * ViewBox-Einheiten je Bildschirmpixel innerhalb von g.root: Längen in der Grafik (Strichbreite, Schrift)
+ * schrumpfen mit der Bühne (`pxPerUnit`) und der Skalierung in `transform`. Multipliziert mit einem
+ * Pixelwert ergibt sich die Länge, die auf dem Bildschirm genau so groß ist. undefined = nicht gemessen.
  */
-export function labelFactor(transform: string, pxPerUnit: number): string | undefined {
+export function screenFactor(transform: string, pxPerUnit: number): number | undefined {
   const scale = Number(/scale\(([^)\s]+)\)/.exec(transform)?.[1] ?? 1)
   const k = pxPerUnit * scale
-  return Number.isFinite(k) && k > 0 ? num(1 / k) : undefined
+  return Number.isFinite(k) && k > 0 ? 1 / k : undefined
 }
 
+/** Mindestkantenlänge der Knoten auf dem Bildschirm (Spec 5.2, mobil). */
+const NODE_MIN_PX = 12
+/** Mindestabstand Knotenrand → Label auf dem Bildschirm. */
+const LABEL_GAP_PX = 4
+/** Labelabstand von der Knotenmitte in ViewBox-Einheiten (Layoutwert). */
+const LABEL_OFFSET = 14
+
 export interface StageAttrs {
+  /** screenFactor als Attributwert für --stroke-k und --label-k; fehlt ohne Messung. */
+  screenK?: string
   state: string
   transform: string
   background: string
@@ -43,9 +53,16 @@ export interface StageAttrs {
   labels: { x: string; y: string; opacity: string }[]
 }
 
-export function stageAttrs(f: Frame, mobile: boolean): StageAttrs {
+/** pxPerUnit: Bildschirmpixel je ViewBox-Einheit der Bühne; 0 (Standard, SSR) = nicht gemessen. */
+export function stageAttrs(f: Frame, mobile: boolean, pxPerUnit = 0): StageAttrs {
   const fragmentOpacity = num(f.fragments)
+  const k = screenFactor(f.transform, pxPerUnit)
+  // Knoten wachsen nur, wenn sie sonst unter 12 px fielen (mobil); das Label rückt um denselben Betrag mit.
+  const radius = (r: number) => (k === undefined ? r : Math.max(r, (NODE_MIN_PX / 2) * k))
+  const labelOffset = (r: number) =>
+    k === undefined ? LABEL_OFFSET : Math.max(LABEL_OFFSET, radius(r) + LABEL_GAP_PX * k)
   return {
+    screenK: k === undefined ? undefined : num(k),
     state: String(f.state),
     transform: roundNumbers(f.transform),
     background: roundNumbers(f.background),
@@ -65,8 +82,8 @@ export function stageAttrs(f: Frame, mobile: boolean): StageAttrs {
       const p = f.packets[i]
       return p ? { cx: num(p.x), cy: num(p.y), opacity: num(p.opacity) } : { opacity: '0' }
     }),
-    nodes: f.nodes.map((n) => ({ d: nodePath(n.x, n.y, n.r), active: String(n.active) })),
-    labels: f.nodes.map((n) => ({ x: num(n.x + 14), y: num(n.y + 4), opacity: num(n.label) })),
+    nodes: f.nodes.map((n) => ({ d: nodePath(n.x, n.y, radius(n.r)), active: String(n.active) })),
+    labels: f.nodes.map((n) => ({ x: num(n.x + labelOffset(n.r)), y: num(n.y + 4), opacity: num(n.label) })),
   }
 }
 
@@ -108,15 +125,14 @@ function setVar(el: HTMLElement | SVGElement, name: string, value: string | unde
   if (value !== undefined && el.style.getPropertyValue(name) !== value) el.style.setProperty(name, value)
 }
 
-/**
- * Schreibt nur geänderte Werte; keine Leseoperationen, die Layout erzwingen.
- * pxPerUnit: Bildschirmpixel je ViewBox-Einheit (außerhalb des Tickers gemessen), 0 = unbekannt.
- */
-export function writeStage(els: StageElements, a: StageAttrs, pxPerUnit: number): void {
+/** Schreibt nur geänderte Werte; keine Leseoperationen, die Layout erzwingen. */
+export function writeStage(els: StageElements, a: StageAttrs): void {
   set(els.svg, 'data-state', a.state)
   set(els.root, 'transform', a.transform)
   setVar(els.stage, '--stage-bg', a.background)
-  setVar(els.svg, '--label-k', labelFactor(a.transform, pxPerUnit))
+  // Gleicher Faktor, zwei Namen: Strichbreiten (globals.css .node/.edge/.zone) und Schriftgrößen (.label).
+  setVar(els.svg, '--stroke-k', a.screenK)
+  setVar(els.svg, '--label-k', a.screenK)
   els.fragments.forEach((el, i) => set(el, 'opacity', a.fragments[i].opacity))
   els.zones.forEach((el, i) => set(el, 'opacity', a.zones[i].opacity))
   els.zoneLabels.forEach((el, i) => set(el, 'opacity', a.zones[i].opacity))
