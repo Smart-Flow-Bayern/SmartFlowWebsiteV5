@@ -196,9 +196,10 @@ export function frame(progress: number, time: number, opts: FrameOptions): Frame
   }
 
   // Zonen und Fragmente
-  // Zonen nur im Übergang 4→5: gestaffelt einblenden, im letzten Viertel ausblenden, in Zustand 5 aus.
-  const zonesOut = clamp01(4 * (1 - t))
-  const zones = ZONES.map((_, i) => (state === 4 ? Math.min(clamp01(3 * t - i), zonesOut) : 0))
+  // Zonen gehören zu Wachstum (Zustand 4, gehalten): Einblenden in der zweiten Hälfte von 3→4,
+  // voll in Zustand 4, Ausblenden im letzten Viertel von 4→5, in Zustand 5 aus.
+  const zone = state === 3 ? clamp01(2 * t - 1) : state === 4 ? clamp01(4 * (1 - t)) : 0
+  const zones = ZONES.map(() => zone)
   const fragments = state === 0 ? 1 - t : 0
 
   // Bühne

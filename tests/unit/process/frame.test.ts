@@ -46,8 +46,8 @@ describe('frame', () => {
     expect(frame(0, 0, desktop).fragments).toBe(1)
     expect(frame(0.5, 0, desktop).fragments).toBeCloseTo(0.5)
     expect(frame(1, 0, desktop).fragments).toBe(0)
-    expect(frame(4, 0, desktop).zones).toEqual([0, 0, 0])
-    expect(frame(4.5, 0, desktop).zones.map((z) => +z.toFixed(2))).toEqual([1, 0.5, 0])
+    expect(frame(4, 0, desktop).zones).toEqual([1, 1, 1])
+    expect(frame(4.5, 0, desktop).zones).toEqual([1, 1, 1])
     expect(frame(3, 1, desktop).packets).toHaveLength(9)
     expect(frame(3, 1, desktop).packets.every((p) => p.opacity === 1)).toBe(true)
     expect(frame(3, 1, mobile).packets).toHaveLength(5)
@@ -108,6 +108,14 @@ describe('frame', () => {
       const a = asCubic(at(before).d), b = asCubic(at(after).d)
       a.forEach((v, i) => expect(v).toBeCloseTo(b[i], 2))
     }
+  })
+  it('Zonen gehören zu Wachstum: 3.5 aus, 4.0 voll, 5.0 aus', () => {
+    expect(frame(3.5, 0, desktop).zones).toEqual([0, 0, 0])
+    expect(frame(4, 0, desktop).zones).toEqual([1, 1, 1])
+    expect(frame(5, 0, desktop).zones).toEqual([0, 0, 0])
+    // Einblenden 3→4 erst ab der zweiten Hälfte, stetig bis Zustand 4
+    frame(4 - 1e-6, 0, desktop).zones.forEach((z) => expect(z).toBeCloseTo(1, 3))
+    frame(3.75, 0, desktop).zones.forEach((z) => expect(z).toBeGreaterThan(0))
   })
   it('Zonen sind in Zustand 5 aus und laufen stetig dorthin', () => {
     expect(frame(5, 0, desktop).zones).toEqual([0, 0, 0])

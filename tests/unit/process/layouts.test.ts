@@ -46,9 +46,11 @@ describe('LAYOUTS', () => {
     const xs = LAYOUTS[5].nodes.map(([x]) => x)
     expect((Math.min(...xs) + Math.max(...xs)) / 2).toBeCloseTo(500)
   })
-  it('Zustand 0 liegt nach Verschiebung und Skalierung rechts (x ≥ 520), Text links bleibt frei', () => {
+  it('Zustand 0 liegt in x 320..700 und auf dem Desktop nach Verschiebung und Skalierung rechts (x ≥ 520)', () => {
     const { shift, scale } = LAYOUTS[0]
     for (const [x] of LAYOUTS[0].nodes) {
+      expect(x).toBeGreaterThanOrEqual(320)
+      expect(x).toBeLessThanOrEqual(700)
       const shown = 500 + shift + (x - 500) * scale
       expect(shown).toBeGreaterThanOrEqual(520)
       expect(shown).toBeLessThanOrEqual(VIEWBOX.width)

@@ -42,9 +42,9 @@ export const COLUMNS = {
 
 const indices = Array.from({ length: COUNT }, (_, i) => i)
 
-// Zustand 0: verstreut, nur in x 350..870, damit die Knoten nach Verschiebung (+170) und Skalierung (0.8)
-// bei x ≥ 550 liegen und die große Überschrift links frei bleibt.
-const S0: Point[] = indices.map((i) => [350 + seed(i, 1) * 520, 60 + seed(i, 2) * 480])
+// Zustand 0: verstreut in x 320..700. Desktop (Verschiebung +170, Skalierung 0.8) ergibt x ≥ 526,
+// die große Überschrift links bleibt frei; mobil (ohne Verschiebung) liegt die Wolke etwa mittig.
+const S0: Point[] = indices.map((i) => [320 + seed(i, 1) * 380, 60 + seed(i, 2) * 480])
 
 // Zustand 1: drei Gruppen
 const CENTERS = [[230, 300], [520, 300], [800, 300]] as const
