@@ -6,7 +6,7 @@ import { useContent } from '@/components/content/ContentProvider'
 
 /** Click-to-load: vor dem Klick gibt es keinen Request an Cal.com. */
 export function CalEmbed() {
-  const content = useContent()
+  const kontakt = useContent().scenes.kontakt
   const [loaded, setLoaded] = useState(false)
   return (
     <div className="cal-embed">
@@ -14,18 +14,18 @@ export function CalEmbed() {
         <iframe
           className="cal-frame"
           src={`${CONTACT.calUrl}?embed=true&theme=dark`}
-          title={content.contact.calTitle}
+          title={kontakt.calTitle}
         />
       ) : (
         <>
           <button type="button" className="cal-button" onClick={() => setLoaded(true)}>
-            {content.contact.calCta}
+            {kontakt.calCta}
           </button>
-          <p className="station-text">{content.contact.calConsent}</p>
+          <p className="station-text">{kontakt.calConsent}</p>
         </>
       )}
       <a className="station-link" href={CONTACT.calUrl} target="_blank" rel="noopener noreferrer">
-        {content.contact.calOpenNewTab}
+        {kontakt.calOpenNewTab}
       </a>
     </div>
   )

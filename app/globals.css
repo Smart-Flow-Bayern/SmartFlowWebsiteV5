@@ -95,6 +95,156 @@ h2 {
   }
 }
 
+/* Szenen (Task 4): Text je Szene in einer Spalte, links oder rechts neben der späteren Bühne. */
+@layer components {
+  .scene {
+    position: relative;
+    display: grid;
+    align-items: center;
+    min-height: 100svh;
+    padding: 96px clamp(16px, 5vw, 80px);
+  }
+
+  .scene-text {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: min(36rem, 44vw);
+  }
+
+  .scene[data-side="left"] .scene-text {
+    justify-self: start;
+  }
+
+  .scene[data-side="right"] .scene-text {
+    justify-self: end;
+  }
+
+  .scene[data-side="center"] {
+    justify-items: center;
+    text-align: center;
+  }
+
+  .scene[data-side="center"] .scene-text {
+    align-items: center;
+    width: min(40rem, 100%);
+  }
+
+  .scene .prose > * + * {
+    margin-top: 16px;
+  }
+
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    color: var(--color-muted);
+  }
+
+  .kicker b {
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .claim {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .claim-sub {
+    font-size: 16px;
+    color: var(--color-muted);
+  }
+
+  .claim + .claim-sub {
+    margin-top: -16px;
+  }
+
+  .services,
+  .examples,
+  .fields {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .services {
+    counter-reset: service;
+  }
+
+  .services > li {
+    counter-increment: service;
+  }
+
+  .services h3::before {
+    content: counter(service, decimal-leading-zero) " ";
+    font-family: var(--font-mono);
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .services h3,
+  .fields h3 {
+    font-size: 20px;
+    line-height: 1.3;
+  }
+
+  .examples > li,
+  .fields > li {
+    padding-left: 16px;
+    border-left: 1.2px solid var(--color-node-stroke);
+  }
+
+  .portrait {
+    display: grid;
+    place-items: center;
+    width: 160px;
+    height: 160px;
+    border: 1.2px solid var(--color-node-stroke);
+    background: var(--color-ground);
+    font-family: var(--font-mono);
+    font-size: 40px;
+    font-weight: 600;
+  }
+
+  .contact-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  @media (max-width: 719px) {
+    .scene {
+      align-items: start;
+      padding: 52svh 16px 64px;
+    }
+
+    .scene-text,
+    .scene[data-side="center"] .scene-text {
+      width: 100%;
+      justify-self: stretch;
+    }
+
+    .portrait {
+      width: 96px;
+      height: 96px;
+      font-size: 28px;
+    }
+  }
+
+  @media (max-width: 389px) {
+    .contact-actions > .btn,
+    .contact-actions > .btn-ghost {
+      width: 100%;
+    }
+  }
+}
+
 /* Bildmarke, Variante animated: heller Abschnitt läuft die Leiterbahn entlang (pathLength = 100) */
 @layer components {
   .impulse-run {

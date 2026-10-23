@@ -13,26 +13,10 @@ export const FLOSKELN: readonly string[] = [
   'in zeiten von',
 ]
 
-/** Englische Sperrliste (Task 18), kleingeschrieben. */
-export const FLOSKELN_EN: readonly string[] = [
-  'holistic',
-  'tailored',
-  'innovative',
-  'solutions',
-  'added value',
-  'sustainable',
-  'future-proof',
-  'synergies',
-  'state of the art',
-  'in times of',
-]
-
 /** Wortstamm, falls er vom Listeneintrag abweicht (Plural-Einträge treffen auch Singular und Komposita). */
 const STAMM: Readonly<Record<string, string>> = {
   lösungen: 'lösung',
   synergien: 'synergie',
-  solutions: 'solution',
-  synergies: 'synerg',
 }
 
 function muster(eintrag: string): RegExp {
