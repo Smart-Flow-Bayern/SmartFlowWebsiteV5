@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { progressFromTops, scrollFromProgress } from '@/lib/scroll/map'
+import { progressFromTops, sceneIndexAt, scrollFromProgress } from '@/lib/scroll/map'
 
 // Ungleich hohe Sections wie im echten Layout (Komplexität höher als ein Bildschirm).
 const tops = [0, 1160, 2060, 2960, 3860, 4760, 5660]
@@ -28,5 +28,15 @@ describe('scrollFromProgress', () => {
     }
     expect(scrollFromProgress(1, tops)).toBe(5660)
     expect(scrollFromProgress(-1, tops)).toBe(0)
+  })
+})
+
+describe('sceneIndexAt', () => {
+  it('liefert die letzte Section, deren Oberkante bei oder über y liegt', () => {
+    expect(sceneIndexAt(-10, tops)).toBe(0)
+    expect(sceneIndexAt(tops[1] - 1, tops)).toBe(0)
+    expect(sceneIndexAt(tops[1], tops)).toBe(1)
+    expect(sceneIndexAt(tops[6] + 900, tops)).toBe(6)
+    expect(sceneIndexAt(300, [])).toBe(0)
   })
 })

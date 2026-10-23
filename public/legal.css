@@ -121,3 +121,16 @@ body > footer nav {
   flex-wrap: wrap;
   gap: 8px 24px;
 }
+
+/* Tap-Flächen in Kopf- und Fußzeile mindestens 24 px hoch (WCAG 2.5.8). */
+body > header a,
+body > footer a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  min-width: 44px;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}

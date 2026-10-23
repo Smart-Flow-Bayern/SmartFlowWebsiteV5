@@ -4,7 +4,7 @@ import { Wordmark } from '@/components/brand/Wordmark'
 import { useContent } from '@/components/content/ContentProvider'
 import { scrollToScene } from '@/components/scroll/ScrollProvider'
 import { wordmarkVariant } from '@/lib/brand/tokens'
-import { progressStore, useProgressSelector } from '@/lib/scroll/progress'
+import { progressStore, useActiveScene } from '@/lib/scroll/progress'
 import { SCENES, sceneAt } from '@/scene/process/scenes'
 
 /** Fokus auf die Kontakt-Überschrift, sobald die Fahrt in der Kontakt-Szene angekommen ist. Höchstens 3 s. */
@@ -23,7 +23,7 @@ function focusOnArrival(elementId: string): void {
 
 export function SiteNav() {
   const content = useContent()
-  const activeId = useProgressSelector((p) => sceneAt(p).id)
+  const activeId = (SCENES[useActiveScene()] ?? SCENES[0]).id
   return (
     <header className="nav-bar">
       <a

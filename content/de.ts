@@ -4,7 +4,7 @@ import type { SiteContent } from '@/content/types'
 export const de: SiteContent = {
   locale: 'de',
   meta: {
-    title: 'Smart Flow – Abläufe ordnen, digitalisieren, automatisieren | Regensburg',
+    title: 'Smart Flow Regensburg – Abläufe ordnen, digitalisieren, automatisieren',
     description:
       'Smart Flow aus Regensburg macht aus Zetteln, Anrufen und doppelten Eingaben einen Ablauf, den jeder im Betrieb versteht.',
   },
@@ -22,6 +22,7 @@ export const de: SiteContent = {
     homeLabel: 'Smart Flow – zum Anfang',
     scenesLabel: 'Abschnitte',
     progressLabel: 'Fortschritt',
+    skipLabel: 'Zum Inhalt springen',
   },
   claim: {
     text: 'Structure. Automation. Growth.',

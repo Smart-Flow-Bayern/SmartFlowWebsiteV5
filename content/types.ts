@@ -28,6 +28,7 @@ export interface SiteContent {
     homeLabel: string
     scenesLabel: string
     progressLabel: string
+    skipLabel: string
   }
   claim: { text: string; subtitle: string } // text exakt 'Structure. Automation. Growth.'
   scenes: {

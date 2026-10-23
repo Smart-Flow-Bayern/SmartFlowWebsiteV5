@@ -6,8 +6,8 @@ import Lenis from 'lenis'
 import { useEffect, type ReactNode } from 'react'
 import type { SceneId } from '@/content/types'
 import { resolveSceneSlug } from '@/lib/scroll/hash'
-import { progressFromTops, scrollFromProgress } from '@/lib/scroll/map'
-import { progressStore } from '@/lib/scroll/progress'
+import { progressFromTops, sceneIndexAt, scrollFromProgress } from '@/lib/scroll/map'
+import { activeSceneStore, progressStore } from '@/lib/scroll/progress'
 import { shouldRefresh, type Size } from '@/lib/scroll/resize'
 import { SCENES } from '@/scene/process/scenes'
 
@@ -27,7 +27,7 @@ function reducedMotion(): boolean {
 
 /** Misst die Oberkanten der Sections (`section.scene`, sortiert nach `data-scene`) relativ zum Dokument. */
 function measureTops(): number[] {
-  const sections = [...document.querySelectorAll<HTMLElement>('#story section.scene')]
+  const sections = [...document.querySelectorAll<HTMLElement>('main.story section.scene')]
   sections.sort((a, b) => Number(a.dataset.scene) - Number(b.dataset.scene))
   return sections.map((el) => Math.round(el.getBoundingClientRect().top + window.scrollY))
 }
@@ -77,7 +77,12 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
     // Kein Pin. Fortschritt stückweise linear über die gemessenen Section-Oberkanten:
     // Szene i oben am Viewport ⇒ i/6, Kontakt oben ⇒ 1. So bleiben Grafik und Text synchron.
     tops = measureTops()
-    const update = () => progressStore.set(progressFromTops(currentScroll(), tops))
+    // Navigation: aktiv ist die Section, deren Oberkante die Viewport-Mitte überquert hat.
+    const update = () => {
+      const y = currentScroll()
+      progressStore.set(progressFromTops(y, tops))
+      activeSceneStore.set(sceneIndexAt(y + window.innerHeight / 2, tops))
+    }
     lenis.on('scroll', update)
     update()
 
@@ -161,6 +166,7 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
       window.removeEventListener('hashchange', onHashChange)
       tops = []
       progressStore.set(0)
+      activeSceneStore.set(0)
       gsap.ticker.remove(tick)
       lenis.off('scroll', update)
       lenis.off('scroll', ScrollTrigger.update)

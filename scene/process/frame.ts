@@ -131,8 +131,16 @@ export function frame(progress: number, time: number, opts: FrameOptions): Frame
   const amp = time === 0 ? 0 : 1.2 + (state === 0 ? (1 - t) * 6 : 0)
   const r = state >= 4 ? NODE_RADIUS.compact : NODE_RADIUS.default
   // Mobil stehen die Gruppen in Zustand 1 zu dicht für Labels: erst in der zweiten Hälfte von 1→2 einblenden.
+  // Mobil auch im Übergang 3→4: Labels in der ersten Hälfte ausblenden, bevor der enge Kreislauf und die
+  // Zonen-Beschriftungen kommen (sonst überlappen Knoten- und Zonen-Labels).
   const label =
-    state === 1 ? (opts.mobile ? clamp01(2 * t - 1) : Math.min(1, 2 * t)) : state === 2 || state === 3 ? 1 : 0
+    state === 1
+      ? opts.mobile ? clamp01(2 * t - 1) : Math.min(1, 2 * t)
+      : state === 2
+        ? 1
+        : state === 3
+          ? opts.mobile ? clamp01(1 - 2 * t) : 1
+          : 0
   const group = Math.floor(3 * t)
   const nodes: FrameNode[] = new Array(COUNT)
   for (let i = 0; i < COUNT; i++) {

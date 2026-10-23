@@ -25,3 +25,10 @@ export function scrollFromProgress(p: number, tops: readonly number[]): number {
   const i = Math.floor(w)
   return tops[i] + (w - i) * (tops[i + 1] - tops[i])
 }
+
+/** Index der letzten Section, deren Oberkante bei oder oberhalb von `y` liegt (0, wenn keine). */
+export function sceneIndexAt(y: number, tops: readonly number[]): number {
+  let i = 0
+  for (let k = 0; k < tops.length; k++) if (tops[k] <= y) i = k
+  return i
+}

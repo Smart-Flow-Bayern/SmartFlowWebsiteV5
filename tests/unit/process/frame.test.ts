@@ -127,6 +127,12 @@ describe('frame', () => {
     expect(frame(2, 0, mobile).nodes.every((n) => n.label === 1)).toBe(true)
     expect(frame(1.5, 0, desktop).nodes.every((n) => n.label === 1)).toBe(true)
   })
+  it('mobil blenden die Labels im Übergang 3→4 vor den Zonen aus, Desktop unverändert', () => {
+    expect(frame(3, 0, mobile).nodes.every((n) => n.label === 1)).toBe(true)
+    expect(frame(3.75, 0, mobile).nodes.every((n) => n.label === 0)).toBe(true)
+    expect(frame(3.75, 0, mobile).zones.every((z) => z > 0)).toBe(true)
+    expect(frame(3.75, 0, desktop).nodes.every((n) => n.label === 1)).toBe(true)
+  })
   it('EDGE_KEYS ist die Vereinigung aller Kanten in fester Reihenfolge', () => {
     expect(EDGE_KEYS.length).toBe(new Set(EDGE_KEYS).size)
     expect(frame(0, 0, desktop).edges.map((e) => `${e.a}-${e.b}`)).toEqual([...EDGE_KEYS])

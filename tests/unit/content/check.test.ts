@@ -8,7 +8,7 @@ function fixture(): SiteContent {
   return {
     locale: 'de',
     meta: { title: 'Titel', description: 'Beschreibung' },
-    nav: { labels, cta: 'Gespräch buchen', homeLabel: 'Start', scenesLabel: 'Abschnitte', progressLabel: 'Fortschritt' },
+    nav: { labels, cta: 'Gespräch buchen', homeLabel: 'Start', scenesLabel: 'Abschnitte', progressLabel: 'Fortschritt', skipLabel: 'Zum Inhalt springen' },
     claim: { text: 'Structure. Automation. Growth.', subtitle: 'Ordnung, Entlastung, Wachstum.' },
     scenes: {
       komplexitaet: { ...szene('01', 'Komplexität'), title: 'Wir räumen Abläufe auf.', scrollHint: 'Scrollen' },

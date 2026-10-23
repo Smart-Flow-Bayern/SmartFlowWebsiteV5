@@ -2,8 +2,8 @@ import { SITE_ORIGIN } from '@/lib/seo/site'
 import type { Metadata } from 'next'
 import { CONTENT } from '@/content'
 
-// Die Datei-Konvention app/opengraph-image.tsx greift nicht, weil das Layout in einer Route Group liegt
-// und app/ kein eigenes Root-Layout hat; das Bild wird deshalb explizit gesetzt.
+// Vorschaubild explizit gesetzt (stabile URL ohne Hash). Seit das Root-Layout in app/ liegt (eigene 404),
+// greift für Seiten ohne eigene openGraph-Angabe zusätzlich die Datei-Konvention app/opengraph-image.tsx.
 export function siteMetadata(): Metadata {
   const { meta } = CONTENT
   return {
