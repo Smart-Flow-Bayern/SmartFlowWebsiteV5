@@ -135,9 +135,28 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
     }
     window.addEventListener('resize', onResize)
 
+    // <html> trägt h-full: Lenis' eigener ResizeObserver auf <html> sieht wachsenden Inhalt nicht
+    // (z. B. Cal-Rahmen nach Klick), der Scrollweg bliebe am alten Ende stehen. Darum <body> beobachten.
+    let bodyTimer: ReturnType<typeof setTimeout> | undefined
+    let bodyHeight = document.body.offsetHeight
+    const bodyObserver =
+      typeof ResizeObserver === 'undefined'
+        ? undefined
+        : new ResizeObserver(() => {
+            clearTimeout(bodyTimer)
+            bodyTimer = setTimeout(() => {
+              if (document.body.offsetHeight === bodyHeight) return
+              bodyHeight = document.body.offsetHeight
+              remeasure()
+            }, 150)
+          })
+    bodyObserver?.observe(document.body)
+
     return () => {
       disposed = true
       clearTimeout(timer)
+      clearTimeout(bodyTimer)
+      bodyObserver?.disconnect()
       window.removeEventListener('resize', onResize)
       window.removeEventListener('hashchange', onHashChange)
       tops = []

@@ -1,30 +1,31 @@
-// Frame-Zeit-Messung mit echter GPU: Chromium headed, 3 s requestAnimationFrame, dabei in 10 Schritten
-// von Progress 0 bis 1 scrollen. Gibt Median und p95 der Frame-Dauer aus.
-// Aufruf: pnpm start -p 3006 (anderes Terminal), dann `pnpm measure:frames [baseUrl]`.
-// Ziel: p95 <= 33 ms (30 fps). Nicht Teil der e2e-Suite.
+// Frame-Zeit-Messung der SVG-Prozessgrafik gegen den Production-Server: Chromium headed (echte GPU und VSync),
+// 3 s requestAnimationFrame, dabei in 14 Schritten von oben bis ans Seitenende scrollen.
+// Gibt Median und p95 der Frame-Abstände je Gerät aus; Exit 1, wenn ein p95 über der Grenze liegt.
+// Aufruf: pnpm build && pnpm start -p 3006 (anderes Terminal), dann `pnpm measure:frames [baseUrl]`.
+// Nicht Teil der e2e-Suite.
 import { chromium, devices } from '@playwright/test'
 
 const BASE = process.argv[2] ?? process.env.BASE_URL ?? 'http://localhost:3006'
 const DURATION_MS = 3000
-const STEPS = 10
+const STEPS = 14
 
 const cases = [
-  { name: 'desktop 1440x900', context: { viewport: { width: 1440, height: 900 } } },
-  { name: 'mobil 390x844', context: { ...devices['iPhone 13'], viewport: { width: 390, height: 844 } } },
+  { name: 'desktop 1440x900', limitP95: 20, context: { viewport: { width: 1440, height: 900 } } },
+  { name: 'mobil iPhone 13', limitP95: 33, context: { ...devices['iPhone 13'] } },
 ] as const
 
 function percentile(sorted: number[], p: number): number {
   return sorted[Math.min(sorted.length - 1, Math.ceil(p * sorted.length) - 1)]
 }
 
+let failed = false
 const browser = await chromium.launch({ headless: false, args: ['--ignore-gpu-blocklist'] })
 for (const c of cases) {
   const context = await browser.newContext(c.context)
   const page = await context.newPage()
-  await page.goto(BASE, { waitUntil: 'load' })
-  await page.waitForSelector('canvas', { timeout: 30_000 })
-  // Produktion setzt window.__sf nicht; Modell- und Shader-Aufbau abwarten.
-  await page.waitForTimeout(4000)
+  await page.goto(BASE, { waitUntil: 'networkidle' })
+  await page.waitForSelector('svg.process-stage')
+  await page.evaluate(() => document.fonts.ready)
   const durations = await page.evaluate(
     ({ durationMs, steps }) =>
       new Promise<number[]>((resolve) => {
@@ -52,10 +53,13 @@ for (const c of cases) {
   const sorted = [...durations].sort((a, b) => a - b)
   const median = percentile(sorted, 0.5)
   const p95 = percentile(sorted, 0.95)
+  const ok = p95 <= c.limitP95
+  if (!ok) failed = true
   console.log(
     `${c.name}: frames=${durations.length} median=${median.toFixed(1)} ms p95=${p95.toFixed(1)} ms ` +
-      `max=${sorted[sorted.length - 1].toFixed(1)} ms ziel_p95<=33: ${p95 <= 33 ? 'erreicht' : 'verfehlt'}`,
+      `max=${sorted[sorted.length - 1].toFixed(1)} ms ziel_p95<=${c.limitP95}: ${ok ? 'erreicht' : 'verfehlt'}`,
   )
   await context.close()
 }
 await browser.close()
+process.exit(failed ? 1 : 0)

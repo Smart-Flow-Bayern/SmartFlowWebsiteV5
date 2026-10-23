@@ -537,10 +537,14 @@ h2 {
     padding-left: 10px;
   }
 
-  @media (max-width: 719px) {
+  /* Handy hoch und quer (z. B. 844×390): keine Fortschrittsanzeige. */
+  @media (max-width: 719px), (max-height: 500px) {
     .progress-nav {
       display: none;
     }
+  }
+
+  @media (max-width: 719px) {
 
     /* Zwei Zeilen: Marke und CTA oben, die Szenen-Links darunter einzeilig und seitlich scrollbar. */
     .nav-bar {
