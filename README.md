@@ -36,6 +36,14 @@ Platzhalter, die noch ersetzt werden müssen:
 - Akzentfarbe: eine CSS-Variable plus `colors.accent` in `lib/brand/tokens.ts`
 - Foto: `lib/brand/portrait.ts`
 
+## Offene Lieferungen
+
+Stand 2026-10-23, Details und Messwerte in `docs/rebranding-v2/07-uebergabe.md`.
+
+- Logo (endgültige Wortmarke), Foto für „Über“, Textkorrektur durch Leon
+- Production-Freigabe (nichts ist deployt)
+- Jury-Restpunkte: mobile Bühne im Fluss, Grafikpositionen Analyse und Wachstum, Standbilder je Szene bei reduzierter Bewegung, View Transition und gemeinsame Kopfzeile der Rechtsseiten, mobile Szenenleiste, breitere H1, ein Referenzbeispiel
+
 ## Hinweis
 
 Produktions-Deployment nur nach Freigabe.
