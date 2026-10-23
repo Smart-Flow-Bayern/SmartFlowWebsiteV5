@@ -326,11 +326,16 @@ h2 {
   .zone-label {
     font: calc(13px * var(--label-k, 1)) var(--font-mono);
     fill: var(--color-ink);
+    paint-order: stroke;
+    stroke: var(--stage-bg, var(--color-ground));
+    stroke-width: calc(4 * var(--label-k, 1));
+    stroke-linejoin: round;
   }
 
+  /* Mindestens 3 px Radius auf dem Bildschirm (--stroke-k), sonst der Layoutwert 3,5. */
   .packet {
     fill: var(--color-accent);
-    r: 3.5;
+    r: max(3.5px, calc(3px * var(--stroke-k, 1)));
   }
 
   @media (max-width: 719px) {
