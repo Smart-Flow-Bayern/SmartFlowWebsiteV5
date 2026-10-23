@@ -16,13 +16,13 @@ export function CalEmbed() {
         </div>
       ) : (
         <>
-          <button type="button" className="cal-button" onClick={() => setLoaded(true)}>
+          <button type="button" className="btn btn-ghost" onClick={() => setLoaded(true)}>
             {kontakt.calCta}
           </button>
-          <p className="station-text">{kontakt.calConsent}</p>
+          <p className="prose">{kontakt.calConsent}</p>
         </>
       )}
-      <a className="station-link" href={CONTACT.calUrl} target="_blank" rel="noopener noreferrer">
+      <a className="text-link" href={CONTACT.calUrl} target="_blank" rel="noopener noreferrer">
         {kontakt.calOpenNewTab}
       </a>
     </div>

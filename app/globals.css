@@ -215,6 +215,14 @@ h2 {
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
+    width: 100%;
+  }
+
+  .cal-embed {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
   }
 
   .site-footer {
@@ -236,7 +244,7 @@ h2 {
     gap: 8px;
   }
 
-  .contact-phone {
+  .text-link {
     align-self: flex-start;
     text-decoration: underline;
     text-underline-offset: 3px;
@@ -290,8 +298,8 @@ h2 {
   }
 
   @media (max-width: 389px) {
-    .contact-actions > .btn,
-    .contact-actions > .btn-ghost {
+    .contact-actions .btn,
+    .contact-actions .btn-ghost {
       width: 100%;
     }
   }
