@@ -1,6 +1,6 @@
 import { gzipSync } from 'node:zlib'
 import { describe, expect, it } from 'vitest'
-import { scriptsFromHtml, sumGzip } from '../../../scripts/check-budget.mjs'
+import { JS_LIMIT, scriptsFromHtml, sumGzip } from '../../../scripts/check-budget.mjs'
 
 describe('sumGzip', () => {
   it('summiert die gzip-Größen der Dateien', () => {
@@ -30,5 +30,11 @@ describe('scriptsFromHtml', () => {
       '<script src="/_next/static/chunks/a.js" async=""></script>' +
       '<script src="/_next/static/chunks/poly.js" noModule=""></script>'
     expect(scriptsFromHtml(html)).toEqual(['static/chunks/a.js'])
+  })
+})
+
+describe('Budget', () => {
+  it('JS_LIMIT ist 220_000', () => {
+    expect(JS_LIMIT).toBe(220_000)
   })
 })

@@ -13,13 +13,7 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: {
-        ...devices['Desktop Chrome'],
-        // WebGL im Headless-Modus
-        launchOptions: {
-          args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
-        },
-      },
+      use: { ...devices['Desktop Chrome'] },
     },
     { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
   ],

@@ -14,8 +14,6 @@
     "brand:svg": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/svg-text-to-path.mts",
     "content:legacy": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/extract-legacy-sentences.mts",
     "brand:icons": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/render-icons.mts",
-    "stations:render": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/render-stations.ts",
-    "model:export": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/export-model.mts",
     "budget": "node scripts/check-budget.mjs",
     "lighthouse": "lhci autorun",
     "lighthouse:desktop": "lhci autorun --config=./lighthouserc.desktop.cjs",
@@ -23,17 +21,13 @@
     "measure:frames": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/measure-frames.mts"
   },
   "dependencies": {
-    "@react-three/drei": "^10.7.9",
-    "@react-three/fiber": "^9.8.2",
     "gsap": "^3.15.0",
     "lenis": "^1.3.27",
     "next": "16.4.2",
     "react": "19.3.0",
-    "react-dom": "19.3.0",
-    "three": "^0.186.1"
+    "react-dom": "19.3.0"
   },
   "devDependencies": {
-    "@gltf-transform/cli": "^4.5.1",
     "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.64.1",
     "@tailwindcss/turbopack": "^4",
@@ -43,7 +37,6 @@
     "@types/opentype.js": "^1.3.10",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@types/three": "^0.186.0",
     "@vitejs/plugin-react": "^6.1.2",
     "eslint": "^9",
     "eslint-config-next": "16.4.2",
