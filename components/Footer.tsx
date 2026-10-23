@@ -6,14 +6,17 @@ import { useContent } from '@/components/content/ContentProvider'
 
 const noopSubscribe = () => () => {}
 
-/** Jahr erst auf dem Client lesen: new Date() im Prerender würde zur Build-Zeit eingefroren. */
-function useYear(): number | null {
-  return useSyncExternalStore(noopSubscribe, () => new Date().getFullYear(), () => null)
+/**
+ * Server und Hydration: `serverYear` (Build-Jahr aus dem Server-Render, siehe lib/build-year.ts), damit das Jahr auch ohne
+ * JavaScript dasteht. Danach das aktuelle Jahr des Clients (falls der Build aus dem Vorjahr stammt).
+ */
+function useYear(serverYear: number | undefined): number | undefined {
+  return useSyncExternalStore(noopSubscribe, () => new Date().getFullYear(), () => serverYear)
 }
 
-export function Footer() {
+export function Footer({ year: serverYear }: { year?: number }) {
   const content = useContent()
-  const year = useYear()
+  const year = useYear(serverYear)
   return (
     <footer className="site-footer">
       <address className="font-mono">
@@ -34,7 +37,7 @@ export function Footer() {
           </a>
         ))}
       </nav>
-      <p className="font-mono">© {year} Smart Flow</p>
+      <p className="font-mono">{year === undefined ? '© Smart Flow' : `© ${year} Smart Flow`}</p>
     </footer>
   )
 }

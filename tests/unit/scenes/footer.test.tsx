@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react'
+import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { ContentProvider } from '@/components/content/ContentProvider'
 import { Footer } from '@/components/Footer'
@@ -13,5 +14,9 @@ describe('Footer', () => {
     expect(screen.getAllByRole('link').filter((a) => /\.html$/.test(a.getAttribute('href') ?? ''))).toHaveLength(3)
     expect(screen.queryByText('English')).toBeNull()
     expect(document.querySelector('[hreflang]')).toBeNull()
+  })
+  it('rendert das Jahr schon im Server-Render (ohne JavaScript)', () => {
+    const html = renderToStaticMarkup(<ContentProvider content={de}><Footer year={2026} /></ContentProvider>)
+    expect(html).toContain('© 2026 Smart Flow')
   })
 })

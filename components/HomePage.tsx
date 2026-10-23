@@ -5,9 +5,11 @@ import { SiteNav } from '@/components/nav/SiteNav'
 import { Scenes } from '@/components/scenes/Scenes'
 import { ScrollProvider } from '@/components/scroll/ScrollProvider'
 import { CONTENT } from '@/content'
+import { buildYear } from '@/lib/build-year'
 
 /** Startseite: Navigation, Sticky-Bühne mit Prozessgrafik und Szenen im Scrollbereich main.story (ohne Pin), Footer. */
 export function HomePage() {
+  const year = buildYear()
   return (
     <>
       {/* Erster Tab-Stop: Sprung zum Inhalt, danach die Navigation. */}
@@ -18,11 +20,13 @@ export function HomePage() {
       <ProgressNav />
       <ScrollProvider>
         <main id="main" className="story" tabIndex={-1}>
+          {/* Ziel des Wortmarken-Links #start ohne JS (Seitenanfang); mit JS löst ScrollProvider #start als Szene 01 auf. */}
+          <div id="start" />
           <ProcessStage />
           <Scenes />
         </main>
       </ScrollProvider>
-      <Footer />
+      <Footer year={year} />
     </>
   )
 }

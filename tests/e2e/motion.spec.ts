@@ -74,5 +74,11 @@ test.describe('Ohne JavaScript', () => {
       await heading.scrollIntoViewIfNeeded()
       await expect(heading).toBeVisible()
     }
+
+    // Wortmarken-Link #start hat ein Ziel am Seitenanfang, die Fußzeile zeigt das Jahr ohne JS.
+    await page.locator('header a.nav-brand[href="#start"]').click()
+    await expect(page).toHaveURL(/#start$/)
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0)
+    await expect(page.locator('footer')).toContainText(/© \d{4} Smart Flow/)
   })
 })

@@ -4,6 +4,7 @@ import { Footer } from '@/components/Footer'
 import { Wordmark } from '@/components/brand/Wordmark'
 import { CONTENT } from '@/content'
 import { wordmarkVariant } from '@/lib/brand/tokens'
+import { buildYear } from '@/lib/build-year'
 
 // noindex setzt Next für die 404 selbst. Eigene openGraph-Angabe ersetzt die der Startseite (ohne og:url);
 // das Vorschaubild kommt hier aus der Datei-Konvention app/opengraph-image.tsx.
@@ -32,6 +33,7 @@ function BrokenChain() {
 
 /** 404 für alle unbekannten Adressen (Root-Layout liefert lang="de", Schriften und dunkles Thema). */
 export default function NotFound() {
+  const year = buildYear()
   return (
     <>
       <a className="skip-link" href="#main">
@@ -55,7 +57,7 @@ export default function NotFound() {
           Zurück zu Smart Flow
         </Link>
       </main>
-      <Footer />
+      <Footer year={year} />
     </>
   )
 }

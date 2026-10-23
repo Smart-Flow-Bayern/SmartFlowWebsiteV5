@@ -21,6 +21,8 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  // Jahr für die Fußzeile im Server-Render (lib/build-year.ts); zur Build-Zeit eingesetzt, Seite bleibt statisch.
+  env: { BUILD_YEAR: String(new Date().getFullYear()) },
   async headers() {
     const immutable = [
       { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
