@@ -22,6 +22,10 @@ export function Footer() {
         {CONTACT.street}
         <br />
         {CONTACT.zip} {CONTACT.city}
+        <br />
+        <a href={CONTACT.phoneHref}>{CONTACT.phone}</a>
+        <br />
+        <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
       </address>
       <nav aria-label={content.footer.legalLabel} className="font-mono">
         {content.footer.legal.map((l) => (

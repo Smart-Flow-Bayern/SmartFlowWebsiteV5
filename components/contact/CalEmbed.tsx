@@ -11,11 +11,9 @@ export function CalEmbed() {
   return (
     <div className="cal-embed">
       {loaded ? (
-        <iframe
-          className="cal-frame"
-          src={`${CONTACT.calUrl}?embed=true&theme=dark`}
-          title={kontakt.calTitle}
-        />
+        <div className="cal-frame" data-lenis-prevent>
+          <iframe src={`${CONTACT.calUrl}?embed=true&theme=dark`} title={kontakt.calTitle} />
+        </div>
       ) : (
         <>
           <button type="button" className="cal-button" onClick={() => setLoaded(true)}>

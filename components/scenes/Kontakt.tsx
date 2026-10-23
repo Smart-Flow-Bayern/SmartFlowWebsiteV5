@@ -20,6 +20,9 @@ export function Kontakt() {
         <a className="btn btn-ghost" href={`mailto:${CONTACT.email}`}>
           {s.emailCta}
         </a>
+        <a className="contact-phone" href={CONTACT.phoneHref}>
+          {CONTACT.phone}
+        </a>
       </div>
     </SceneSection>
   )
