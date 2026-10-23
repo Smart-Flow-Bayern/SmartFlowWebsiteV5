@@ -42,8 +42,9 @@ export const COLUMNS = {
 
 const indices = Array.from({ length: COUNT }, (_, i) => i)
 
-// Zustand 0: verstreut
-const S0: Point[] = indices.map((i) => [80 + seed(i, 1) * 840, 60 + seed(i, 2) * 480])
+// Zustand 0: verstreut, nur in x 350..870, damit die Knoten nach Verschiebung (+170) und Skalierung (0.8)
+// bei x ≥ 550 liegen und die große Überschrift links frei bleibt.
+const S0: Point[] = indices.map((i) => [350 + seed(i, 1) * 520, 60 + seed(i, 2) * 480])
 
 // Zustand 1: drei Gruppen
 const CENTERS = [[230, 300], [520, 300], [800, 300]] as const
@@ -74,8 +75,8 @@ const S4: Point[] = indices.map((i) => {
   return [500 + Math.cos(a) * 230, 300 + Math.sin(a) * 160]
 })
 
-// Zustand 5: Bündelung in einer Zeile
-const S5: Point[] = indices.map((i) => [500 + (i - 6.5) * 26, 470])
+// Zustand 5: Bündelung in einer zentrierten Zeile im unteren Band (unter dem Kontakttext)
+const S5: Point[] = indices.map((i) => [500 + (i - 6.5) * 26, 570])
 
 // Kanten je Zustand
 const E1: Edge[] = [[0, 1], [1, 10], [10, 13], [2, 3], [3, 4], [4, 5], [5, 11], [11, 2], [6, 7], [7, 8], [8, 9], [9, 12], [12, 6]]

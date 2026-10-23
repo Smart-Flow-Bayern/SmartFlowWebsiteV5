@@ -4,7 +4,7 @@ import { Kicker, SceneSection } from '@/components/scenes/SceneSection'
 export function Ueber() {
   const a = CONTENT.about
   return (
-    <SceneSection id="ueber" index={5} side="right">
+    <SceneSection id="ueber" index={5} side="left">
       {/* Platzhalter bis Task 7 (Portrait mit Foto oder Initialen im Knotenstil). */}
       <div className="portrait" aria-hidden>
         {a.initials}

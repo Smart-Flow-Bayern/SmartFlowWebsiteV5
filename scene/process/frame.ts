@@ -59,10 +59,20 @@ export function ease(t: number): number {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
 }
 
-export function edgePath(a: Point, b: Point, curved: boolean): string {
-  if (!curved) return `M${a[0]} ${a[1]}L${b[0]} ${b[1]}`
+/**
+ * Kontrollpunkte der Kante bei Kurvenfaktor `curve` (0 = gerade, 1 = volle Bezier):
+ * sie wandern waagerecht vom jeweiligen Endpunkt zur gemeinsamen Mitte mx.
+ */
+function controls(a: Point, b: Point, curve: number): [number, number] {
   const mx = (a[0] + b[0]) / 2
-  return `M${a[0]} ${a[1]}C${mx} ${a[1]} ${mx} ${b[1]} ${b[0]} ${b[1]}`
+  return [a[0] + (mx - a[0]) * curve, b[0] + (mx - b[0]) * curve]
+}
+
+/** SVG-Pfad der Kante; `curve` 0..1 blendet stetig von der Geraden zur Bezier-Kurve. */
+export function edgePath(a: Point, b: Point, curve: number): string {
+  if (curve <= 0) return `M${a[0]} ${a[1]}L${b[0]} ${b[1]}`
+  const [c1, c2] = controls(a, b, curve)
+  return `M${a[0]} ${a[1]}C${c1} ${a[1]} ${c2} ${b[1]} ${b[0]} ${b[1]}`
 }
 
 const bez = (p0: number, p1: number, p2: number, p3: number, t: number): number => {
@@ -70,10 +80,10 @@ const bez = (p0: number, p1: number, p2: number, p3: number, t: number): number 
   return u * u * u * p0 + 3 * u * u * t * p1 + 3 * u * t * t * p2 + t * t * t * p3
 }
 
-/** Punkt auf der kubischen Kurve von edgePath(a, b, true). */
-export function bezierPoint(a: Point, b: Point, u: number): Point {
-  const mx = (a[0] + b[0]) / 2
-  return [bez(a[0], mx, mx, b[0], u), bez(a[1], a[1], b[1], b[1], u)]
+/** Punkt bei Parameter u auf der Kurve von edgePath(a, b, curve). */
+export function bezierPoint(a: Point, b: Point, u: number, curve: number): Point {
+  const [c1, c2] = controls(a, b, curve)
+  return [bez(a[0], c1, c2, b[0], u), bez(a[1], a[1], b[1], b[1], u)]
 }
 
 // Vereinigung aller Kanten in Reihenfolge des ersten Auftretens über die Zustände 0..5.
@@ -120,7 +130,9 @@ export function frame(progress: number, time: number, opts: FrameOptions): Frame
   // Knoten
   const amp = time === 0 ? 0 : 1.2 + (state === 0 ? (1 - t) * 6 : 0)
   const r = state >= 4 ? NODE_RADIUS.compact : NODE_RADIUS.default
-  const label = state === 1 ? Math.min(1, 2 * t) : state === 2 || state === 3 ? 1 : 0
+  // Mobil stehen die Gruppen in Zustand 1 zu dicht für Labels: erst in der zweiten Hälfte von 1→2 einblenden.
+  const label =
+    state === 1 ? (opts.mobile ? clamp01(2 * t - 1) : Math.min(1, 2 * t)) : state === 2 || state === 3 ? 1 : 0
   const group = Math.floor(3 * t)
   const nodes: FrameNode[] = new Array(COUNT)
   for (let i = 0; i < COUNT; i++) {
@@ -145,6 +157,8 @@ export function frame(progress: number, time: number, opts: FrameOptions): Frame
   const inA = EDGE_IN[state], inB = EDGE_IN[next]
   const draws = !B.dashed && t > 0
   const strong = state >= 2
+  // Kantenform stetig zwischen gerade (0) und Bezier (1), kein Sprung an den Zustandsgrenzen.
+  const curve = lerp(A.curved ? 1 : 0, B.curved ? 1 : 0, t)
   const edges: FrameEdge[] = new Array(edgeList.length)
   for (let k = 0; k < edgeList.length; k++) {
     const [a, b] = edgeList[k]
@@ -161,7 +175,7 @@ export function frame(progress: number, time: number, opts: FrameOptions): Frame
     edges[k] = {
       a,
       b,
-      d: opacity > 0 ? edgePath([na.x, na.y], [nb.x, nb.y], A.curved) : '',
+      d: opacity > 0 ? edgePath([na.x, na.y], [nb.x, nb.y], curve) : '',
       opacity,
       drawn,
       dashed: ina && A.dashed,
@@ -177,12 +191,14 @@ export function frame(progress: number, time: number, opts: FrameOptions): Frame
     const [ea, eb] = PACKET_EDGES[(i * 2) % PACKET_EDGES.length]
     const u = (time * 0.35 + i / packetCount) % 1
     const na = nodes[ea], nb = nodes[eb]
-    const [x, y] = bezierPoint([na.x, na.y], [nb.x, nb.y], u)
+    const [x, y] = bezierPoint([na.x, na.y], [nb.x, nb.y], u, curve)
     packets[i] = { x, y, opacity: live }
   }
 
   // Zonen und Fragmente
-  const zones = ZONES.map((_, i) => (state === 4 ? clamp01(3 * t - i) : state === 5 ? 1 - t : 0))
+  // Zonen nur im Übergang 4→5: gestaffelt einblenden, im letzten Viertel ausblenden, in Zustand 5 aus.
+  const zonesOut = clamp01(4 * (1 - t))
+  const zones = ZONES.map((_, i) => (state === 4 ? Math.min(clamp01(3 * t - i), zonesOut) : 0))
   const fragments = state === 0 ? 1 - t : 0
 
   // Bühne

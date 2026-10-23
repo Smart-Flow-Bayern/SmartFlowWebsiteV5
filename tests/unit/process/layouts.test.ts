@@ -39,8 +39,20 @@ describe('LAYOUTS', () => {
     const xs = new Set(LAYOUTS[2].nodes.map(([x]) => x))
     expect([...xs].sort((a, b) => a - b)).toEqual([230, 430, 600, 770])
   })
-  it('Zustand 5 ist eine Zeile', () => {
-    expect(new Set(LAYOUTS[5].nodes.map(([, y]) => y)).size).toBe(1)
+  it('Zustand 5 ist eine zentrierte Zeile im unteren Band', () => {
+    const ys = new Set(LAYOUTS[5].nodes.map(([, y]) => y))
+    expect(ys.size).toBe(1)
+    expect([...ys][0]).toBeGreaterThanOrEqual(520)
+    const xs = LAYOUTS[5].nodes.map(([x]) => x)
+    expect((Math.min(...xs) + Math.max(...xs)) / 2).toBeCloseTo(500)
+  })
+  it('Zustand 0 liegt nach Verschiebung und Skalierung rechts (x ≥ 520), Text links bleibt frei', () => {
+    const { shift, scale } = LAYOUTS[0]
+    for (const [x] of LAYOUTS[0].nodes) {
+      const shown = 500 + shift + (x - 500) * scale
+      expect(shown).toBeGreaterThanOrEqual(520)
+      expect(shown).toBeLessThanOrEqual(VIEWBOX.width)
+    }
   })
   it('liefert 26 deterministische Fragmente und drei Nutzenfelder', () => {
     expect(FRAGMENTS).toHaveLength(26)
