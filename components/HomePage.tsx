@@ -1,10 +1,11 @@
 import { Footer } from '@/components/Footer'
+import { ProcessStage } from '@/components/process/ProcessStage'
 import { ProgressNav } from '@/components/nav/ProgressNav'
 import { SiteNav } from '@/components/nav/SiteNav'
 import { Scenes } from '@/components/scenes/Scenes'
 import { ScrollProvider } from '@/components/scroll/ScrollProvider'
 
-/** Startseite: Navigation, Szenen im Scrollbereich #story (ScrollTrigger ohne Pin), Footer. */
+/** Startseite: Navigation, Sticky-Bühne mit Prozessgrafik und Szenen im Scrollbereich #story (ohne Pin), Footer. */
 export function HomePage() {
   return (
     <>
@@ -13,6 +14,7 @@ export function HomePage() {
       <ProgressNav />
       <ScrollProvider>
         <main id="story" className="story">
+          <ProcessStage />
           <Scenes />
         </main>
       </ScrollProvider>

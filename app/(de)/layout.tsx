@@ -9,12 +9,18 @@ import "@/app/globals.css";
 
 const content = CONTENT;
 
+/** Läuft vor dem ersten Paint: Reduced Motion als Attribut, damit CSS die Bühne sofort statisch zeigt. */
+const MOTION_SCRIPT =
+  "if (matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.dataset.motion = 'reduced'";
+
 export const metadata: Metadata = siteMetadata();
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="de" className={`${fontClasses} h-full antialiased`}>
+    // suppressHydrationWarning: das Inline-Script setzt data-motion vor der Hydration.
+    <html lang="de" className={`${fontClasses} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full flex flex-col">
+        <script dangerouslySetInnerHTML={{ __html: MOTION_SCRIPT }} />
         <JsonLd data={buildSchema(content)} />
         <ContentProvider content={content}>{children}</ContentProvider>
       </body>

@@ -108,7 +108,11 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
       tops = measureTops()
       ScrollTrigger.refresh()
       lenis.resize()
-      lenis.scrollTo(scrollFromProgress(prev, tops), { immediate: true, force: true })
+      // Nur verschieben, wenn die aktuelle Position nicht schon denselben Fortschritt ergibt: Unter Reduced Motion
+      // steht die Bühne vor der ersten Szene, Fortschritt 0 gilt dort für den ganzen Bereich oberhalb von Szene 1.
+      if (progressFromTops(currentScroll(), tops) !== prev) {
+        lenis.scrollTo(scrollFromProgress(prev, tops), { immediate: true, force: true })
+      }
       update()
     }
     let disposed = false

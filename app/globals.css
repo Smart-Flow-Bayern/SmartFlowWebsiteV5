@@ -251,6 +251,124 @@ h2 {
     min-height: calc(7 * 100svh);
   }
 
+  /* Sticky-Bühne (Task 6): Grafik bleibt stehen, die Szenen laufen darüber.
+     padding-top hält die Grafik unter der festen Navigation (64 px, mobil 97 px). */
+  .stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    z-index: 0;
+    padding-top: 64px;
+    background: var(--stage-bg, var(--color-ground));
+  }
+
+  .process-stage {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .story > .scene:first-of-type {
+    margin-top: -100svh;
+  }
+
+  .story > .scene {
+    z-index: 1;
+  }
+
+  .node {
+    fill: var(--color-ground);
+    stroke: var(--color-node-stroke);
+    stroke-width: 1.2;
+  }
+
+  .node[data-active="true"] {
+    fill: var(--color-accent);
+    stroke: var(--color-accent);
+  }
+
+  /* pathLength = 1: Dash-Werte sind Anteile der Kante; gezogene Kanten nutzen 1 1 plus stroke-dashoffset. */
+  .edge {
+    fill: none;
+    stroke: var(--color-node-stroke);
+    stroke-width: 1;
+    stroke-dasharray: 1 1;
+  }
+
+  .edge[data-strong="true"] {
+    stroke-width: 1.2;
+  }
+
+  .edge[data-dashed="true"] {
+    stroke-dasharray: 0.02 0.04;
+  }
+
+  /* --label-k (vom Ticker gesetzt) gleicht die Skalierung der ViewBox aus: 13 px bzw. 12 px auf dem Bildschirm. */
+  /* Volle Deckkraft kommt aus dem opacity-Attribut (1 oder 0 je Zustand); eine CSS-opacity würde es überschreiben. */
+  .label {
+    font: calc(13px * var(--label-k, 1)) var(--font-mono);
+    fill: var(--color-ink);
+  }
+
+  .frag {
+    stroke: var(--color-line);
+  }
+
+  .zone {
+    fill: none;
+    stroke: var(--color-line);
+    stroke-width: 1;
+  }
+
+  .zone-label {
+    font: calc(13px * var(--label-k, 1)) var(--font-mono);
+    fill: var(--color-ink);
+  }
+
+  .packet {
+    fill: var(--color-accent);
+    r: 3.5;
+  }
+
+  @media (max-width: 719px) {
+    .stage {
+      height: 52svh;
+      padding-top: 97px;
+    }
+
+    .story > .scene:first-of-type {
+      margin-top: -52svh;
+    }
+
+    .label {
+      font-size: calc(12px * var(--label-k, 1));
+    }
+  }
+
+  /* Reduced Motion: Standbild im Fluss über den Szenen, keine Überlagerung.
+     Abstand zur Navigation als margin, damit die Grafik das volle Seitenverhältnis behält. */
+  html[data-motion="reduced"] .stage {
+    position: static;
+    height: auto;
+    aspect-ratio: 1000 / 600;
+    padding-top: 0;
+    margin-top: 64px;
+  }
+
+  html[data-motion="reduced"] .story > .scene:first-of-type {
+    margin-top: 0;
+  }
+
+  @media (max-width: 719px) {
+    html[data-motion="reduced"] .stage {
+      margin-top: 97px;
+    }
+
+    html[data-motion="reduced"] .story > .scene {
+      padding-top: 64px;
+    }
+  }
+
   .nav-bar {
     position: fixed;
     inset: 0 0 auto;
