@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="de" data-dir="a">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Flow Rebranding V2 – drei Richtungen, eine Prozessgeschichte</title>
+<style>
+  @font-face { font-family: "Schibsted Grotesk"; src: url("../../../public/fonts/schibsted-grotesk-latin-wght.woff2") format("woff2"); font-weight: 400 900; font-display: swap; }
+  @font-face { font-family: "JetBrains Mono"; src: url("../../../public/fonts/jetbrains-mono-latin-wght.woff2") format("woff2"); font-weight: 100 800; font-display: swap; }
+  /* ---------- Richtung A: Signal (dunkel, ein Akzent, Mono-Labels) ---------- */
+  :root, [data-dir="a"] {
+    --ground: #050607; --ground-end: #15181b; --ink: #f4f6f5; --muted: #8a9797;
+    --line: rgba(244,246,245,.14); --accent: #ddff4d; --accent-ink: #050607;
+    --node: #1c2024; --node-stroke: #3a4146; --packet: #ddff4d;
+    --font-display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+    --font-text: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --radius: 2px; --edge-dash: 0; --node-shape: 1;
+  }
+  /* ---------- Richtung B: Plan (hell, Papier, Tusche, ein Signalrot) ---------- */
+  [data-dir="b"] {
+    --ground: #f3f1ec; --ground-end: #ffffff; --ink: #121212; --muted: #5f5f5a;
+    --line: rgba(18,18,18,.16); --accent: #e3461c; --accent-ink: #ffffff;
+    --node: #ffffff; --node-stroke: #121212; --packet: #e3461c;
+    --font-display: "Schibsted Grotesk", Georgia, serif;
+    --font-text: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    --radius: 0px; --edge-dash: 1; --node-shape: 0;
+  }
+  /* ---------- Richtung C: Tiefe (dunkelblau, monochrom, warmes Licht) ---------- */
+  [data-dir="c"] {
+    --ground: #0a0f1a; --ground-end: #1b2436; --ink: #e8ecf2; --muted: #8a94a6;
+    --line: rgba(232,236,242,.12); --accent: #ffb454; --accent-ink: #0a0f1a;
+    --node: #16203a; --node-stroke: #3a4a6e; --packet: #ffd79a;
+    --font-display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+    --font-text: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    --radius: 999px; --edge-dash: 0; --node-shape: 2;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: auto; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: var(--font-text); font-size: 17px; line-height: 1.5;
+    transition: color .6s;
+  }
+  ::selection { background: var(--accent); color: var(--accent-ink); }
+  a { color: inherit; }
+
+  /* Umschalter für die Richtungen (nur für die Vorschau) */
+  .switch {
+    position: fixed; top: 14px; left: 50%; translate: -50% 0; z-index: 50;
+    display: flex; gap: 4px; padding: 4px; border: 1px solid var(--line);
+    background: color-mix(in srgb, var(--ground) 85%, transparent); backdrop-filter: blur(8px);
+    font: 500 12px/1 var(--font-mono); letter-spacing: .04em;
+  }
+  .switch button {
+    border: 0; background: transparent; color: var(--muted); padding: 8px 12px; cursor: pointer;
+    font: inherit; border-radius: var(--radius);
+  }
+  .switch button[aria-pressed="true"] { background: var(--ink); color: var(--ground); }
+
+  /* Rahmen: Wortmarke links, Stationen Mitte, CTA rechts */
+  .frame {
+    position: fixed; inset: 0 0 auto 0; z-index: 40; display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 24px; pointer-events: none; mix-blend-mode: normal;
+  }
+  .frame > * { pointer-events: auto; }
+  .wordmark { font: 600 15px/1 var(--font-mono); letter-spacing: -.02em; text-decoration: none; }
+  .wordmark b { color: var(--accent); font-weight: 600; }
+  .cta {
+    font: 600 13px/1 var(--font-mono); padding: 11px 16px; border: 1px solid var(--ink);
+    background: transparent; color: var(--ink); border-radius: var(--radius); text-decoration: none;
+    transition: background .25s, color .25s;
+  }
+  .cta:hover, .cta:focus-visible { background: var(--ink); color: var(--ground); outline: none; }
+
+  /* Fortschrittsleiste: sechs Zustände als Punkte links unten */
+  .progress {
+    position: fixed; left: 24px; bottom: 22px; z-index: 40; display: grid; gap: 10px;
+    font: 500 11px/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted);
+  }
+  .progress li { list-style: none; display: flex; gap: 10px; align-items: center; transition: color .3s; }
+  .progress i { width: 18px; height: 1px; background: var(--line); display: block; transition: background .3s, width .3s; }
+  .progress li.on { color: var(--ink); }
+  .progress li.on i { background: var(--accent); width: 34px; }
+  .progress ul { margin: 0; padding: 0; display: grid; gap: 8px; }
+
+  /* Die Bühne: sticky SVG, darüber die Texte je Szene */
+  .story { position: relative; }
+  .stage { position: sticky; top: 0; height: 100svh; overflow: clip; }
+  .stage svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .scenes { position: relative; margin-top: -100svh; }
+  .scene {
+    position: relative; min-height: 100svh; display: grid; align-content: center;
+    padding: 0 24px; max-width: 1200px; margin: 0 auto; pointer-events: none;
+  }
+  .scene > div { max-width: 480px; pointer-events: auto; }
+  .scene[data-side="right"] > div { margin-left: auto; }
+  .scene[data-side="center"] { text-align: center; }
+  .scene[data-side="center"] > div { margin: 0 auto; max-width: 700px; }
+  .kicker { font: 500 12px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 14px; }
+  .kicker b { color: var(--accent); font-weight: 500; }
+  h1, h2 { font-family: var(--font-display); font-weight: 700; letter-spacing: -.03em; line-height: .98; margin: 0 0 18px; text-wrap: balance; }
+  h1 { font-size: clamp(44px, 8.5vw, 112px); }
+  h2 { font-size: clamp(34px, 5vw, 64px); }
+  p { margin: 0; color: var(--ink); }
+  .lead { font-size: clamp(17px, 1.6vw, 21px); max-width: 44ch; }
+  .muted { color: var(--muted); }
+  .hero .claim { font: 500 13px/1.3 var(--font-mono); letter-spacing: .04em; margin-top: 26px; color: var(--muted); }
+  .hero .claim b { color: var(--ink); font-weight: 600; }
+  .hint { position: absolute; bottom: 26px; left: 50%; translate: -50% 0; font: 500 11px/1 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+
+  .list { display: grid; gap: 10px; margin: 20px 0 0; padding: 0; list-style: none; }
+  .list li { display: grid; grid-template-columns: 22px 1fr; gap: 12px; align-items: baseline; }
+  .list span { font: 600 12px/1.6 var(--font-mono); color: var(--accent); }
+
+  .fields { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); margin-top: 22px; }
+  .fields div { background: var(--ground); padding: 14px 14px 16px; }
+  .fields strong { display: block; font: 600 12px/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; }
+  .fields p { font-size: 14px; color: var(--muted); }
+
+  .contact { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 28px; }
+  .btn { font: 600 14px/1 var(--font-mono); padding: 15px 20px; background: var(--accent); color: var(--accent-ink); border-radius: var(--radius); text-decoration: none; border: 1px solid var(--accent); }
+  .btn.ghost { background: transparent; color: var(--ink); border-color: var(--ink); }
+
+  /* Fußzeile, damit die Szene nicht im Nichts endet */
+  footer { padding: 60px 24px 40px; max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 24px 40px; justify-content: space-between; font: 400 13px/1.6 var(--font-mono); color: var(--muted); border-top: 1px solid var(--line); }
+
+  /* Farben der SVG-Grafik hängen am selben Token-Satz */
+  .n { fill: var(--node); stroke: var(--node-stroke); stroke-width: 1.5; vector-effect: non-scaling-stroke; transition: fill .4s, stroke .4s; }
+  .n.active { fill: var(--accent); stroke: var(--accent); }
+  .e { fill: none; stroke: var(--ink); stroke-width: 1.2; stroke-opacity: .35; vector-effect: non-scaling-stroke; }
+  .e.strong { stroke-opacity: .7; stroke-width: 1.6; }
+  .e.dashed { stroke-dasharray: 4 5; }
+  .lbl { font: 500 11px var(--font-mono); fill: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+  .pk { fill: var(--packet); }
+  .zone { fill: none; stroke: var(--accent); stroke-opacity: .45; stroke-width: 1; stroke-dasharray: 2 4; vector-effect: non-scaling-stroke; }
+  .frag { stroke: var(--muted); stroke-opacity: .5; stroke-width: 1; vector-effect: non-scaling-stroke; }
+  [data-dir="b"] .e { stroke-opacity: .55; }
+  [data-dir="c"] .n { filter: drop-shadow(0 0 6px rgba(255,180,84,.0)); }
+  [data-dir="c"] .n.active { filter: drop-shadow(0 0 10px rgba(255,180,84,.55)); }
+
+  @media (max-width: 720px) {
+    .frame { padding: 14px 16px; background: linear-gradient(var(--ground), color-mix(in srgb, var(--ground) 0%, transparent)); }
+    .stage svg { height: 52svh; top: 8svh; }
+    .scene { padding: 0 16px 72px; align-content: end; }
+    .scene > div { max-width: 100%; }
+    .scene[data-side="center"] > div { margin: 0; text-align: left; }
+    .contact { justify-content: flex-start; }
+    .fields { grid-template-columns: 1fr; }
+    .progress { display: none; }
+    .switch { top: auto; bottom: 12px; }
+    h1 { font-size: clamp(36px, 11vw, 56px); }
+    h2 { font-size: clamp(28px, 8vw, 40px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .stage { position: relative; height: 60svh; }
+    .scene { min-height: auto; padding-block: 48px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="switch" role="group" aria-label="Richtung wählen">
+  <button type="button" data-set="a" aria-pressed="true">A Signal</button>
+  <button type="button" data-set="b" aria-pressed="false">B Plan</button>
+  <button type="button" data-set="c" aria-pressed="false">C Tiefe</button>
+</div>
+
+<header class="frame">
+  <a class="wordmark" href="#">smart<b>_</b>flow</a>
+  <a class="cta" href="#kontakt">Erstgespräch</a>
+</header>
+
+<nav class="progress" aria-label="Fortschritt">
+  <ul>
+    <li data-i="0"><i></i>01 Komplexität</li>
+    <li data-i="1"><i></i>02 Analyse</li>
+    <li data-i="2"><i></i>03 Struktur</li>
+    <li data-i="3"><i></i>04 Automatisierung</li>
+    <li data-i="4"><i></i>05 Wachstum</li>
+    <li data-i="5"><i></i>06 Kontakt</li>
+  </ul>
+</nav>
+
+<main class="story" id="story">
+  <div class="stage" aria-hidden="true">
+    <svg id="viz" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet"><g id="root"></g></svg>
+  </div>
+
+  <div class="scenes">
+  <section class="scene hero" data-side="left" data-i="0">
+    <div>
+      <p class="kicker"><b>01</b> Komplexität</p>
+      <h1>Zu viele Zettel. Zu viele Programme. Zu wenig Tag.</h1>
+      <p class="lead">Jede Woche kommt ein neues Werkzeug dazu. Ihr Betrieb soll trotzdem einfach laufen.</p>
+      <p class="claim"><b>Structure. Automation. Growth.</b><br>Wir verwandeln Komplexität in Abläufe, die von allein laufen.</p>
+    </div>
+    <span class="hint">Scrollen</span>
+  </section>
+
+  <section class="scene" data-side="right" data-i="1">
+    <div>
+      <p class="kicker"><b>02</b> Analyse</p>
+      <h2>Erst verstehen, dann ändern.</h2>
+      <p class="lead">Wir gehen Ihren Arbeitstag mit den Leuten durch, die ihn machen. Dabei wird sichtbar, was zusammengehört und wo es hakt.</p>
+    </div>
+  </section>
+
+  <section class="scene" data-side="left" data-i="2">
+    <div>
+      <p class="kicker"><b>03</b> Struktur</p>
+      <h2>Ein Ablauf, den jeder im Betrieb lesen kann.</h2>
+      <p class="lead">Aus den Teilen wird eine Reihenfolge: Was kommt rein, was passiert damit, wer entscheidet, was geht raus.</p>
+      <ul class="list">
+        <li><span>01</span>Auftrag wird einmal erfasst, nicht dreimal abgetippt.</li>
+        <li><span>02</span>Anfragen kommen an einer Stelle an.</li>
+        <li><span>03</span>Jeder weiß, wer dran ist.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="scene" data-side="right" data-i="3">
+    <div>
+      <p class="kicker"><b>04</b> Automatisierung</p>
+      <h2>Manches muss niemand mehr anfassen.</h2>
+      <p class="lead">Rechnung raus, sobald der Auftrag fertig ist. Termin bestätigt, bevor jemand anruft. Angebot nachgefasst, ohne dass jemand daran denken muss.</p>
+    </div>
+  </section>
+
+  <section class="scene" data-side="left" data-i="4">
+    <div>
+      <p class="kicker"><b>05</b> Wachstum</p>
+      <h2>Was läuft, macht Platz für das Nächste.</h2>
+      <p class="lead">Ein Ablauf, der sich im Alltag bewährt hat, bleibt stabil, wenn mehr Aufträge kommen. Ohne Zahlen, die wir nicht belegen können.</p>
+      <div class="fields">
+        <div><strong>Effizienz</strong><p>Weniger Handgriffe für dieselbe Arbeit.</p></div>
+        <div><strong>Skalierbarkeit</strong><p>Mehr Aufträge, gleiche Mannschaft.</p></div>
+        <div><strong>Produktivität</strong><p>Zeit für die Arbeit, für die Sie bezahlt werden.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" data-side="center" data-i="5" id="kontakt">
+    <div>
+      <p class="kicker"><b>06</b> Kontakt</p>
+      <h2>Structure. Automation. Growth.<br>Reden wir über Ihren Betrieb.</h2>
+      <p class="lead">Erzählen Sie, wo es bei Ihnen hakt. Sie hören danach klar, ob wir helfen können und womit wir anfangen würden.</p>
+      <div class="contact">
+        <a class="btn" href="#">Termin wählen</a>
+        <a class="btn ghost" href="#">info@smartflow.bayern</a>
+      </div>
+    </div>
+  </section>
+  </div>
+</main>
+
+<footer>
+  <span>Smart Flow · Arnulfsplatz 2 · 93047 Regensburg</span>
+  <span>Impressum · Datenschutz · AGB · English</span>
+</footer>
+
+<script>
+/* Vorschau-Logik. Eine Variable (Scrollfortschritt 0..5) steuert alles: Knoten, Kanten, Pakete, Hintergrund, Navigation. */
+(() => {
+  const svg = document.getElementById('viz');
+  const NS = 'http://www.w3.org/2000/svg';
+  const html = document.documentElement;
+
+  // Umschalter
+  document.querySelectorAll('.switch button').forEach(b => b.addEventListener('click', () => {
+    html.dataset.dir = b.dataset.set;
+    document.querySelectorAll('.switch button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    render(progress, true);
+  }));
+  addEventListener('keydown', e => { const m = { '1': 'a', '2': 'b', '3': 'c' }[e.key]; if (m) document.querySelector(`[data-set="${m}"]`).click(); });
+
+  // 14 Knoten: Bezeichnung aus dem Betriebsalltag, Positionen je Zustand (viewBox 1000x600)
+  const names = ['Anfrage','Angebot','Auftrag','Termin','Material','Einsatz','Stunden','Rechnung','Zahlung','Nachfass','Kunde','Team','Ablage','Rückfrage'];
+  const seed = (i, k) => { const x = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453; return x - Math.floor(x); };
+  const rnd = (i, k) => seed(i, k);
+
+  // Zustand 0: verstreut
+  const S0 = names.map((_, i) => [80 + rnd(i,1) * 840, 60 + rnd(i,2) * 480]);
+  // Zustand 1: drei Gruppen (Eingang, Arbeit, Abschluss)
+  const groups = [[0,1,10,13],[2,3,4,5,11],[6,7,8,9,12]];
+  const centers = [[230,300],[520,300],[800,300]];
+  const S1 = names.map(() => [0,0]);
+  groups.forEach((g, gi) => g.forEach((n, j) => { const a = j / g.length * Math.PI * 2; const r = 60 + (j % 2) * 30; S1[n] = [centers[gi][0] + Math.cos(a) * r, centers[gi][1] + Math.sin(a) * r * .8]; }));
+  // Zustand 2: Prozessarchitektur Eingang → Bearbeitung → Entscheidung → Ausgang
+  const S2 = names.map(() => [0,0]);
+  const col = (ids, x) => ids.forEach((n, j) => S2[n] = [x, 300 + (j - (ids.length - 1) / 2) * 90]);
+  col([0,10,13], 230); col([1,2,3,4,5,11], 430); col([12], 600); col([6,7,8,9], 770);
+  // Zustand 3: wie 2 (Pakete laufen)
+  const S3 = S2.map(p => [...p]);
+  // Zustand 4: verdichteter Kreislauf
+  const S4 = names.map((_, i) => { const a = i / names.length * Math.PI * 2 - Math.PI / 2; return [500 + Math.cos(a) * 230, 300 + Math.sin(a) * 160]; });
+  // Zustand 5: Bündelung unter dem Claim, eine Leitung zum CTA
+  const S5 = names.map((_, i) => [500 + (i - 6.5) * 26, 470]);
+  const states = [S0, S1, S2, S3, S4, S5];
+
+  // Kanten je Zustand
+  const E1 = [[0,1],[1,10],[10,13],[2,3],[3,4],[4,5],[5,11],[11,2],[6,7],[7,8],[8,9],[9,12],[12,6]];
+  const E2 = [[0,1],[10,1],[13,1],[1,2],[2,3],[2,4],[3,5],[4,5],[11,5],[5,12],[12,6],[12,7],[7,8],[8,9],[6,7]];
+  const E4 = names.map((_, i) => [i, (i + 1) % names.length]).concat([[0,7],[2,9],[4,11]]);
+  const E5 = names.slice(0, -1).map((_, i) => [i, i + 1]);
+  const edges = [[], E1, E2, E2, E4, E5];
+  const dashed = [false, true, false, false, false, false];
+
+  // Elemente einmal anlegen
+  const root = document.getElementById('root');
+  const gEdges = el('g'), gZones = el('g'), gNodes = el('g'), gLabels = el('g'), gPk = el('g'), gFrag = el('g');
+  root.append(gFrag, gZones, gEdges, gPk, gNodes, gLabels);
+  // Die Grafik weicht dem Text aus: Text links → Grafik nach rechts, und umgekehrt (Desktop)
+  const shift = [170, -190, 290, -290, 190, 0];
+  const scales = [.8, .8, .58, .58, .8, .8];
+  const edgeKey = (a, b) => a < b ? `${a}-${b}` : `${b}-${a}`;
+  const edgeEls = new Map();
+  edges.flat().forEach(([a, b]) => { const k = edgeKey(a, b); if (!edgeEls.has(k)) { const p = el('path', { class: 'e' }); gEdges.append(p); edgeEls.set(k, p); } });
+  const nodeEls = names.map((n, i) => { const g = el('g'); const shape = el('path', { class: 'n' }); g.append(shape); gNodes.append(g); return { g, shape }; });
+  const labelEls = names.map(n => { const t = el('text', { class: 'lbl' }); t.textContent = n; gLabels.append(t); return t; });
+  const frags = Array.from({ length: 26 }, (_, i) => { const l = el('line', { class: 'frag' }); gFrag.append(l); return { l, x: rnd(i, 7) * 1000, y: rnd(i, 8) * 600, a: rnd(i, 9) * Math.PI, len: 10 + rnd(i, 10) * 30 }; });
+  const zones = [['Effizienz', 500, 300, 300, 200], ['Skalierbarkeit', 500, 300, 380, 260], ['Produktivität', 500, 300, 460, 320]].map(([n, x, y, rx, ry]) => { const e = el('ellipse', { class: 'zone', cx: x, cy: y, rx, ry }); gZones.append(e); return e; });
+  const packets = Array.from({ length: 9 }, () => { const c = el('circle', { class: 'pk', r: 3.5 }); gPk.append(c); return c; });
+
+  function el(tag, attrs = {}) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; }
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+  function nodePath(x, y, r, shape) {
+    if (shape === 0) return `M${x - r} ${y - r}h${2 * r}v${2 * r}h${-2 * r}z`;            // Plan: Quadrat
+    if (shape === 2) return `M${x} ${y}m${-r} 0a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0`; // Tiefe: Kreis
+    return `M${x} ${y - r}l${r} ${r}l${-r} ${r}l${-r} ${-r}z`;                                  // Signal: Raute (Chip)
+  }
+
+  let progress = 0, time = 0, idle = 0;
+  function render(p, force) {
+    const s = clamp(Math.floor(p), 0, 5), nxt = Math.min(s + 1, 5), t = ease(clamp(p - s, 0, 1));
+    const shape = +getComputedStyle(html).getPropertyValue('--node-shape');
+    const A = states[s], B = states[nxt];
+    const dx = innerWidth > 720 ? lerp(shift[s], shift[nxt], t) : 0;
+    const scale = innerWidth > 720 ? lerp(scales[s], scales[nxt], t) : 1;
+    root.setAttribute('transform', `translate(${500 + dx} 300) scale(${scale}) translate(-500 -300)`);
+    // Hintergrund hellt von Anfang bis Ende auf
+    document.body.style.background = `color-mix(in srgb, var(--ground) ${100 - p * 14}%, var(--ground-end))`;
+    // Knoten
+    names.forEach((n, i) => {
+      const jitter = s === 0 ? (1 - t) * 6 : 0;
+      const x = lerp(A[i][0], B[i][0], t) + Math.sin(idle * .7 + i) * (jitter + 1.2);
+      const y = lerp(A[i][1], B[i][1], t) + Math.cos(idle * .5 + i * 1.3) * (jitter + 1.2);
+      const r = s >= 4 ? 7 : 9;
+      nodeEls[i].shape.setAttribute('d', nodePath(x, y, r, shape));
+      const active = (s === 3 && Math.floor(time * 2 + i) % 7 === 0) || (s === 5 && t > .5) || (s === 1 && groups.some((g, gi) => g.includes(i) && Math.floor(t * 3) === gi));
+      nodeEls[i].shape.classList.toggle('active', active);
+      const showLabel = s >= 1 && s <= 3 ? Math.min(1, s === 1 ? t * 2 : 1) : (s === 4 ? 0 : 0);
+      labelEls[i].setAttribute('x', x + 14); labelEls[i].setAttribute('y', y + 4); labelEls[i].setAttribute('opacity', showLabel);
+    });
+    // Kanten: sichtbar, wenn im aktuellen oder nächsten Zustand enthalten
+    const inA = new Set(edges[s].map(([a, b]) => edgeKey(a, b))), inB = new Set(edges[nxt].map(([a, b]) => edgeKey(a, b)));
+    edgeEls.forEach((pathEl, k) => {
+      const [a, b] = k.split('-').map(Number);
+      const o = inA.has(k) && inB.has(k) ? 1 : inA.has(k) ? 1 - t : inB.has(k) ? t : 0;
+      if (o <= 0) { pathEl.setAttribute('opacity', 0); return; }
+      const ax = +nodeEls[a].shape.getAttribute('d').split(/[M ]/)[1], ay = +nodeEls[a].shape.getAttribute('d').split(' ')[1].split(/[lhma]/)[0];
+      const pa = center(a), pb = center(b);
+      const mx = (pa[0] + pb[0]) / 2;
+      const d = s >= 2 && s <= 3 ? `M${pa[0]} ${pa[1]}C${mx} ${pa[1]} ${mx} ${pb[1]} ${pb[0]} ${pb[1]}` : `M${pa[0]} ${pa[1]}L${pb[0]} ${pb[1]}`;
+      pathEl.setAttribute('d', d); pathEl.setAttribute('opacity', o);
+      pathEl.classList.toggle('dashed', dashed[s] && +getComputedStyle(html).getPropertyValue('--edge-dash') >= 0);
+      pathEl.classList.toggle('strong', s >= 2);
+    });
+    // Fragmente nur in Komplexität
+    frags.forEach((f, i) => { const o = s === 0 ? 1 - t : 0; const x = f.x + Math.sin(idle * .4 + i) * 8, y = f.y + Math.cos(idle * .3 + i) * 8; f.l.setAttribute('x1', x); f.l.setAttribute('y1', y); f.l.setAttribute('x2', x + Math.cos(f.a) * f.len); f.l.setAttribute('y2', y + Math.sin(f.a) * f.len); f.l.setAttribute('opacity', o * .8); });
+    // Nutzenfelder in Wachstum
+    zones.forEach((z, i) => z.setAttribute('opacity', s === 4 ? clamp(t * 3 - i, 0, 1) * (1 - 0) : s === 5 ? 1 - t : 0));
+    // Pakete in Automatisierung (und auslaufend in Wachstum)
+    const live = s === 3 ? 1 : s === 4 ? 1 - t : s === 2 ? t : 0;
+    packets.forEach((c, i) => {
+      if (live <= 0) { c.setAttribute('opacity', 0); return; }
+      const list = edges[3]; const e = list[(i * 2) % list.length];
+      const u = (time * .35 + i / packets.length) % 1; const pa = center(e[0]), pb = center(e[1]); const mx = (pa[0] + pb[0]) / 2;
+      // Punkt auf der kubischen Kurve
+      const bx = bez(pa[0], mx, mx, pb[0], u), by = bez(pa[1], pa[1], pb[1], pb[1], u);
+      c.setAttribute('cx', bx); c.setAttribute('cy', by); c.setAttribute('opacity', live);
+    });
+    // Navigation
+    document.querySelectorAll('.progress li').forEach(li => li.classList.toggle('on', +li.dataset.i === Math.round(p)));
+  }
+  function center(i) { const d = nodeEls[i].shape.getAttribute('d'); const m = d.match(/M(-?[\d.]+) (-?[\d.]+)/); const shape = +getComputedStyle(html).getPropertyValue('--node-shape'); const r = progress >= 4 ? 7 : 9; const x = +m[1], y = +m[2]; return shape === 0 ? [x + r, y + r] : shape === 2 ? [x, y] : [x, y + r]; }
+  const bez = (p0, p1, p2, p3, t) => { const u = 1 - t; return u*u*u*p0 + 3*u*u*t*p1 + 3*u*t*t*p2 + t*t*t*p3; };
+
+  // Scrollfortschritt 0..5 über die sechs Szenen
+  const story = document.getElementById('story');
+  function readScroll() {
+    const rect = story.getBoundingClientRect(); const total = story.offsetHeight - innerHeight;
+    return clamp((-rect.top) / total * 5, 0, 5);
+  }
+  // Erster Frame: Startzustand sofort zeichnen, nicht erst nach dem Nachziehen
+  progress = readScroll();
+  let target = 0;
+  function tick(now) {
+    time = now / 1000; idle = time;
+    target = readScroll();
+    progress += (target - progress) * .12;      // weiches Nachziehen
+    render(progress);
+    requestAnimationFrame(tick);
+  }
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    // Reduced Motion: Standbild Zustand 2 (lesbare Struktur), keine Pakete
+    progress = 2; render(2, true);
+  } else requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
