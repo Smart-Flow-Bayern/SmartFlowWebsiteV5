@@ -1,6 +1,6 @@
 # Smart Flow Website V5
 
-Neue Unternehmenswebsite von Smart Flow (smartflow.bayern): eine Scroll-Fahrt durch eine 3D-Szene, alle Texte als echtes HTML, Deutsch mit englischer Fassung unter `/en`.
+Neue Unternehmenswebsite von Smart Flow (smartflow.bayern): eine Scroll-Fahrt durch eine 3D-Szene, alle Texte als echtes HTML, nur Deutsch (`/en` leitet dauerhaft auf die Startseite).
 
 ## Stack
 
