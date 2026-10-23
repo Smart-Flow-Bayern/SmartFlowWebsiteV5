@@ -356,13 +356,22 @@ h2 {
       display: none;
     }
 
+    /* Zwei Zeilen: Marke und CTA oben, die Szenen-Links darunter einzeilig und seitlich scrollbar. */
     .nav-bar {
-      gap: 8px;
-      padding: 0 16px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      column-gap: 8px;
+      row-gap: 0;
+      height: auto;
+      padding: 8px 16px 0;
     }
 
     .nav-scenes {
+      order: 3;
+      flex-basis: 100%;
       justify-content: flex-start;
+      margin: 0 -16px;
+      padding: 0 8px;
     }
 
     .nav-scene {
@@ -370,7 +379,13 @@ h2 {
     }
   }
 
+  /* Marke und CTA müssen bis 320 px nebeneinander passen. */
   @media (max-width: 389px) {
+    .nav-brand svg {
+      width: 128px;
+      height: auto;
+    }
+
     .nav-cta {
       padding: 0 12px;
     }
