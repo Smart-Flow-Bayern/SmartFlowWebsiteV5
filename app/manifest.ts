@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next'
+import { colors } from '@/lib/brand/tokens'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
@@ -6,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: 'Smart Flow',
     start_url: '/',
     display: 'standalone',
-    background_color: '#050607',
-    theme_color: '#050607',
+    background_color: colors.ground,
+    theme_color: colors.ground,
     icons: [
       { src: '/icon.svg', sizes: 'any', type: 'image/svg+xml' },
       { src: '/apple-icon.png', sizes: '180x180', type: 'image/png' },

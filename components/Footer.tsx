@@ -6,15 +6,17 @@ import { useContent } from '@/components/content/ContentProvider'
 
 const noopSubscribe = () => () => {}
 
-/** Jahr erst auf dem Client lesen: new Date() im Prerender würde zur Build-Zeit eingefroren. */
-function useYear(): number | null {
-  return useSyncExternalStore(noopSubscribe, () => new Date().getFullYear(), () => null)
+/**
+ * Server und Hydration: `serverYear` (Build-Jahr aus dem Server-Render, siehe lib/build-year.ts), damit das Jahr auch ohne
+ * JavaScript dasteht. Danach das aktuelle Jahr des Clients (falls der Build aus dem Vorjahr stammt).
+ */
+function useYear(serverYear: number | undefined): number | undefined {
+  return useSyncExternalStore(noopSubscribe, () => new Date().getFullYear(), () => serverYear)
 }
 
-export function Footer() {
+export function Footer({ year: serverYear }: { year?: number }) {
   const content = useContent()
-  const year = useYear()
-  const other = content.locale === 'de' ? 'en' : 'de'
+  const year = useYear(serverYear)
   return (
     <footer className="site-footer">
       <address className="font-mono">
@@ -23,6 +25,10 @@ export function Footer() {
         {CONTACT.street}
         <br />
         {CONTACT.zip} {CONTACT.city}
+        <br />
+        <a href={CONTACT.phoneHref}>{CONTACT.phone}</a>
+        <br />
+        <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
       </address>
       <nav aria-label={content.footer.legalLabel} className="font-mono">
         {content.footer.legal.map((l) => (
@@ -30,11 +36,8 @@ export function Footer() {
             {l.label}
           </a>
         ))}
-        <a href={content.footer.languageSwitch.href} hrefLang={other} lang={other}>
-          {content.footer.languageSwitch.label}
-        </a>
       </nav>
-      <p className="font-mono">© {year} Smart Flow</p>
+      <p className="font-mono">{year === undefined ? '© Smart Flow' : `© ${year} Smart Flow`}</p>
     </footer>
   )
 }

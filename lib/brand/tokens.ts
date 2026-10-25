@@ -1,10 +1,12 @@
 export const colors = {
-  bg: '#050607',
-  bgLight: '#1A1D20',
-  surface: '#141618',
-  accent: '#DDFF4D',
-  muted: '#7A8A8A',
-  text: '#F4F6F5',
+  ground: '#07090b',
+  groundEnd: '#171b1f',
+  ink: '#f1f3f2',
+  muted: '#8d9794',
+  line: 'rgba(241,243,242,.16)',
+  nodeStroke: '#d7dcda',
+  accent: '#ddff4d',
+  accentInk: '#07090b',
 } as const
 
 export const fonts = {

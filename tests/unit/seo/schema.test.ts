@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { buildSchema } from '@/lib/seo/schema'
 import { de } from '@/content/de'
-import { en } from '@/content/en'
 
 type Obj = {
   '@context'?: string
@@ -30,7 +29,7 @@ function keysDeep(v: unknown, out: Set<string> = new Set()): Set<string> {
 }
 
 describe('buildSchema', () => {
-  const schema = buildSchema('de', de) as Obj[]
+  const schema = buildSchema(de) as Obj[]
 
   it('has exactly one LocalBusiness with contact data from CONTACT', () => {
     const lb = byType(schema, 'LocalBusiness')
@@ -45,12 +44,11 @@ describe('buildSchema', () => {
     expect(lb[0].url).toBe('https://smartflow.bayern/')
   })
 
-  it('has one Person and three Services named after the station titles', () => {
+  it('has one Person and three Services from content.services', () => {
     expect(byType(schema, 'Person')).toHaveLength(1)
     expect(byType(schema, 'Person')[0].name).toBe('Leon Heinrich')
-    const names = byType(schema, 'Service').map((s) => s.name)
-    expect(names).toEqual([de.cpu.title, de.ram.title, de.gpu.title])
-    expect(byType(schema, 'Service').map((s) => s.description)).toEqual([de.cpu.intro, de.ram.intro, de.gpu.intro])
+    expect(byType(schema, 'Service').map((s) => s.name)).toEqual(de.services.map((s) => s.name))
+    expect(byType(schema, 'Service').map((s) => s.description)).toEqual(de.services.map((s) => s.text))
   })
 
   it('contains no FAQPage, Offer or AggregateRating', () => {
@@ -67,31 +65,22 @@ describe('buildSchema', () => {
   })
 
   it('is JSON round-trip stable', () => {
-    for (const s of [buildSchema('de', de), buildSchema('en', en)]) {
-      const json = JSON.stringify(s)
-      expect(json).not.toContain('undefined')
-      expect(json).not.toContain('null')
-      expect(JSON.parse(json)).toStrictEqual(s)
-    }
+    const s = buildSchema(de)
+    const json = JSON.stringify(s)
+    expect(json).not.toContain('undefined')
+    expect(json).not.toContain('null')
+    expect(JSON.parse(json)).toStrictEqual(s)
   })
 
   it('every @id reference resolves to an existing @id', () => {
-    for (const s of [schema, buildSchema('en', en) as Obj[]]) {
-      const ids = new Set(s.map((o) => o['@id']).filter(Boolean))
-      const refs = [
-        ...s.filter((o) => o.founder).map((o) => o.founder!['@id']),
-        ...s.filter((o) => o.worksFor).map((o) => o.worksFor!['@id']),
-        ...s.filter((o) => o.provider).map((o) => o.provider!['@id']),
-      ]
-      expect(refs.length).toBe(5)
-      for (const r of refs) expect(ids.has(r)).toBe(true)
-      for (const o of s) expect(o['@context']).toBe('https://schema.org')
-    }
-  })
-
-  it('English variant points to /en and uses English titles', () => {
-    const s = buildSchema('en', en) as Obj[]
-    expect(byType(s, 'LocalBusiness')[0].url).toBe('https://smartflow.bayern/en')
-    expect(byType(s, 'Service').map((x) => x.name)).toEqual([en.cpu.title, en.ram.title, en.gpu.title])
+    const ids = new Set(schema.map((o) => o['@id']).filter(Boolean))
+    const refs = [
+      ...schema.filter((o) => o.founder).map((o) => o.founder!['@id']),
+      ...schema.filter((o) => o.worksFor).map((o) => o.worksFor!['@id']),
+      ...schema.filter((o) => o.provider).map((o) => o.provider!['@id']),
+    ]
+    expect(refs.length).toBe(5)
+    for (const r of refs) expect(ids.has(r)).toBe(true)
+    for (const o of schema) expect(o['@context']).toBe('https://schema.org')
   })
 })

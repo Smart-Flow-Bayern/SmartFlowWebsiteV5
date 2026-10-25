@@ -1,31 +1,849 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #050607;
-  --color-bg-light: #1A1D20;
-  --color-surface: #141618;
-  --color-accent: #DDFF4D;
-  --color-muted: #7A8A8A;
-  --color-text: #F4F6F5;
+  --color-ground: #07090b;
+  --color-ground-end: #171b1f;
+  --color-ink: #f1f3f2;
+  --color-muted: #8d9794;
+  --color-line: rgba(241,243,242,.16);
+  --color-node-stroke: #d7dcda;
+  --color-accent: #ddff4d;
+  --color-accent-ink: #07090b;
   --font-sans: var(--font-schibsted), system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 }
 
 :root {
   color-scheme: dark;
+  /* Randspalte für Kopfzeile, Szenen und Footer (bei 1440 px: 72 px). Ab 1600 px breiter, damit die
+     beschriftete Fortschrittsanzeige links daneben Platz hat und keine Textspalte berührt. */
+  --gutter: clamp(16px, 5vw, 80px);
+}
+
+@media (min-width: 1600px) {
+  :root {
+    --gutter: 232px;
+  }
+}
+
+html {
+  scroll-behavior: auto;
 }
 
 body {
-  background: var(--color-bg);
-  color: var(--color-text);
+  background: var(--color-ground);
+  color: var(--color-ink);
   font-family: var(--font-sans);
+  font-size: 18px;
+  line-height: 1.55;
+}
+
+@media (max-width: 719px) {
+  body {
+    font-size: 17px;
+  }
 }
 
 h1,
 h2,
 h3 {
   font-weight: 800;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: clamp(40px, min(7vw, 11vh), 96px);
+  line-height: 1.05;
+}
+
+h2 {
+  font-size: clamp(28px, 4vw, 48px);
+  line-height: 1.1;
+}
+
+.prose {
+  max-width: 36rem;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+/* Szenen-Links: .nav-scenes scrollt seitlich und schneidet alles außerhalb der Link-Box ab, Ring nach innen. */
+.nav-scene:focus-visible {
+  outline-offset: -2px;
+}
+
+@layer components {
+  .btn,
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 24px;
+    font-family: var(--font-mono);
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 0;
+    cursor: pointer;
+  }
+
+  /* Hover: Fläche wischt von links herein (background-size), Farben nur aus den Tokens. */
+  .btn,
+  .btn-ghost {
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: 0% 100%;
+    transition:
+      background-size 0.24s ease-out,
+      color 0.24s ease-out,
+      border-color 0.24s ease-out;
+  }
+
+  .btn {
+    background-color: var(--color-accent);
+    background-image: linear-gradient(var(--color-ink), var(--color-ink));
+    color: var(--color-accent-ink);
+    border: 1px solid var(--color-accent);
+  }
+
+  .btn-ghost {
+    background-color: transparent;
+    background-image: linear-gradient(var(--color-accent), var(--color-accent));
+    color: var(--color-ink);
+    border: 1px solid var(--color-ink);
+  }
+
+  .btn:hover,
+  .btn-ghost:hover {
+    background-size: 100% 100%;
+  }
+
+  .btn:hover {
+    border-color: var(--color-ink);
+  }
+
+  .btn-ghost:hover {
+    color: var(--color-accent-ink);
+    border-color: var(--color-accent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn,
+    .btn-ghost {
+      transition: none;
+    }
+  }
+
+  /* Erster Tab-Stop, sichtbar nur mit Fokus. */
+  .skip-link {
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    z-index: 30;
+    padding: 12px 16px;
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
+    font-family: var(--font-mono);
+    font-size: 16px;
+    font-weight: 600;
+    transform: translateY(-200%);
+  }
+
+  .skip-link:focus-visible {
+    transform: none;
+    outline-color: var(--color-ink);
+  }
+
+  main:focus {
+    outline: none;
+  }
+
+  .scroll-hint {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    color: var(--color-muted);
+  }
+}
+
+/* Szenen (Task 4): Text je Szene in einer Spalte, links oder rechts neben der späteren Bühne. */
+@layer components {
+  .scene {
+    position: relative;
+    display: grid;
+    align-items: center;
+    min-height: 100svh;
+    padding: 96px var(--gutter);
+  }
+
+  .scene-text {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: min(36rem, 44vw);
+  }
+
+  .scene[data-side="left"] .scene-text {
+    justify-self: start;
+  }
+
+  .scene[data-side="right"] .scene-text {
+    justify-self: end;
+  }
+
+  /* Spalte mittig, Inhalt einheitlich linksbündig (Kontakt). */
+  .scene[data-side="center"] {
+    justify-items: center;
+  }
+
+  .scene[data-side="center"] .scene-text {
+    align-items: stretch;
+    width: min(40rem, 100%);
+  }
+
+  .scene[data-side="center"] .scene-text > * {
+    align-self: flex-start;
+  }
+
+  .scene[data-side="center"] .scene-text > .contact-actions {
+    align-self: stretch;
+  }
+
+  /* Sprungziel (#kontakt, scrollIntoView): Abstand unter der festen Kopfzeile plus 32 px. */
+  #kontakt {
+    scroll-margin-top: calc(64px + 32px);
+  }
+
+  @media (max-width: 719px) {
+    #kontakt {
+      scroll-margin-top: calc(97px + 32px);
+    }
+  }
+
+  .scene .prose > * + * {
+    margin-top: 16px;
+  }
+
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    color: var(--color-muted);
+  }
+
+  .kicker b {
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .claim {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .claim-sub {
+    font-size: 16px;
+    color: var(--color-muted);
+  }
+
+  .claim + .claim-sub {
+    margin-top: -16px;
+  }
+
+  .services,
+  .examples,
+  .fields {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .services {
+    counter-reset: service;
+  }
+
+  .services > li {
+    counter-increment: service;
+  }
+
+  .services h3::before {
+    content: counter(service, decimal-leading-zero) " ";
+    font-family: var(--font-mono);
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .services h3,
+  .fields h3 {
+    font-size: 20px;
+    line-height: 1.3;
+  }
+
+  .examples > li,
+  .fields > li {
+    padding-left: 16px;
+    border-left: 1.2px solid var(--color-node-stroke);
+  }
+
+  .portrait {
+    display: grid;
+    place-items: center;
+    width: 160px;
+    height: 160px;
+    border: 1.2px solid var(--color-node-stroke);
+    background: var(--color-ground);
+    font-family: var(--font-mono);
+    font-size: 40px;
+    font-weight: 600;
+  }
+
+  .contact-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .cal-embed {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+
+  /* Gleiche Randspalte wie Szenen und Kopfzeile. */
+  .site-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px 48px;
+    padding: 32px var(--gutter);
+    border-top: 1px solid var(--color-line);
+    font-size: 14px;
+    font-style: normal;
+  }
+
+  .site-footer address {
+    font-style: normal;
+  }
+
+  .site-footer nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  /* Tap-Flächen mindestens 24 px hoch (WCAG 2.5.8). */
+  .site-footer a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    min-width: 44px;
+  }
+
+  .site-footer a,
+  .text-link {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-decoration-color: var(--color-line);
+    text-underline-offset: 4px;
+    transition: text-decoration-color 0.2s, text-decoration-thickness 0.2s;
+  }
+
+  .site-footer a:hover,
+  .text-link:hover {
+    text-decoration-color: currentColor;
+    text-decoration-thickness: 2px;
+  }
+
+  .text-link {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    text-decoration-color: currentColor;
+  }
+
+  .not-found {
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 24px;
+    min-height: 80svh;
+    padding: 128px var(--gutter) 96px;
+  }
+
+  .nf-chain {
+    width: min(320px, 100%);
+    height: auto;
+  }
+
+  .nf-edge {
+    fill: none;
+    stroke: var(--color-node-stroke);
+    stroke-width: 1.2;
+  }
+
+  .nf-node {
+    fill: var(--color-ground);
+    stroke: var(--color-node-stroke);
+    stroke-width: 1.2;
+  }
+
+  .nf-node[data-active="true"] {
+    fill: var(--color-accent);
+    stroke: var(--color-accent);
+  }
+
+  .cal-frame {
+    width: 100%;
+    height: min(70svh, 640px);
+  }
+
+  .cal-frame > iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  @media (min-width: 720px) {
+    .scene-text:has(> .portrait) {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      column-gap: 32px;
+      align-items: start;
+    }
+
+    .scene-text > .portrait {
+      grid-row: 1 / span 4;
+    }
+
+    .scene-text:has(> .portrait) > :not(.portrait) {
+      grid-column: 2;
+    }
+  }
+
+  @media (max-width: 719px) {
+    .scene {
+      align-items: start;
+      padding: 52svh 16px 64px;
+    }
+
+    .site-footer {
+      padding: 32px 16px;
+    }
+
+    .scene-text,
+    .scene[data-side="center"] .scene-text {
+      width: 100%;
+      justify-self: stretch;
+    }
+
+    .portrait {
+      width: 96px;
+      height: 96px;
+      font-size: 28px;
+    }
+  }
+
+  @media (max-width: 389px) {
+    .contact-actions .btn,
+    .contact-actions .btn-ghost {
+      width: 100%;
+    }
+  }
+}
+
+/* Scrollbereich und Navigation (Task 5): #story ist SCROLL_HEIGHTS (7) Bildschirme hoch, kein Pin. */
+@layer components {
+  .story {
+    min-height: calc(7 * 100svh);
+  }
+
+  /* Sticky-Bühne (Task 6): Grafik bleibt stehen, die Szenen laufen darüber.
+     padding-top hält die Grafik unter der festen Navigation (64 px, mobil 97 px). */
+  .stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    z-index: 0;
+    padding-top: 64px;
+    background: var(--stage-bg, var(--color-ground));
+  }
+
+  .process-stage {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Standbild vor dem ersten Frame und ohne JS: Transform je Breakpoint aus --root-desktop/--root-mobile
+     (serverseitig aus frame() gesetzt, ProcessStage). Mobil: zentriert, Skalierung 1, keine Verschiebung.
+     Sobald der Ticker schreibt (data-live), gilt das transform-Attribut. */
+  .stage:not([data-live]) .root {
+    transform-box: view-box;
+    transform-origin: 0 0;
+    transform: var(--root-desktop);
+  }
+
+  .story > .scene:first-of-type {
+    margin-top: -100svh;
+  }
+
+  .story > .scene {
+    z-index: 1;
+  }
+
+  /* --stroke-k (vom Ticker gesetzt) gleicht die Skalierung der ViewBox aus: Striche ≥ 1,2 px auf dem Bildschirm
+     (Spec 5.2). Ohne JS gilt 1. */
+  .node {
+    fill: var(--color-ground);
+    stroke: var(--color-node-stroke);
+    stroke-width: calc(1.2 * var(--stroke-k, 1));
+  }
+
+  .node[data-active="true"] {
+    fill: var(--color-accent);
+    stroke: var(--color-accent);
+  }
+
+  /* pathLength = 1: Dash-Werte sind Anteile der Kante; gezogene Kanten nutzen 1 1 plus stroke-dashoffset. */
+  .edge {
+    fill: none;
+    stroke: var(--color-node-stroke);
+    stroke-width: calc(1.2 * var(--stroke-k, 1));
+    stroke-dasharray: 1 1;
+  }
+
+  .edge[data-dashed="true"] {
+    stroke-dasharray: 0.02 0.04;
+  }
+
+  /* --label-k (vom Ticker gesetzt) gleicht die Skalierung der ViewBox aus: 13 px bzw. 12 px auf dem Bildschirm. */
+  /* Volle Deckkraft kommt aus dem opacity-Attribut (1 oder 0 je Zustand); eine CSS-opacity würde es überschreiben. */
+  /* Halo in Hintergrundfarbe: Kanten und Pakete streichen die Buchstaben nicht durch. */
+  .label {
+    font: calc(13px * var(--label-k, 1)) var(--font-mono);
+    fill: var(--color-ink);
+    paint-order: stroke;
+    stroke: var(--stage-bg, var(--color-ground));
+    stroke-width: calc(4 * var(--label-k, 1));
+    stroke-linejoin: round;
+  }
+
+  .frag {
+    stroke: var(--color-line);
+  }
+
+  .zone {
+    fill: none;
+    stroke: var(--color-line);
+    stroke-width: calc(1 * var(--stroke-k, 1));
+  }
+
+  .zone-label {
+    font: calc(13px * var(--label-k, 1)) var(--font-mono);
+    fill: var(--color-ink);
+    paint-order: stroke;
+    stroke: var(--stage-bg, var(--color-ground));
+    stroke-width: calc(4 * var(--label-k, 1));
+    stroke-linejoin: round;
+  }
+
+  /* Mindestens 3 px Radius auf dem Bildschirm (--stroke-k), sonst der Layoutwert 3,5.
+     Das Attribut r="3.5" in ProcessStage ist der Fallback, falls `r` als CSS-Eigenschaft fehlt. */
+  .packet {
+    fill: var(--color-accent);
+    r: max(3.5px, calc(3px * var(--stroke-k, 1)));
+  }
+
+  @media (max-width: 719px) {
+    /* Bühne deckt den Text ab: Text läuft unter der Grafik hindurch statt darüber (kein Text auf der Grafik).
+       Kontakt liegt wieder darüber; sein Textblock deckt die Grafik am Ende ab. */
+    .stage {
+      height: 52svh;
+      padding-top: 97px;
+      z-index: 2;
+    }
+
+    .story > .scene[data-scene="6"] {
+      z-index: 3;
+    }
+
+    .scene[data-scene="6"] .scene-text {
+      width: calc(100% + 32px);
+      margin: 0 -16px;
+      padding: 24px 16px 0;
+      background: var(--color-ground);
+    }
+
+    .story > .scene:first-of-type {
+      margin-top: -52svh;
+    }
+
+    .stage:not([data-live]) .root {
+      transform: var(--root-mobile);
+    }
+
+    .label {
+      font-size: calc(12px * var(--label-k, 1));
+    }
+  }
+
+  /* Reduced Motion: Standbild im Fluss über den Szenen, keine Überlagerung.
+     Abstand zur Navigation als margin, damit die Grafik das volle Seitenverhältnis behält. */
+  /* Desktop: Standbild als Hintergrund der ersten Szene (nicht sticky), die H1 steht daneben im ersten Bildschirm.
+     Die folgenden Szenen laufen als normaler Text links in der Spalte, ohne leere Bildschirmhälften. */
+  @media (min-width: 720px) {
+    html[data-motion="reduced"] .stage {
+      position: relative;
+    }
+
+    html[data-motion="reduced"] .story > .scene:not(:first-of-type) {
+      min-height: auto;
+    }
+
+    html[data-motion="reduced"] .scene[data-side="right"] .scene-text {
+      justify-self: start;
+    }
+  }
+
+  @media (max-width: 719px) {
+    html[data-motion="reduced"] .stage {
+      position: static;
+      height: auto;
+      aspect-ratio: 1000 / 600;
+      padding-top: 0;
+      margin-top: 97px;
+    }
+
+    html[data-motion="reduced"] .story > .scene:first-of-type {
+      margin-top: 0;
+    }
+
+    html[data-motion="reduced"] .story > .scene {
+      padding-top: 64px;
+    }
+  }
+
+  .nav-bar {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 64px;
+    padding: 0 var(--gutter);
+    background: var(--color-ground);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    min-width: 44px;
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+
+  .nav-brand {
+    flex: none;
+    transition: opacity 0.2s;
+  }
+
+  .nav-brand:hover {
+    opacity: 0.75;
+  }
+
+  .nav-scenes {
+    display: flex;
+    flex: 1 1 auto;
+    justify-content: center;
+    gap: 4px;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    white-space: nowrap;
+  }
+
+  .nav-scene {
+    flex: none;
+    padding: 0 10px;
+    font-family: var(--font-mono);
+    font-size: 16px;
+    color: var(--color-muted);
+    border-bottom: 2px solid transparent;
+    /* Hover: Unterstrich zieht von links ein. */
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 10px calc(100% - 8px);
+    background-size: 0 1px;
+    transition: background-size 0.2s ease-out, color 0.2s;
+  }
+
+  .nav-scene:hover:not([aria-current="true"]) {
+    background-size: calc(100% - 20px) 1px;
+  }
+
+  .nav-scene:hover,
+  .nav-scene[aria-current="true"] {
+    color: var(--color-ink);
+  }
+
+  .nav-scene[aria-current="true"] {
+    border-bottom-color: var(--color-accent);
+  }
+
+  .nav-cta {
+    flex: none;
+    min-height: 44px;
+    padding: 0 16px;
+    text-decoration: none;
+  }
+
+  /* Unter 1600 px nur Balken in der Randspalte (bei 1440 px x 26..50, Spalte 72 px; bei 720 px x 8..32,
+     Spalte 36 px). Ab 1600 px mit Beschriftung, Randspalte dort 232 px. Am Footer ausgeblendet. */
+  .progress-nav {
+    position: fixed;
+    left: clamp(8px, calc(2.5vw - 10px), 40px);
+    bottom: 32px;
+    z-index: 10;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    transition: opacity 0.2s, visibility 0.2s;
+  }
+
+  .progress-nav[data-hidden="true"] {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .progress-nav ol {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .progress-nav a {
+    display: flex;
+    align-items: center;
+    width: 24px;
+    min-height: 32px;
+    color: var(--color-ink);
+    text-decoration: none;
+    border-left: 2px solid var(--color-muted);
+    transition: border-left-width 0.15s, border-color 0.15s;
+  }
+
+  .progress-nav a:hover {
+    border-left: 4px solid var(--color-ink);
+  }
+
+  .progress-nav a b {
+    font-weight: 600;
+  }
+
+  .progress-nav a[aria-current="step"] {
+    border-left: 4px solid var(--color-accent);
+  }
+
+  /* Beschriftung nur für Screenreader. */
+  .progress-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  @media (min-width: 1600px) {
+    .progress-nav a {
+      width: auto;
+      padding-left: 12px;
+      border-left-color: var(--color-line);
+    }
+
+    .progress-nav a:hover,
+    .progress-nav a[aria-current="step"] {
+      padding-left: 10px;
+    }
+
+    .progress-label {
+      position: static;
+      width: auto;
+      height: auto;
+      overflow: visible;
+      clip-path: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .progress-nav,
+    .progress-nav a,
+    .nav-scene,
+    .nav-brand,
+    .site-footer a,
+    .text-link {
+      transition: none;
+    }
+  }
+
+  /* Handy hoch und quer (z. B. 844×390): keine Fortschrittsanzeige. */
+  @media (max-width: 719px), (max-height: 500px) {
+    .progress-nav {
+      display: none;
+    }
+  }
+
+  @media (max-width: 719px) {
+
+    /* Zwei Zeilen: Marke und CTA oben, die Szenen-Links darunter einzeilig und seitlich scrollbar. */
+    .nav-bar {
+      flex-wrap: wrap;
+      justify-content: space-between;
+      column-gap: 8px;
+      row-gap: 0;
+      height: auto;
+      padding: 8px 16px 0;
+    }
+
+    .nav-scenes {
+      order: 3;
+      flex-basis: 100%;
+      justify-content: flex-start;
+      margin: 0 -16px;
+      padding: 0 8px;
+    }
+
+    .nav-scene {
+      padding: 0 8px;
+    }
+  }
+
+  /* Marke und CTA müssen bis 320 px nebeneinander passen. */
+  @media (max-width: 389px) {
+    .nav-brand svg {
+      width: 128px;
+      height: auto;
+    }
+
+    .nav-cta {
+      padding: 0 12px;
+    }
+  }
 }
 
 /* Bildmarke, Variante animated: heller Abschnitt läuft die Leiterbahn entlang (pathLength = 100) */
@@ -50,578 +868,5 @@ h3 {
   }
   to {
     stroke-dashoffset: -100;
-  }
-}
-
-/* Stationen 1 bis 5 und Über: Zustand (data-state) kommt aus lib/scroll/visibility.ts */
-@layer components {
-  .station-overlay {
-    position: absolute;
-    inset-block: 0;
-    width: min(520px, 100% - 2 * 6vw);
-    display: flex;
-    flex-direction: column;
-    justify-content: safe center;
-    /* Platz für die feste Navigation (--nav-h, siehe SiteNav); mobil überschrieben. */
-    padding-top: var(--nav-h);
-    pointer-events: none;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(16px);
-    transition:
-      opacity 500ms ease,
-      transform 500ms ease,
-      visibility 0s linear 500ms;
-  }
-
-  .station-overlay[data-align='left'] {
-    left: 6vw;
-  }
-
-  .station-overlay[data-align='right'] {
-    right: 6vw;
-  }
-
-  .station-overlay[data-state='entering'],
-  .station-overlay[data-state='visible'] {
-    opacity: 1;
-    visibility: visible;
-    transform: none;
-    transition-delay: 0s;
-  }
-
-  .station-overlay[data-state='leaving'] {
-    transform: none;
-  }
-
-  .station-overlay[data-state='leaving'] .station-overlay-body {
-    pointer-events: none;
-  }
-
-  .station-overlay-body {
-    pointer-events: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .station-title {
-    font-size: clamp(36px, 3.6vw, 44px);
-    line-height: 1.05;
-    overflow-wrap: break-word; /* nur letztes Netz */
-    hyphens: manual;
-  }
-
-  .station-intro {
-    font-size: 18px;
-    line-height: 1.5;
-    color: var(--color-text);
-  }
-
-  .station-text {
-    font-size: 16px;
-    line-height: 1.5;
-    color: var(--color-text);
-  }
-
-  .station-wordmark {
-    color: var(--color-muted);
-  }
-
-  .station-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .station-mono {
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--color-muted);
-  }
-
-  .station-mono-accent {
-    color: var(--color-accent);
-  }
-
-  .station-labels {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 20px;
-    font-size: 13px;
-    color: var(--color-muted);
-  }
-
-  /* Das Label, dessen Bauteil in der Szene gerade aufleuchtet (mainboardLabelIndex). */
-  .station-labels .reveal-item[data-flash='true'] {
-    color: var(--color-accent);
-  }
-
-  .station-columns {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-  }
-
-  .station-block-name {
-    font-size: 20px;
-    line-height: 1.2;
-  }
-
-  .reveal-item {
-    opacity: 0;
-    transform: translateY(16px);
-    transition:
-      opacity 500ms ease,
-      transform 500ms ease,
-      color 300ms ease;
-  }
-
-  .reveal-item[data-revealed='true'] {
-    opacity: 1;
-    transform: none;
-  }
-
-  /* Station 0 blendet mit demselben Mechanismus aus, ist aber ohne Scroll sofort da. */
-  .station-fade {
-    transition:
-      opacity 500ms ease,
-      visibility 0s linear 500ms;
-  }
-
-  .station-fade[data-state='visible'] {
-    opacity: 1;
-    visibility: visible;
-    transition-delay: 0s;
-  }
-
-  .station-fade[data-state='leaving'],
-  .station-fade[data-state='hidden'] {
-    opacity: 0;
-    visibility: hidden;
-  }
-
-  @media (max-width: 768px) {
-    .station-overlay {
-      inset-block: auto 0;
-      left: 0;
-      right: 0;
-      width: auto;
-      max-height: 60vh;
-      overflow: hidden;
-      justify-content: flex-start;
-      padding: 12px 16px;
-      background: rgb(5 6 7 / 0.78);
-    }
-
-    .station-overlay[data-align] {
-      left: 0;
-      right: 0;
-    }
-
-    /* Intro plus längstes Beispiel passen bei 320x568 nicht in 60vh. */
-    #cpu {
-      max-height: 70vh;
-    }
-
-    .station-overlay-body {
-      gap: 8px;
-    }
-
-    .station-title {
-      font-size: 28px;
-      line-height: 1.05;
-    }
-
-    .station-list {
-      gap: 8px;
-    }
-
-    .station-columns {
-      grid-template-columns: 1fr;
-      gap: 8px;
-    }
-
-    /* Reveal-Listen zeigen mobil nur den aktuellen Eintrag; vor dem ersten Reveal keinen. */
-    [data-current='false'] {
-      display: none;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .station-overlay,
-    .reveal-item {
-      transform: none;
-    }
-  }
-}
-
-/* Feste Navigation (components/nav/SiteNav.tsx). Höhe in --nav-h, damit Overlays nicht darunter laufen.
-   --nav-h und sein Mobil-Override müssen im selben Layer stehen, sonst gewinnt die ungeschichtete Regel. */
-@layer components {
-  :root {
-    --nav-h: 64px;
-  }
-
-  .nav-bar {
-    position: fixed;
-    inset: 0 0 auto 0;
-    z-index: 20;
-    height: var(--nav-h);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding-inline: 6vw;
-    pointer-events: none;
-  }
-
-  .nav-bar::after {
-    content: '';
-    position: absolute;
-    inset: auto 0 0 0;
-    border-bottom: 1px solid var(--color-surface);
-    opacity: 0;
-    transition: opacity 200ms ease;
-  }
-
-  .nav-bar[data-scrolled='true']::after {
-    opacity: 1;
-  }
-
-  .nav-link,
-  .nav-cta {
-    pointer-events: auto;
-  }
-
-  .nav-link:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 3px;
-  }
-
-  .nav-brand {
-    display: inline-flex;
-    align-items: center;
-    min-height: 24px;
-  }
-
-  .nav-stations {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .nav-station {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    min-height: 24px;
-    padding: 4px 8px;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--color-muted);
-    transition: color 200ms ease;
-  }
-
-  .nav-station:hover,
-  .nav-station[aria-current='true'] {
-    color: var(--color-text);
-  }
-
-  .nav-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: currentColor;
-    transition:
-      background-color 200ms ease,
-      transform 200ms ease;
-  }
-
-  .nav-station[aria-current='true'] .nav-dot {
-    background: var(--color-accent);
-    transform: scale(1.35);
-  }
-
-  .nav-cta {
-    min-height: 36px;
-    padding: 0 16px;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--color-bg);
-    background: var(--color-accent);
-    border: 0;
-    border-radius: 2px;
-    cursor: pointer;
-  }
-
-  @media (max-width: 768px) {
-    /* Zwei Zeilen: Wortmarke und CTA oben, sieben Punkte (je 24 px Fläche) darunter. */
-    :root {
-      --nav-h: 84px;
-    }
-
-    .nav-bar {
-      flex-wrap: wrap;
-      align-content: center;
-      row-gap: 4px;
-      padding-inline: 16px;
-    }
-
-    .nav-stations {
-      order: 3;
-      width: 100%;
-      justify-content: space-between;
-      gap: 0;
-    }
-
-    .nav-station {
-      padding: 4px;
-      min-width: 24px;
-      justify-content: center;
-    }
-
-    .nav-label {
-      display: none;
-    }
-
-    .nav-cta {
-      padding: 0 10px;
-    }
-  }
-
-  @media (max-width: 359px) {
-    /* Wortmarke und CTA teilen sich bei 320 px eine Zeile innerhalb von 84 px. */
-    .nav-brand svg {
-      height: 18px;
-      width: auto;
-    }
-
-    .nav-cta {
-      min-height: 44px;
-      padding: 0 8px;
-      font-size: 11px;
-      letter-spacing: 0.02em;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .nav-bar::after,
-    .nav-station,
-    .nav-dot {
-      transition: none;
-    }
-  }
-}
-
-/* Kontakt-Station mit Cal.com-Embed und Footer (components/stations/StationContact.tsx) */
-@layer components {
-  .station-overlay--contact {
-    width: min(1100px, 100% - 2 * 6vw);
-    max-height: calc(100svh - var(--nav-h));
-    justify-content: flex-start;
-  }
-
-  .station-overlay--contact .station-overlay-body {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 24px;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    padding: 16px 24px;
-    background: rgb(5 6 7 / 0.78);
-  }
-
-  .contact-info,
-  .contact-direct {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .station-link {
-    color: var(--color-text);
-    text-decoration: underline;
-    text-underline-offset: 4px;
-    width: fit-content;
-  }
-
-  .station-link:hover,
-  .station-link:focus-visible {
-    color: var(--color-accent);
-  }
-
-  .cal-embed {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    align-items: flex-start;
-  }
-
-  .cal-button {
-    background: var(--color-accent);
-    color: var(--color-bg);
-    font-weight: 600;
-    padding: 12px 20px;
-    border-radius: 2px;
-    cursor: pointer;
-  }
-
-  .cal-button:hover {
-    filter: brightness(1.08);
-  }
-
-  .cal-frame {
-    width: 100%;
-    height: 560px;
-    border: 1px solid var(--color-surface);
-    background: var(--color-surface);
-  }
-
-  .site-footer {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding-top: 16px;
-    border-top: 1px solid var(--color-surface);
-    font-size: 12px;
-    color: var(--color-muted);
-  }
-
-  .site-footer address {
-    font-style: normal;
-  }
-
-  .site-footer nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px 16px;
-  }
-
-  .site-footer a {
-    color: var(--color-text);
-  }
-
-  .site-footer a:hover,
-  .site-footer a:focus-visible {
-    text-decoration: underline;
-    text-underline-offset: 4px;
-  }
-
-  @media (min-width: 1024px) {
-    .station-overlay--contact .station-overlay-body {
-      grid-template-columns: 1fr 1fr;
-      grid-template-areas:
-        'info cal'
-        'direct cal'
-        'footer cal';
-      align-content: start;
-      column-gap: 48px;
-    }
-
-    .contact-info {
-      grid-area: info;
-    }
-
-    .contact-direct {
-      grid-area: direct;
-    }
-
-    .contact-cal {
-      grid-area: cal;
-    }
-
-    .site-footer {
-      grid-area: footer;
-      align-self: end;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .station-overlay--contact {
-      max-height: calc(100svh - var(--nav-h));
-      top: var(--nav-h);
-      bottom: 0;
-      padding-top: 12px;
-    }
-
-    .cal-frame {
-      height: auto;
-      min-height: 70svh;
-    }
-  }
-}
-
-/* Statischer Modus (components/static/StaticStations.tsx): Standbilder und Texte im Dokumentfluss. */
-@layer components {
-  html[data-mode='static'] body {
-    background: #050607;
-  }
-
-  html[data-mode='static'] .nav-bar {
-    background: rgb(5 6 7 / 0.92);
-  }
-
-  .static-stations {
-    padding-top: var(--nav-h);
-  }
-
-  .static-station {
-    display: grid;
-    gap: 32px;
-    padding: 48px 6vw;
-    max-width: 1280px;
-    margin-inline: auto;
-    scroll-margin-top: var(--nav-h);
-  }
-
-  .static-station picture,
-  .static-station img {
-    display: block;
-    width: 100%;
-  }
-
-  .static-station img {
-    height: auto;
-    border-radius: 4px;
-    background: #141618;
-  }
-
-  /* Station 0: Silhouette statt Standbild; der Container positioniert das absolute SVG. */
-  .static-silhouette {
-    position: relative;
-    height: 60vh;
-    min-height: 320px;
-    overflow: hidden;
-  }
-
-  .static-station-text {
-    display: flex;
-    flex-direction: column;
-    gap: 48px;
-    min-width: 0;
-  }
-
-  .station-static {
-    max-width: 60ch;
-    scroll-margin-top: var(--nav-h);
-  }
-
-  /* Mobil blendet das Overlay-Layout alle Einträge außer dem aktuellen aus; im statischen Modus stehen alle. */
-  html[data-mode='static'] [data-current='false'] {
-    display: revert-layer;
-  }
-
-  @media (min-width: 1024px) {
-    .static-station {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      align-items: start;
-    }
   }
 }

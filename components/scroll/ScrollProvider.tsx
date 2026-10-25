@@ -4,45 +4,58 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
 import { useEffect, type ReactNode } from 'react'
-import type { StationId } from '@/content/types'
-import { resolveStationSlug } from '@/lib/scroll/hash'
-import { progressStore } from '@/lib/scroll/progress'
+import type { SceneId } from '@/content/types'
+import { resolveSceneSlug } from '@/lib/scroll/hash'
+import { progressFromTops, sceneIndexAt, scrollFromProgress } from '@/lib/scroll/map'
+import { activeSceneStore, progressStore } from '@/lib/scroll/progress'
 import { shouldRefresh, type Size } from '@/lib/scroll/resize'
-import { STATIONS, stationOffset } from '@/scene/stations'
-
-/** Anteil des Stationsfensters, auf dem Navigation und Deep Links landen. */
-export const STATION_LANDING = 0.45
+import { SCENES } from '@/scene/process/scenes'
 
 let lenisInstance: Lenis | null = null
+/** Gemessene Oberkanten der sieben Sections in Seitenpixeln, in Szenenreihenfolge. */
+let tops: number[] = []
 
-/** Maximal möglicher Scrollweg der Seite (unabhängig von svh/innerHeight-Abweichungen). */
-function maxScroll(): number {
-  return Math.max(0, document.documentElement.scrollHeight - window.innerHeight)
+declare global {
+  interface Window {
+    __sf?: { readonly progress: number }
+  }
 }
 
-function stationFromHash() {
+function reducedMotion(): boolean {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+}
+
+/** Misst die Oberkanten der Sections (`section.scene`, sortiert nach `data-scene`) relativ zum Dokument. */
+function measureTops(): number[] {
+  const sections = [...document.querySelectorAll<HTMLElement>('main.story section.scene')]
+  sections.sort((a, b) => Number(a.dataset.scene) - Number(b.dataset.scene))
+  return sections.map((el) => Math.round(el.getBoundingClientRect().top + window.scrollY))
+}
+
+function currentScroll(): number {
+  return lenisInstance ? lenisInstance.scroll : window.scrollY
+}
+
+function sceneFromHash() {
   let slug = location.hash.slice(1)
   try {
     slug = decodeURIComponent(slug)
   } catch {
     return undefined // kaputte Prozentkodierung: wie unbekannter Hash
   }
-  return resolveStationSlug(slug)
+  return resolveSceneSlug(slug)
 }
 
-export function scrollToStation(id: StationId, opts?: { immediate?: boolean }): void {
-  const station = STATIONS.find((s) => s.id === id)
-  if (!station) return
-  // Landung im Fenster (45 %): Overlay ab 40 % sichtbar, Kamera ab 35 % geparkt. Start (gehaeuse) bei 0,
-  // Kontakt am Ende der Fahrt, denn sein Overlay erscheint erst nach 30 % des Fensters (Ruling Task 17).
-  const at =
-    id === 'gehaeuse' ? 0 : id === 'kontakt' ? 1 : station.start + STATION_LANDING * (station.end - station.start)
-  const target = stationOffset(at, lenisInstance ? lenisInstance.limit : maxScroll())
+/** Scrollt an die gemessene Oberkante der Section (auch Kontakt). Unter reduzierter Bewegung immer sofort. */
+export function scrollToScene(id: SceneId, opts?: { immediate?: boolean }): void {
+  const index = SCENES.findIndex((s) => s.id === id)
+  const measured = tops.length === SCENES.length ? tops : measureTops()
+  const target = index >= 0 && measured[index] !== undefined ? measured[index] : 0
+  const immediate = reducedMotion() || opts?.immediate === true
   if (lenisInstance) {
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    lenisInstance.scrollTo(target, reduced || opts?.immediate ? { immediate: true } : undefined)
+    lenisInstance.scrollTo(target, immediate ? { immediate: true } : undefined)
   } else {
-    window.scrollTo(0, target)
+    window.scrollTo({ top: target, behavior: immediate ? 'instant' : 'smooth' })
   }
 }
 
@@ -52,40 +65,66 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
     // Resize gehört unserem Handler: ScrollTriggers eigener Resize-Refresh liefe danach und verschöbe progress.
     ScrollTrigger.config({ autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load' })
 
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const lenis = new Lenis(
-      reduced ? { autoRaf: false, smoothWheel: false, lerp: 1 } : { autoRaf: false },
-    )
+    const lenis = new Lenis(reducedMotion() ? { autoRaf: false, smoothWheel: false, lerp: 1 } : { autoRaf: false })
     lenisInstance = lenis
+    // ScrollTrigger bleibt mit Lenis synchron (für spätere Trigger), ist aber nicht mehr Quelle des Fortschritts.
     lenis.on('scroll', ScrollTrigger.update)
 
     const tick = (time: number) => lenis.raf(time * 1000)
     gsap.ticker.add(tick)
     gsap.ticker.lagSmoothing(0)
 
-    const trigger = ScrollTrigger.create({
-      trigger: '#stage',
-      start: 'top top',
-      end: 'max',
-      pin: true,
-      pinSpacing: false, // Platz liefert der Spacer in app/page.tsx
-      invalidateOnRefresh: true,
-      onUpdate: (self) => progressStore.set(self.progress),
-    })
-    progressStore.set(trigger.progress)
+    // Kein Pin. Fortschritt stückweise linear über die gemessenen Section-Oberkanten:
+    // Szene i oben am Viewport ⇒ i/6, Kontakt oben ⇒ 1. So bleiben Grafik und Text synchron.
+    tops = measureTops()
+    // Navigation: aktiv ist die Section, deren Oberkante die Viewport-Mitte überquert hat.
+    const update = () => {
+      const y = currentScroll()
+      progressStore.set(progressFromTops(y, tops))
+      activeSceneStore.set(sceneIndexAt(y + window.innerHeight / 2, tops))
+    }
+    lenis.on('scroll', update)
+    update()
 
-    // Deep Link: #slug springt nach dem Refresh direkt zur Station; unbekannte oder kaputte Hashes werden ignoriert.
-    const linked = stationFromHash()
+    if (process.env.NODE_ENV !== 'production') {
+      window.__sf = {
+        get progress() {
+          return progressStore.get()
+        },
+      }
+    }
+
+    // Deep Link: #slug springt nach dem Refresh direkt zur Szene; unbekannte oder kaputte Hashes werden ignoriert.
+    const linked = sceneFromHash()
     if (linked) {
       ScrollTrigger.refresh()
-      scrollToStation(linked.id, { immediate: true })
+      scrollToScene(linked.id, { immediate: true })
     }
-    // Nur echte Hash-Wechsel (Adressleiste, Zurück/Vor); history.replaceState der Punkte löst keinen aus.
+    // Nur echte Hash-Wechsel (Adressleiste, Zurück/Vor); history.replaceState der Navigation löst keinen aus.
     const onHashChange = () => {
-      const target = stationFromHash()
-      if (target) scrollToStation(target.id)
+      const target = sceneFromHash()
+      if (target) scrollToScene(target.id)
     }
     window.addEventListener('hashchange', onHashChange)
+
+    /** Neu messen und den Fortschritt halten (gleiche Stelle der Geschichte, nicht gleiche Pixelposition). */
+    const remeasure = () => {
+      const prev = progressStore.get()
+      tops = measureTops()
+      ScrollTrigger.refresh()
+      lenis.resize()
+      // Nur verschieben, wenn die aktuelle Position nicht schon denselben Fortschritt ergibt: Unter Reduced Motion
+      // steht die Bühne vor der ersten Szene, Fortschritt 0 gilt dort für den ganzen Bereich oberhalb von Szene 1.
+      if (progressFromTops(currentScroll(), tops) !== prev) {
+        lenis.scrollTo(scrollFromProgress(prev, tops), { immediate: true, force: true })
+      }
+      update()
+    }
+    let disposed = false
+    // Webfonts ändern Zeilenumbrüche und damit Section-Höhen: einmal nach dem Laden neu messen.
+    void document.fonts?.ready.then(() => {
+      if (!disposed) remeasure()
+    })
 
     let timer: ReturnType<typeof setTimeout> | undefined
     // lastSize wird nur beim Refresh aktualisiert: kleine Abweichungen summieren sich bis zur Schwelle.
@@ -96,25 +135,44 @@ export function ScrollProvider({ children }: { children: ReactNode }) {
         const next: Size = { w: window.innerWidth, h: window.innerHeight }
         if (!shouldRefresh(lastSize, next)) return
         lastSize = next
-        const prev = progressStore.get()
-        ScrollTrigger.refresh()
-        lenis.resize()
-        lenis.scrollTo(prev * lenis.limit, { immediate: true, force: true })
-        ScrollTrigger.update()
+        remeasure()
       }, 150)
     }
     window.addEventListener('resize', onResize)
 
+    // <html> trägt h-full: Lenis' eigener ResizeObserver auf <html> sieht wachsenden Inhalt nicht
+    // (z. B. Cal-Rahmen nach Klick), der Scrollweg bliebe am alten Ende stehen. Darum <body> beobachten.
+    let bodyTimer: ReturnType<typeof setTimeout> | undefined
+    let bodyHeight = document.body.offsetHeight
+    const bodyObserver =
+      typeof ResizeObserver === 'undefined'
+        ? undefined
+        : new ResizeObserver(() => {
+            clearTimeout(bodyTimer)
+            bodyTimer = setTimeout(() => {
+              if (document.body.offsetHeight === bodyHeight) return
+              bodyHeight = document.body.offsetHeight
+              remeasure()
+            }, 150)
+          })
+    bodyObserver?.observe(document.body)
+
     return () => {
+      disposed = true
       clearTimeout(timer)
+      clearTimeout(bodyTimer)
+      bodyObserver?.disconnect()
       window.removeEventListener('resize', onResize)
       window.removeEventListener('hashchange', onHashChange)
-      trigger.kill()
+      tops = []
       progressStore.set(0)
+      activeSceneStore.set(0)
       gsap.ticker.remove(tick)
+      lenis.off('scroll', update)
       lenis.off('scroll', ScrollTrigger.update)
       lenis.destroy()
       if (lenisInstance === lenis) lenisInstance = null
+      if (process.env.NODE_ENV !== 'production') delete window.__sf
     }
   }, [])
 

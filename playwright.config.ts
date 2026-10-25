@@ -1,5 +1,6 @@
 import { defineConfig, devices } from '@playwright/test'
 
+// Dev-Server, nicht Production: window.__sf.progress gibt es nur in der Entwicklung (ScrollProvider).
 export default defineConfig({
   testDir: 'tests/e2e',
   retries: 0,
@@ -11,16 +12,8 @@ export default defineConfig({
     reuseExistingServer: true,
   },
   projects: [
-    {
-      name: 'chromium',
-      use: {
-        ...devices['Desktop Chrome'],
-        // WebGL im Headless-Modus
-        launchOptions: {
-          args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
-        },
-      },
-    },
-    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] }, testIgnore: /mobile\.spec\.ts/ },
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] }, testIgnore: /mobile\.spec\.ts/ },
+    { name: 'mobile', use: { ...devices['iPhone 13'] }, testMatch: /(mobile|smoke|motion)\.spec\.ts/ },
   ],
 })

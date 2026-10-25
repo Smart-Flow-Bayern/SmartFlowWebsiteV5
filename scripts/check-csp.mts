@@ -1,4 +1,4 @@
-// CSP-Prüfung gegen den Production-Build: lädt / und /en,
+// CSP-Prüfung gegen den Production-Build: lädt /,
 // scrollt in 15 Schritten (0 bis 14 einschließlich) bis ans Ende, öffnet dann den Cal.com-Embed und schlägt bei jeder CSP-Verletzung fehl.
 // Aufruf: pnpm build && pnpm start -p 3006 (anderes Terminal), dann `pnpm check:csp [baseUrl]`.
 // Erfasst Konsolenmeldungen ("Content Security Policy", "Refused to") und securitypolicyviolation-Events.
@@ -6,15 +6,10 @@
 import { chromium } from '@playwright/test'
 
 const BASE = process.argv[2] ?? process.env.BASE_URL ?? 'http://localhost:3006'
-const pages = [
-  { path: '/', cta: 'Termin wählen' },
-  { path: '/en', cta: 'Pick a time' },
-]
+const pages = [{ path: '/', cta: 'Termin wählen' }]
 const STEPS = 14
 
-const browser = await chromium.launch({
-  args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
-})
+const browser = await chromium.launch()
 const violations: string[] = []
 const errors: string[] = []
 let calFrame = 0
@@ -38,8 +33,7 @@ for (const p of pages) {
   const res = await page.goto(BASE + p.path, { waitUntil: 'load' })
   const csp = res?.headers()['content-security-policy']
   if (!csp) violations.push(tag('Antwort ohne Content-Security-Policy-Header'))
-  await page.waitForSelector('canvas', { timeout: 30_000 })
-  await page.waitForTimeout(4000) // Modell (Meshopt/WASM) und Shader
+  await page.waitForTimeout(2000)
 
   for (let i = 0; i <= STEPS; i++) {
     await page.evaluate(

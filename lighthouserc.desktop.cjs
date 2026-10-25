@@ -8,7 +8,6 @@ module.exports = {
       numberOfRuns: 3,
       settings: {
         preset: 'desktop',
-        chromeFlags: '--use-angle=swiftshader --enable-unsafe-swiftshader --ignore-gpu-blocklist',
       },
     },
     assert: {

@@ -1,6 +1,14 @@
 import { findeFloskeln } from '@/content/floskeln'
 import type { SiteContent } from '@/content/types'
 
+/** Anglizismen, die außer im Claim nicht vorkommen sollen (Spec 5.3), kleingeschrieben. */
+export const ANGLIZISMEN: readonly string[] = ['workflow', 'tool', 'integration', 'dashboard', 'ki-gestützt']
+
+/** Treffer der Anglizismen-Liste in `text`, in Reihenfolge der Liste; gleiche Wortgrenzen wie `findeFloskeln`. */
+export function findeAnglizismen(text: string): string[] {
+  return findeFloskeln(text, ANGLIZISMEN)
+}
+
 /** Jeder String-Wert des Inhalts, rekursiv durch Objekte und Arrays. */
 export function alleTexte(content: SiteContent): string[] {
   const out: string[] = []
@@ -53,10 +61,12 @@ function laenge(
   fehler.push(`${pfad}: ${arr.length} statt ${sollText}`)
 }
 
+type Befund = { text: string; treffer: string[] }
+
 export function pruefeInhalt(
   content: SiteContent,
   legacy: string[],
-): { floskeln: { text: string; treffer: string[] }[]; legacy: string[]; struktur: string[] } {
+): { floskeln: Befund[]; legacy: string[]; struktur: string[]; anglizismen: Befund[] } {
   const texte = alleTexte(content)
 
   const floskeln = texte
@@ -72,13 +82,16 @@ export function pruefeInhalt(
   }
 
   const struktur: string[] = []
-  laenge(struktur, 'station1.labels', content.station1.labels, 5)
+  laenge(struktur, 'services', content.services, 3)
+  laenge(struktur, 'scenes.automatisierung.examples', content.scenes.automatisierung.examples, 3)
+  laenge(struktur, 'scenes.wachstum.fields', content.scenes.wachstum.fields, 3)
   laenge(struktur, 'about.sentences', content.about.sentences, [2, 3])
-  laenge(struktur, 'cpu.examples', content.cpu.examples, 3)
-  laenge(struktur, 'ram.sticks', content.ram.sticks, 3)
-  laenge(struktur, 'gpu.before', content.gpu.before, 3)
-  laenge(struktur, 'gpu.after', content.gpu.after, 3)
-  laenge(struktur, 'ssd.blocks', content.ssd.blocks, 4)
 
-  return { floskeln, legacy: [...treffer], struktur }
+  // Der Claim ist die einzige erlaubte englische Zeile.
+  const anglizismen = texte
+    .filter((text) => text !== content.claim.text)
+    .map((text) => ({ text, treffer: findeAnglizismen(text) }))
+    .filter((a) => a.treffer.length > 0)
+
+  return { floskeln, legacy: [...treffer], struktur, anglizismen }
 }

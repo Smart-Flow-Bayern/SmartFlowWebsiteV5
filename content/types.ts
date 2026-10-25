@@ -1,47 +1,58 @@
-export type StationId = 'gehaeuse' | 'mainboard' | 'cpu' | 'ram' | 'gpu' | 'ssd' | 'kontakt'
+export type SceneId = 'komplexitaet' | 'analyse' | 'struktur' | 'automatisierung' | 'wachstum' | 'ueber' | 'kontakt'
 
-export const STATION_IDS: readonly StationId[] = [
-  'gehaeuse',
-  'mainboard',
-  'cpu',
-  'ram',
-  'gpu',
-  'ssd',
+/** Reihenfolge der Szenen auf der Seite. */
+export const SCENE_IDS: readonly SceneId[] = [
+  'komplexitaet',
+  'analyse',
+  'struktur',
+  'automatisierung',
+  'wachstum',
+  'ueber',
   'kontakt',
 ]
 
+/** Gemeinsamer Text einer nummerierten Szene. `number` '01'..'06', `kicker` z. B. 'Komplexität'. */
+export interface SceneText {
+  number: string
+  kicker: string
+  title: string
+  text: string
+}
+
 export interface SiteContent {
-  locale: 'de' | 'en'
+  locale: 'de'
   meta: { title: string; description: string }
-  nav: { labels: Record<StationId, string>; cta: string; homeLabel: string; stationsLabel: string }
-  station0: { sentence: string; scrollHint: string }
-  station1: { claim: string; labels: [string, string, string, string, string] }
-  about: { heading: string; sentences: string[] } // 2–3 Sätze
-  cpu: { title: string; intro: string; examples: { branch: string; text: string }[] } // genau 3
-  ram: { title: string; intro: string; sticks: string[] } // genau 3
-  gpu: {
-    title: string
-    intro: string
-    beforeLabel: string
-    afterLabel: string
-    before: string[]
-    after: string[]
-  } // je 3
-  ssd: {
-    title: string
-    blocks: { name: string; happens: string; deliverable: string; duration: string }[] // genau 4
+  nav: {
+    labels: Record<SceneId, string>
+    cta: string
+    homeLabel: string
+    scenesLabel: string
+    progressLabel: string
+    skipLabel: string
   }
-  contact: {
-    title: string
-    text: string
-    calCta: string
-    calConsent: string
-    calTitle: string
-    calOpenNewTab: string
+  claim: { text: string; subtitle: string } // text exakt 'Structure. Automation. Growth.'
+  scenes: {
+    komplexitaet: SceneText & { scrollHint: string } // title ist die H1, ≤ 90 Zeichen
+    analyse: SceneText
+    struktur: SceneText // die drei Punkte kommen aus services
+    automatisierung: SceneText & { examples: string[] } // genau 3
+    wachstum: SceneText & { fields: { name: string; text: string }[] } // genau 3: Effizienz, Skalierbarkeit, Produktivität
+    kontakt: SceneText & {
+      calCta: string
+      calConsent: string
+      calTitle: string
+      calOpenNewTab: string
+      emailCta: string
+    }
   }
-  footer: {
-    legal: { label: string; href: string }[]
-    languageSwitch: { label: string; href: string }
-    legalLabel: string
+  services: { name: string; text: string }[] // genau 3: Prozessoptimierung, Digitalisierung, Automatisierung
+  about: {
+    number: string
+    kicker: string
+    heading: string
+    sentences: string[] // 2–3 Sätze
+    photoAlt: string
+    initials: string // 'LH'
   }
+  footer: { legal: { label: string; href: string }[]; legalLabel: string }
 }

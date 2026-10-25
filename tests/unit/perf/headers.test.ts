@@ -4,9 +4,9 @@ import nextConfig from '../../../next.config'
 describe('next.config headers', () => {
   afterEach(() => vi.unstubAllEnvs())
 
-  it('liefert langes immutable Caching für Modelle, Fonts und Stationsbilder', async () => {
+  it('liefert langes immutable Caching für Fonts', async () => {
     const rules = await nextConfig.headers!()
-    for (const source of ['/models/:path*', '/fonts/:path*', '/stations/:path*']) {
+    for (const source of ['/fonts/:path*']) {
       const rule = rules.find((r) => r.source === source)
       expect(rule, source).toBeDefined()
       expect(rule!.headers).toContainEqual({
@@ -51,7 +51,9 @@ describe('next.config headers', () => {
     )
     expect(directives['frame-src']).toEqual(['https://cal.com', 'https://*.cal.com'])
     expect(directives['connect-src']).toEqual(["'self'", 'https://cal.com', 'https://*.cal.com'])
-    expect(directives['script-src']).toContain("'wasm-unsafe-eval'")
+    expect(directives['script-src']).toEqual(["'self'", "'unsafe-inline'"])
+    expect(directives['img-src']).not.toContain('blob:')
+    expect(directives['worker-src']).toEqual(["'self'"])
     expect(directives['script-src']).not.toContain("'unsafe-eval'")
     expect(directives['object-src']).toEqual(["'none'"])
     expect(directives['frame-ancestors']).toEqual(["'self'"])

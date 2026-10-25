@@ -1,22 +1,18 @@
 'use client'
 
 import { Wordmark } from '@/components/brand/Wordmark'
-import { scrollToStation } from '@/components/scroll/ScrollProvider'
 import { useContent } from '@/components/content/ContentProvider'
+import { scrollToScene } from '@/components/scroll/ScrollProvider'
 import { wordmarkVariant } from '@/lib/brand/tokens'
-import { useMode } from '@/lib/device/mode'
-import { useProgressSelector } from '@/lib/scroll/progress'
-import { STATIONS, stationAt } from '@/scene/stations'
+import { progressStore, useActiveScene } from '@/lib/scroll/progress'
+import { SCENES, sceneAt } from '@/scene/process/scenes'
 
-const SCROLLED_AFTER = 0.05
-
-/** Fokus erst setzen, wenn die Station nicht mehr inert ist (Overlay blendet nach der Fahrt ein). Max. 3 s. */
-function focusWhenReady(elementId: string, stationId = 'kontakt'): void {
+/** Fokus auf die Kontakt-Überschrift, sobald die Fahrt in der Kontakt-Szene angekommen ist. Höchstens 3 s. */
+function focusOnArrival(elementId: string): void {
   const until = performance.now() + 3000
   const step = () => {
-    const station = document.getElementById(stationId)
     const target = document.getElementById(elementId)
-    if (station && target && !station.hasAttribute('inert')) {
+    if (target && sceneAt(progressStore.get()).id === 'kontakt') {
       target.focus({ preventScroll: true })
       return
     }
@@ -27,63 +23,50 @@ function focusWhenReady(elementId: string, stationId = 'kontakt'): void {
 
 export function SiteNav() {
   const content = useContent()
-  const activeId = useProgressSelector((p) => stationAt(p).id)
-  const scrolledByProgress = useProgressSelector((p) => p > SCROLLED_AFTER)
-  const staticMode = useMode() === 'static'
-  const scrolled = staticMode || scrolledByProgress
-
+  const activeId = (SCENES[useActiveScene()] ?? SCENES[0]).id
   return (
-    <header className="nav-bar" data-scrolled={scrolled}>
+    <header className="nav-bar">
       <a
         href="#start"
         aria-label={content.nav.homeLabel}
         className="nav-link nav-brand"
         onClick={(event) => {
-          if (staticMode) return
           event.preventDefault()
-          scrollToStation('gehaeuse')
+          scrollToScene('komplexitaet')
           history.replaceState(null, '', '#start')
         }}
       >
         <Wordmark variant={wordmarkVariant} size={24} decorative />
       </a>
-      <nav aria-label={content.nav.stationsLabel} className="nav-stations">
-        {STATIONS.map(({ id, slug }) => (
+      <nav aria-label={content.nav.scenesLabel} className="nav-scenes">
+        {SCENES.map(({ id, slug }) => (
           <a
             key={id}
             href={`#${slug}`}
-            aria-label={content.nav.labels[id]}
-            aria-current={!staticMode && id === activeId ? 'true' : undefined}
-            className="nav-link nav-station"
+            aria-current={id === activeId ? 'true' : undefined}
+            className="nav-link nav-scene"
             onClick={(event) => {
-              if (staticMode) return
               event.preventDefault()
-              scrollToStation(id)
+              scrollToScene(id)
               history.replaceState(null, '', `#${slug}`)
             }}
           >
-            <span className="nav-dot" aria-hidden="true" />
-            <span className="nav-label" aria-hidden="true">
-              {content.nav.labels[id]}
-            </span>
+            {content.nav.labels[id]}
           </a>
         ))}
       </nav>
-      <button
-        type="button"
-        className="nav-link nav-cta"
-        onClick={() => {
-          if (staticMode) {
-            location.hash = '#kontakt'
-            document.getElementById('kontakt-title')?.focus({ preventScroll: true })
-            return
-          }
-          scrollToStation('kontakt')
-          focusWhenReady('kontakt-title')
+      <a
+        className="btn nav-cta"
+        href="#kontakt"
+        onClick={(event) => {
+          event.preventDefault()
+          scrollToScene('kontakt')
+          history.replaceState(null, '', '#kontakt')
+          focusOnArrival('kontakt-title')
         }}
       >
         {content.nav.cta}
-      </button>
+      </a>
     </header>
   )
 }

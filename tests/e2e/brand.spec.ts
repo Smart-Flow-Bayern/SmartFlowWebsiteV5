@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { colors } from '@/lib/brand/tokens'
 
 test.describe('/brand', () => {
   test.beforeEach(async ({ page }) => {
@@ -14,7 +15,7 @@ test.describe('/brand', () => {
   })
 
   test('zeigt alle fünf Farbwerte als Text', async ({ page }) => {
-    for (const hex of ['#050607', '#141618', '#DDFF4D', '#7A8A8A', '#F4F6F5']) {
+    for (const hex of [colors.ground, colors.groundEnd, colors.accent, colors.muted, colors.ink]) {
       await expect(page.getByText(hex, { exact: true }).first()).toBeVisible()
     }
   })

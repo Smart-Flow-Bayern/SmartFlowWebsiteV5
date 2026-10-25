@@ -11,15 +11,13 @@ const CONTEXT = 'https://schema.org'
  * JSON-LD für die Startseite. Nur belegte Fakten aus CONTACT und den Inhaltsdateien;
  * fehlende Felder stehen in docs/content/seo-offen.md.
  */
-export function buildSchema(locale: 'de' | 'en', content: SiteContent): object[] {
-  const url = locale === 'de' ? `${ORIGIN}/` : `${ORIGIN}/en`
-
+export function buildSchema(content: SiteContent): object[] {
   const business = {
     '@context': CONTEXT,
     '@type': 'LocalBusiness',
     '@id': BUSINESS_ID,
     name: 'Smart Flow',
-    url,
+    url: `${ORIGIN}/`,
     email: CONTACT.email,
     telephone: CONTACT.phone,
     address: {
@@ -40,11 +38,11 @@ export function buildSchema(locale: 'de' | 'en', content: SiteContent): object[]
     worksFor: { '@id': BUSINESS_ID },
   }
 
-  const services = [content.cpu, content.ram, content.gpu].map((s) => ({
+  const services = content.services.map((s) => ({
     '@context': CONTEXT,
     '@type': 'Service',
-    name: s.title,
-    description: s.intro,
+    name: s.name,
+    description: s.text,
     provider: { '@id': BUSINESS_ID },
   }))
 

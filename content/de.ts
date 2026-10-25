@@ -1,125 +1,113 @@
 import type { SiteContent } from '@/content/types'
 
+/** Entwurf nach Spec 5.3 (Rebranding V2), Leon korrigiert. */
 export const de: SiteContent = {
   locale: 'de',
   meta: {
-    title: 'Smart Flow – Abläufe, Digitalisierung, Automatisierung | Regensburg',
+    title: 'Smart Flow Regensburg – Abläufe ordnen, digitalisieren, automatisieren',
     description:
-      'Smart Flow aus Regensburg ordnet Abläufe in kleinen Betrieben, wählt passende Software aus und automatisiert, was sich ständig wiederholt.',
+      'Smart Flow aus Regensburg macht aus Zetteln, Anrufen und doppelten Eingaben einen Ablauf, den jeder im Betrieb versteht.',
   },
   nav: {
     labels: {
-      gehaeuse: 'Start',
-      mainboard: 'Überblick',
-      cpu: 'Abläufe',
-      ram: 'Werkzeuge',
-      gpu: 'Automatisch',
-      ssd: 'Vorgehen',
+      komplexitaet: 'Start',
+      analyse: 'Analyse',
+      struktur: 'Struktur',
+      automatisierung: 'Automatisierung',
+      wachstum: 'Wachstum',
+      ueber: 'Über',
       kontakt: 'Kontakt',
     },
     cta: 'Erstgespräch',
     homeLabel: 'Smart Flow – zum Anfang',
-    stationsLabel: 'Stationen',
+    scenesLabel: 'Abschnitte',
+    progressLabel: 'Fortschritt',
+    skipLabel: 'Zum Inhalt springen',
   },
-  station0: {
-    sentence: 'Jede Woche ein neues Werkzeug. Dabei soll Ihr Betrieb einfach laufen.',
-    scrollHint: 'Scrollen',
+  claim: {
+    text: 'Structure. Automation. Growth.',
+    subtitle: 'Erst Ordnung, dann Entlastung, dann Wachstum.',
   },
-  station1: {
-    claim: 'Weniger Lärm. Mehr erledigt.',
-    labels: ['Abläufe', 'Werkzeuge', 'Automatisch', 'Vorgehen', 'Kontakt'],
+  scenes: {
+    komplexitaet: {
+      number: '01',
+      kicker: 'Komplexität',
+      title: 'Anfragen auf Zetteln, Termine im Kopf, Rechnungen am Wochenende.',
+      text: 'In vielen Betrieben wächst die Arbeit schneller als die Ordnung. Wir machen daraus einen Ablauf, den jeder im Betrieb versteht.',
+      scrollHint: 'Scrollen',
+    },
+    analyse: {
+      number: '02',
+      kicker: 'Analyse',
+      title: 'Erst verstehen, wie die Arbeit bei Ihnen läuft.',
+      text: 'Wir gehen Ihren Arbeitstag mit den Leuten durch, die täglich damit arbeiten. So wird sichtbar, wo Anfragen liegen bleiben und was doppelt passiert. Das Vorgehen ist immer gleich: erst verstehen, dann planen, dann umbauen, dann nachbessern.',
+    },
+    struktur: {
+      number: '03',
+      kicker: 'Struktur',
+      title: 'Jede Angabe wird einmal erfasst und liegt an einer Stelle.',
+      text: 'Ein Auftrag wird einmal aufgenommen, und alle arbeiten mit denselben Angaben. Für jeden Schritt ist klar, wer zuständig ist. Dafür setzen wir an drei Stellen an.',
+    },
+    automatisierung: {
+      number: '04',
+      kicker: 'Automatisierung',
+      title: 'Was sich ständig wiederholt, läuft von selbst.',
+      text: 'Manches muss niemand mehr anfassen. Es läuft im Hintergrund, während Ihr Team arbeitet. Drei Beispiele aus dem Alltag:',
+      examples: [
+        'Die Rechnung geht raus, sobald der Auftrag als erledigt markiert ist.',
+        'Kunden wählen ihren Termin selbst und bekommen vorher eine Erinnerung.',
+        'Offene Angebote werden nach festem Plan nachgefasst, ohne dass jemand daran denken muss.',
+      ],
+    },
+    wachstum: {
+      number: '05',
+      kicker: 'Wachstum',
+      title: 'Mehr Aufträge schaffen, ohne mehr Durcheinander.',
+      text: 'Wenn Abläufe klar sind, trägt der Betrieb mehr Arbeit, ohne dass alle länger bleiben. Neue Leute finden sich zurecht, weil jeder Schritt nachvollziehbar ist.',
+      fields: [
+        { name: 'Effizienz', text: 'Weniger Suchen, weniger Rückfragen, keine doppelte Eingabe.' },
+        { name: 'Skalierbarkeit', text: 'Der Ablauf hält auch dann, wenn mehr Anfragen kommen.' },
+        { name: 'Produktivität', text: 'Ihr Team arbeitet am Auftrag statt an der Ablage.' },
+      ],
+    },
+    kontakt: {
+      number: '06',
+      kicker: 'Kontakt',
+      title: 'Reden wir über Ihren Betrieb.',
+      text: 'Erzählen Sie, wo es bei Ihnen hakt. Sie hören danach klar, ob wir helfen können und womit wir anfangen würden.',
+      calCta: 'Termin wählen',
+      calConsent:
+        'Der Kalender von Cal.com erscheint erst, wenn Sie klicken. Dann gehen Daten an Cal.com; mehr dazu in der Datenschutzerklärung.',
+      calTitle: 'Terminbuchung bei Cal.com',
+      calOpenNewTab: 'Kalender in neuem Tab öffnen',
+      emailCta: 'E-Mail schreiben',
+    },
   },
+  services: [
+    {
+      name: 'Prozessoptimierung',
+      text: 'Wir ordnen Abläufe so, dass nichts doppelt passiert und jeder weiß, was als Nächstes kommt.',
+    },
+    {
+      name: 'Digitalisierung',
+      text: 'Wir wählen passende Programme aus und verbinden sie, damit nichts zweimal eingetippt wird.',
+    },
+    {
+      name: 'Automatisierung',
+      text: 'Was sich ständig wiederholt, wie Rechnung, Erinnerung und Nachfass, läuft im Hintergrund.',
+    },
+  ],
   about: {
-    heading: 'Wer dahintersteht',
+    number: '',
+    kicker: 'Wer dahintersteht',
+    heading: 'Ein Ansprechpartner aus Regensburg.',
     sentences: [
       'Smart Flow ist Leon Heinrich aus Regensburg.',
       'Ihr Ansprechpartner bleibt vom ersten Gespräch bis zum laufenden Ablauf derselbe.',
       'Die Frage ist jedes Mal: Was spart Ihrem Betrieb Arbeit, und was ist nur laut?',
     ],
-  },
-  cpu: {
-    title: 'Prozessoptimierung',
-    intro:
-      'Erst verstehen, dann ändern. Wir sehen uns an, wie die Arbeit bei Ihnen wirklich läuft. Wo es staut, wird umgebaut. Was doppelt passiert, fällt weg.',
-    examples: [
-      {
-        branch: 'Handwerk',
-        text: 'Beispiel: Ein Auftrag wird im Büro aufgenommen, auf der Baustelle neu notiert und abends für die Rechnung noch einmal abgetippt. Danach wird der Auftrag einmal erfasst, und alle arbeiten mit denselben Angaben.',
-      },
-      {
-        branch: 'Praxis',
-        text: 'Beispiel: Terminwünsche kommen per Anruf, Zettel und Nachricht herein, und niemand weiß, welche schon bestätigt sind. Danach kommen Anfragen an einer festen Stelle an, und das Team ruft gesammelt zurück.',
-      },
-      {
-        branch: 'Hausverwaltung',
-        text: 'Beispiel: Eine Schadensmeldung wandert durch mehrere Postfächer, bis sich jemand zuständig fühlt. Danach ist klar, wer sie bekommt und wann der Mieter eine Antwort hat.',
-      },
-    ],
-  },
-  ram: {
-    title: 'Digitalisierung',
-    intro:
-      'Software soll Arbeit abnehmen, nicht neue machen. Wir sorgen dafür, dass Ihre Werkzeuge zu Ihrem Betrieb passen.',
-    sticks: [
-      'Die passende Software auswählen, nicht die lauteste.',
-      'Daten aus Ordnern, Zetteln und Tabellen dorthin holen, wo alle sie finden.',
-      'Programme verbinden, damit nichts zweimal eingetippt wird.',
-    ],
-  },
-  gpu: {
-    title: 'Automatisierung',
-    intro: 'Manches muss niemand mehr anfassen. Es läuft im Hintergrund, während Sie arbeiten.',
-    beforeLabel: 'Vorher',
-    afterLabel: 'Nachher',
-    before: [
-      'Rechnungen werden am Monatsende nachgeschrieben.',
-      'Termine werden am Telefon hin und her geschoben.',
-      'Bei Angeboten wird nachgefasst, wenn jemand daran denkt.',
-    ],
-    after: [
-      'Rechnungen gehen raus, sobald der Auftrag abgeschlossen ist.',
-      'Kunden buchen selbst und bekommen vorher eine Erinnerung.',
-      'Offene Angebote werden nach festem Plan nachgefasst.',
-    ],
-  },
-  ssd: {
-    title: 'Vier Schritte',
-    blocks: [
-      {
-        name: 'Analyse',
-        happens:
-          'Wir gehen Ihren Arbeitstag mit den Leuten durch, die täglich damit arbeiten, bei Ihnen oder per Video.',
-        deliverable: 'Eine Liste, was Sie am meisten aufhält, und womit wir anfangen.',
-        duration: 'nach Absprache',
-      },
-      {
-        name: 'Konzept',
-        happens: 'Wir legen fest, wie es künftig laufen soll und welche Werkzeuge dafür nötig sind.',
-        deliverable: 'Ein Plan in verständlicher Sprache, mit Reihenfolge und Aufwand je Schritt.',
-        duration: 'nach Absprache',
-      },
-      {
-        name: 'Umsetzung',
-        happens: 'Wir richten ein, verbinden und testen. Ihr Team wird eingewiesen, bevor umgestellt wird.',
-        deliverable: 'Abläufe, die im Alltag funktionieren und die Ihr Team selbst bedienen kann.',
-        duration: 'nach Absprache',
-      },
-      {
-        name: 'Optimierung',
-        happens: 'Wenn alles läuft, schauen wir, wo es im Alltag noch hakt, und bessern nach.',
-        deliverable: 'Ein Ablauf, der sich im Betrieb bewährt hat, nicht nur auf dem Papier.',
-        duration: 'nach Absprache',
-      },
-    ],
-  },
-  contact: {
-    title: 'Reden wir über Ihren Betrieb.',
-    text: 'Erzählen Sie, wo es bei Ihnen hakt. Sie hören danach klar, ob wir helfen können und womit wir anfangen würden.',
-    calCta: 'Termin wählen',
-    calConsent:
-      'Der Kalender von Cal.com erscheint erst, wenn Sie klicken. Dann gehen Daten an Cal.com; mehr dazu in der Datenschutzerklärung.',
-    calTitle: 'Terminbuchung bei Cal.com',
-    calOpenNewTab: 'Kalender in neuem Tab öffnen',
+    photoAlt: 'Leon Heinrich',
+    initials: 'LH',
   },
   footer: {
     legal: [
@@ -127,7 +115,6 @@ export const de: SiteContent = {
       { label: 'Datenschutz', href: '/datenschutz.html' },
       { label: 'AGB', href: '/agb.html' },
     ],
-    languageSwitch: { label: 'English', href: '/en' },
     legalLabel: 'Rechtliches',
   },
 }

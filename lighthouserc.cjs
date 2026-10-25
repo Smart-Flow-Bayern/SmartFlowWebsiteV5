@@ -1,6 +1,5 @@
 // Lighthouse CI, mobil (Default-Emulation). Desktop: lighthouserc.desktop.cjs.
 // Chrome-Pfad bei Bedarf per CHROME_PATH setzen, nicht hier festschreiben.
-// Die Chrome-Flags erzwingen WebGL per SwiftShader (Software-Rendering, deutlich langsamer als echte GPU).
 module.exports = {
   ci: {
     collect: {
@@ -8,13 +7,10 @@ module.exports = {
       startServerReadyPattern: 'Ready',
       url: ['http://localhost:3006/'],
       numberOfRuns: 3,
-      settings: {
-        chromeFlags: '--use-angle=swiftshader --enable-unsafe-swiftshader --ignore-gpu-blocklist',
-      },
     },
     assert: {
       assertions: {
-        'categories:performance': ['error', { minScore: 0.7 }],
+        'categories:performance': ['error', { minScore: 0.9 }],
         'categories:accessibility': ['error', { minScore: 0.95 }],
         'categories:best-practices': ['error', { minScore: 0.95 }],
         'categories:seo': ['error', { minScore: 0.95 }],

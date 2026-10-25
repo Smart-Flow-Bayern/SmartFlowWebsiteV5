@@ -1,27 +1,30 @@
 import { SITE_ORIGIN } from '@/lib/seo/site'
 import type { Metadata } from 'next'
 import { CONTENT } from '@/content'
-import { alternates, type Locale } from '@/lib/i18n'
 
-// Die Datei-Konvention app/opengraph-image.tsx greift nicht, weil beide Layouts in Route Groups liegen
-// und app/ kein eigenes Root-Layout hat; das Bild wird deshalb explizit gesetzt.
-export function siteMetadata(locale: Locale): Metadata {
-  const { meta } = CONTENT[locale]
-  const url = locale === 'de' ? '/' : '/en'
+/**
+ * Vorschaubild für `/`: explizit gesetzt (stabile URL ohne Hash). Für `/` greift diese Angabe, nicht die
+ * Datei-Konvention app/opengraph-image.tsx; die Konvention (URL mit Hash, Maße und alt aus der Datei) gilt nur
+ * für Routen, die `openGraph.images` nicht selbst setzen (derzeit die 404). Maße und alt wie in
+ * app/opengraph-image.tsx (`size`, `alt`).
+ */
+export const OG_IMAGE = { url: '/opengraph-image', width: 1200, height: 630, alt: 'Smart Flow' } as const
+
+export function siteMetadata(): Metadata {
+  const { meta } = CONTENT
   return {
     metadataBase: new URL(SITE_ORIGIN),
     title: meta.title,
     description: meta.description,
-    alternates: alternates(locale),
     openGraph: {
       type: 'website',
       siteName: 'Smart Flow',
-      locale: locale === 'de' ? 'de_DE' : 'en_US',
-      url,
+      locale: 'de_DE',
+      url: '/',
       title: meta.title,
       description: meta.description,
-      images: ['/opengraph-image'],
+      images: [OG_IMAGE],
     },
-    twitter: { card: 'summary_large_image', images: ['/opengraph-image'] },
+    twitter: { card: 'summary_large_image', images: [OG_IMAGE] },
   }
 }
