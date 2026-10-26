@@ -6,7 +6,7 @@ export const de: SiteContent = {
   meta: {
     title: 'Smart Flow Regensburg – Abläufe ordnen, digitalisieren, automatisieren',
     description:
-      'Smart Flow aus Regensburg macht aus Zetteln, Anrufen und doppelten Eingaben einen Ablauf, den jeder im Betrieb versteht.',
+      'Smart Flow aus Regensburg hilft kleinen und mittleren Betrieben, ihre Büroarbeit vom Zettel in einen festen Ablauf zu bringen.',
   },
   nav: {
     labels: {
@@ -33,40 +33,40 @@ export const de: SiteContent = {
       number: '01',
       kicker: 'Komplexität',
       title: 'Anfragen auf Zetteln, Termine im Kopf, Rechnungen am Wochenende.',
-      text: 'In vielen Betrieben wächst die Arbeit schneller als die Ordnung. Wir machen daraus einen Ablauf, den jeder im Betrieb versteht.',
+      text: 'In vielen Betrieben wächst die Arbeit schneller als die Ordnung. Wir machen daraus einen Ablauf, den Ihr ganzes Team versteht.',
       scrollHint: 'Scrollen',
     },
     analyse: {
       number: '02',
       kicker: 'Analyse',
       title: 'Erst verstehen, wie die Arbeit bei Ihnen läuft.',
-      text: 'Wir gehen Ihren Arbeitstag mit den Leuten durch, die täglich damit arbeiten. So wird sichtbar, wo Anfragen liegen bleiben und was doppelt passiert. Das Vorgehen ist immer gleich: erst verstehen, dann planen, dann umbauen, dann nachbessern.',
+      text: 'Wir gehen Ihren Arbeitstag mit den Leuten durch, die ihn kennen. So wird sichtbar, wo Anfragen liegen bleiben und was doppelt passiert. Danach planen wir den Umbau und bessern so lange nach, bis er im Alltag sitzt.',
     },
     struktur: {
       number: '03',
       kicker: 'Struktur',
       title: 'Jede Angabe wird einmal erfasst und liegt an einer Stelle.',
-      text: 'Ein Auftrag wird einmal aufgenommen, und alle arbeiten mit denselben Angaben. Für jeden Schritt ist klar, wer zuständig ist. Dafür setzen wir an drei Stellen an.',
+      text: 'Wer einen Auftrag annimmt, legt ihn an, und ab da arbeiten alle mit denselben Daten. Für jeden Schritt steht fest, wer zuständig ist. Dafür setzen wir an drei Stellen an.',
     },
     automatisierung: {
       number: '04',
       kicker: 'Automatisierung',
       title: 'Was sich ständig wiederholt, läuft von selbst.',
-      text: 'Manches muss niemand mehr anfassen. Es läuft im Hintergrund, während Ihr Team arbeitet. Drei Beispiele aus dem Alltag:',
+      text: 'Manche Handgriffe muss niemand mehr machen. Ihr Team sieht nur noch das Ergebnis. Zum Beispiel:',
       examples: [
         'Die Rechnung geht raus, sobald der Auftrag als erledigt markiert ist.',
         'Kunden wählen ihren Termin selbst und bekommen vorher eine Erinnerung.',
-        'Offene Angebote werden nach festem Plan nachgefasst, ohne dass jemand daran denken muss.',
+        'Bei offenen Angeboten wird nach festem Plan nachgefasst. Daran denken muss niemand.',
       ],
     },
     wachstum: {
       number: '05',
       kicker: 'Wachstum',
       title: 'Mehr Aufträge schaffen, ohne mehr Durcheinander.',
-      text: 'Wenn Abläufe klar sind, trägt der Betrieb mehr Arbeit, ohne dass alle länger bleiben. Neue Leute finden sich zurecht, weil jeder Schritt nachvollziehbar ist.',
+      text: 'Ist geregelt, wer was wann macht, schafft der Betrieb mehr Arbeit in derselben Zeit. Neue Leute finden sich schnell zurecht, weil sie jeden Schritt nachvollziehen können.',
       fields: [
-        { name: 'Effizienz', text: 'Weniger Suchen, weniger Rückfragen, keine doppelte Eingabe.' },
-        { name: 'Skalierbarkeit', text: 'Der Ablauf hält auch dann, wenn mehr Anfragen kommen.' },
+        { name: 'Effizienz', text: 'Weniger Suchen und Nachfragen. Was einmal eingegeben ist, steht überall.' },
+        { name: 'Skalierbarkeit', text: 'Das System hält auch dann, wenn mehr Anfragen kommen.' },
         { name: 'Produktivität', text: 'Ihr Team arbeitet am Auftrag statt an der Ablage.' },
       ],
     },
@@ -74,7 +74,7 @@ export const de: SiteContent = {
       number: '06',
       kicker: 'Kontakt',
       title: 'Reden wir über Ihren Betrieb.',
-      text: 'Erzählen Sie, wo es bei Ihnen hakt. Sie hören danach klar, ob wir helfen können und womit wir anfangen würden.',
+      text: 'Erzählen Sie, wo es bei Ihnen hakt. Danach sagen wir Ihnen offen, ob wir helfen können und womit wir anfangen würden.',
       calCta: 'Termin wählen',
       calConsent:
         'Der Kalender von Cal.com erscheint erst, wenn Sie klicken. Dann gehen Daten an Cal.com; mehr dazu in der Datenschutzerklärung.',
@@ -86,7 +86,7 @@ export const de: SiteContent = {
   services: [
     {
       name: 'Prozessoptimierung',
-      text: 'Wir ordnen Abläufe so, dass nichts doppelt passiert und jeder weiß, was als Nächstes kommt.',
+      text: 'Wir ordnen die Arbeit so, dass jeder weiß, was als Nächstes kommt.',
     },
     {
       name: 'Digitalisierung',
@@ -94,7 +94,7 @@ export const de: SiteContent = {
     },
     {
       name: 'Automatisierung',
-      text: 'Was sich ständig wiederholt, wie Rechnung, Erinnerung und Nachfass, läuft im Hintergrund.',
+      text: 'Routinearbeit wie Rechnungen und Terminerinnerungen übernimmt das System.',
     },
   ],
   about: {
@@ -103,7 +103,7 @@ export const de: SiteContent = {
     heading: 'Ein Ansprechpartner aus Regensburg.',
     sentences: [
       'Smart Flow ist Leon Heinrich aus Regensburg.',
-      'Ihr Ansprechpartner bleibt vom ersten Gespräch bis zum laufenden Ablauf derselbe.',
+      'Vom ersten Gespräch bis zum fertigen Umbau haben Sie denselben Ansprechpartner.',
       'Die Frage ist jedes Mal: Was spart Ihrem Betrieb Arbeit, und was ist nur laut?',
     ],
     photoAlt: 'Leon Heinrich',
