@@ -19,7 +19,7 @@ describe('Scenes (Szenen als HTML)', () => {
   it('setzt den Claim mit lang="en" und sonst kein Englisch-Attribut', () => {
     const { container } = render(<Story />)
     const en = [...container.querySelectorAll('[lang="en"]')]
-    expect(en.length).toBe(2)
+    expect(en.length).toBe(1)
     for (const el of en) expect(el.textContent).toBe(de.claim.text)
   })
   it('Struktur listet die drei Leistungen, Kontakt bietet Termin und E-Mail', () => {
@@ -27,5 +27,13 @@ describe('Scenes (Szenen als HTML)', () => {
     expect(container.querySelectorAll('#struktur ol li')).toHaveLength(3)
     expect(screen.getByRole('button', { name: de.scenes.kontakt.calCta })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: de.scenes.kontakt.emailCta })).toHaveAttribute('href', 'mailto:info@smartflow.bayern')
+  })
+  it('zeigt die häufigen Fragen zwischen Über und Kontakt, ohne als Szene zu zählen', () => {
+    const { container } = render(<Story />)
+    const fragen = container.querySelector('#fragen')!
+    expect(fragen.classList.contains('scene')).toBe(false)
+    expect(fragen.previousElementSibling?.id).toBe('ueber')
+    expect(fragen.nextElementSibling?.id).toBe('kontakt')
+    expect([...fragen.querySelectorAll('h3')].map((h) => h.textContent)).toEqual(de.faq.items.map((i) => i.question))
   })
 })

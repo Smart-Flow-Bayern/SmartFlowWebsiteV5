@@ -37,18 +37,15 @@ export function Kicker({ number, kicker }: { number: string; kicker: string }) {
   )
 }
 
-/**
- * Der englische Claim (Szene 01 und 06). Den deutschen Untertitel trägt nur Szene 01 (Spec Abschnitt 4);
- * in Kontakt stünde derselbe Satz sonst ein zweites Mal auf der Seite.
- */
-export function Claim({ subtitle = true }: { subtitle?: boolean }) {
+/** Der englische Claim mit deutschem Untertitel, nur in Szene 01. */
+export function Claim() {
   const { claim } = CONTENT
   return (
     <>
       <p className="claim" lang="en">
         {claim.text}
       </p>
-      {subtitle ? <p className="claim-sub">{claim.subtitle}</p> : null}
+      <p className="claim-sub">{claim.subtitle}</p>
     </>
   )
 }

@@ -51,8 +51,17 @@ describe('buildSchema', () => {
     expect(byType(schema, 'Service').map((s) => s.description)).toEqual(de.services.map((s) => s.text))
   })
 
-  it('contains no FAQPage, Offer or AggregateRating', () => {
-    for (const t of ['FAQPage', 'Offer', 'AggregateRating']) expect(byType(schema, t)).toHaveLength(0)
+  it('has one FAQPage with the visible questions and answers', () => {
+    const faq = byType(schema, 'FAQPage') as unknown as {
+      mainEntity: { '@type': string; name: string; acceptedAnswer: { '@type': string; text: string } }[]
+    }[]
+    expect(faq).toHaveLength(1)
+    expect(faq[0].mainEntity.map((q) => q.name)).toEqual(de.faq.items.map((i) => i.question))
+    expect(faq[0].mainEntity.map((q) => q.acceptedAnswer.text)).toEqual(de.faq.items.map((i) => i.answer))
+  })
+
+  it('contains no Offer or AggregateRating', () => {
+    for (const t of ['Offer', 'AggregateRating']) expect(byType(schema, t)).toHaveLength(0)
     const keys = keysDeep(schema)
     expect(keys.has('offers')).toBe(false)
     expect(keys.has('aggregateRating')).toBe(false)

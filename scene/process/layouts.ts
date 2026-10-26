@@ -110,9 +110,9 @@ export const FRAGMENTS_MOBILE = 12
 export const CENTER: Point = [500, 300]
 
 export const ZONES: readonly { label: string; rx: number; ry: number }[] = [
-  { label: 'Effizienz', rx: 300, ry: 200 },
-  { label: 'Skalierbarkeit', rx: 380, ry: 260 },
-  { label: 'Produktivität', rx: 460, ry: 320 },
+  { label: 'Weniger Suchen', rx: 300, ry: 200 },
+  { label: 'Mehr Anfragen, gleiches Team', rx: 380, ry: 260 },
+  { label: 'Zeit für den Auftrag', rx: 460, ry: 320 },
 ]
 
 export const PACKETS_DESKTOP = 9

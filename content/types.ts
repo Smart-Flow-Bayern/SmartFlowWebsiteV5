@@ -36,7 +36,7 @@ export interface SiteContent {
     analyse: SceneText
     struktur: SceneText // die drei Punkte kommen aus services
     automatisierung: SceneText & { examples: string[] } // genau 3
-    wachstum: SceneText & { fields: { name: string; text: string }[] } // genau 3: Effizienz, Skalierbarkeit, Produktivität
+    wachstum: SceneText & { fields: { name: string; text: string }[] } // genau 3
     kontakt: SceneText & {
       calCta: string
       calConsent: string
@@ -53,6 +53,12 @@ export interface SiteContent {
     sentences: string[] // 2–3 Sätze
     photoAlt: string
     initials: string // 'LH'
+  }
+  /** Häufige Fragen zwischen Über und Kontakt; keine Szene, nur Text. */
+  faq: {
+    kicker: string
+    heading: string
+    items: { question: string; answer: string }[]
   }
   footer: { legal: { label: string; href: string }[]; legalLabel: string }
 }

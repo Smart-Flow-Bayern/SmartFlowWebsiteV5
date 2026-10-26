@@ -33,20 +33,20 @@ export const de: SiteContent = {
       number: '01',
       kicker: 'Komplexität',
       title: 'Anfragen auf Zetteln, Termine im Kopf, Rechnungen am Wochenende.',
-      text: 'In vielen Handwerksbetrieben, Praxen und Hausverwaltungen wächst die Arbeit schneller als die Ordnung. Wir machen daraus einen Ablauf, den Ihr ganzes Team versteht.',
+      text: 'In vielen Handwerksbetrieben, Praxen und Hausverwaltungen wächst die Arbeit schneller als die Ordnung. Ich mache daraus einen Ablauf, den Ihr ganzes Team versteht.',
       scrollHint: 'Scrollen',
     },
     analyse: {
       number: '02',
       kicker: 'Analyse',
       title: 'Erst verstehen, wie die Arbeit bei Ihnen läuft.',
-      text: 'Wir gehen Ihren Arbeitstag mit den Leuten durch, die ihn kennen. So wird sichtbar, wo Anfragen liegen bleiben und was doppelt passiert. Danach planen wir den Umbau und bessern so lange nach, bis er im Alltag sitzt.',
+      text: 'Ich gehe Ihren Arbeitstag mit den Leuten durch, die ihn kennen. So wird sichtbar, wo Anfragen liegen bleiben und was doppelt passiert. Danach plane ich den Umbau und bessere so lange nach, bis er im Alltag sitzt.',
     },
     struktur: {
       number: '03',
       kicker: 'Struktur',
       title: 'Jede Angabe wird einmal erfasst und liegt an einer Stelle.',
-      text: 'Wer einen Auftrag annimmt, legt ihn an, und ab da arbeiten alle mit denselben Daten. Für jeden Schritt steht fest, wer zuständig ist. Dafür setzen wir an drei Stellen an.',
+      text: 'Wer einen Auftrag annimmt, legt ihn an, und ab da arbeiten alle mit denselben Daten. Für jeden Schritt steht fest, wer zuständig ist. Dafür setze ich an drei Stellen an.',
     },
     automatisierung: {
       number: '04',
@@ -54,9 +54,9 @@ export const de: SiteContent = {
       title: 'Was sich ständig wiederholt, läuft von selbst.',
       text: 'Manche Handgriffe muss niemand mehr machen. Ihr Team sieht nur noch das Ergebnis. Zum Beispiel:',
       examples: [
-        'Die Rechnung geht raus, sobald der Auftrag als erledigt markiert ist.',
-        'Kunden wählen ihren Termin selbst und bekommen vorher eine Erinnerung.',
-        'Bei offenen Angeboten wird nach festem Plan nachgefasst. Daran denken muss niemand.',
+        'Im Handwerksbetrieb geht die Rechnung raus, sobald der Auftrag als erledigt markiert ist.',
+        'In der Praxis wählen Patienten ihren Termin selbst und bekommen vorher eine Erinnerung.',
+        'In der Hausverwaltung landet jede Schadensmeldung mit Fotos beim richtigen Objekt und bei der zuständigen Person.',
       ],
     },
     wachstum: {
@@ -65,16 +65,16 @@ export const de: SiteContent = {
       title: 'Mehr Aufträge schaffen, ohne mehr Durcheinander.',
       text: 'Ist geregelt, wer was wann macht, schafft der Betrieb mehr Arbeit in derselben Zeit. Neue Leute finden sich schnell zurecht, weil sie jeden Schritt nachvollziehen können.',
       fields: [
-        { name: 'Effizienz', text: 'Weniger Suchen und Nachfragen. Was einmal eingegeben ist, steht überall.' },
-        { name: 'Skalierbarkeit', text: 'Das System hält auch dann, wenn mehr Anfragen kommen.' },
-        { name: 'Produktivität', text: 'Ihr Team arbeitet am Auftrag statt an der Ablage.' },
+        { name: 'Weniger Suchen', text: 'Was einmal eingegeben ist, steht überall. Niemand muss mehr nachfragen.' },
+        { name: 'Mehr Anfragen, gleiches Team', text: 'Der Ablauf hält auch dann, wenn mehr Anfragen kommen.' },
+        { name: 'Zeit für den Auftrag', text: 'Ihr Team arbeitet am Auftrag statt an der Ablage.' },
       ],
     },
     kontakt: {
       number: '06',
       kicker: 'Kontakt',
       title: 'Reden wir über Ihren Betrieb.',
-      text: 'Erzählen Sie, wo es bei Ihnen hakt. Danach sagen wir Ihnen offen, ob wir helfen können und womit wir anfangen würden.',
+      text: 'Erzählen Sie, wo es bei Ihnen hakt. Danach sage ich Ihnen offen, ob ich helfen kann und womit ich anfangen würde.',
       calCta: 'Termin wählen',
       calConsent:
         'Der Kalender von Cal.com erscheint erst, wenn Sie klicken. Dann gehen Daten an Cal.com; mehr dazu in der Datenschutzerklärung.',
@@ -86,11 +86,11 @@ export const de: SiteContent = {
   services: [
     {
       name: 'Prozessoptimierung',
-      text: 'Wir ordnen die Arbeit so, dass jeder weiß, was als Nächstes kommt.',
+      text: 'Ich ordne die Arbeit so, dass jeder weiß, was als Nächstes kommt.',
     },
     {
       name: 'Digitalisierung',
-      text: 'Wir wählen passende Programme aus und verbinden sie, damit nichts zweimal eingetippt wird.',
+      text: 'Ich wähle passende Programme aus und verbinde sie, damit nichts zweimal eingetippt wird.',
     },
     {
       name: 'Automatisierung',
@@ -108,6 +108,34 @@ export const de: SiteContent = {
     ],
     photoAlt: 'Leon Heinrich',
     initials: 'LH',
+  },
+  faq: {
+    kicker: 'Häufige Fragen',
+    heading: 'Was Betriebe vor dem ersten Gespräch wissen wollen.',
+    items: [
+      {
+        question: 'Muss mein Team dafür viel Neues lernen?',
+        answer:
+          'Nein. Ich entwickle den Ablauf mit den Leuten, die die Arbeit heute machen. Danach bessere ich nach, bis er im Alltag sitzt.',
+      },
+      {
+        question: 'Was, wenn meine Mitarbeiter nicht mitziehen?',
+        answer: 'Wer die Arbeit macht, gestaltet den neuen Ablauf mit. Deshalb fühlt er sich nicht wie eine Vorgabe von oben an.',
+      },
+      {
+        question: 'Müssen wir neue Programme kaufen?',
+        answer:
+          'Nicht unbedingt. Zuerst sehe ich mir an, was Sie schon nutzen und was davon gut läuft. Neues kommt nur dazu, wenn es Ihnen Arbeit spart.',
+      },
+      {
+        question: 'Geht das neben dem Tagesgeschäft?',
+        answer: 'Ja. Ich stelle Schritt für Schritt um, nicht alles an einem Tag. Ihr Betrieb läuft dabei weiter.',
+      },
+      {
+        question: 'Was passiert mit unseren Daten?',
+        answer: 'Ihre Daten liegen in eigenen Datenbanken.',
+      },
+    ],
   },
   footer: {
     legal: [

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { FRAGMENTS, LAYOUTS, NODE_NAMES, VIEWBOX, ZONES } from '@/scene/process/layouts'
+import { de } from '@/content/de'
 
 const key = ([a, b]: readonly [number, number]) => (a < b ? `${a}-${b}` : `${b}-${a}`)
 
@@ -59,6 +60,7 @@ describe('LAYOUTS', () => {
   it('liefert 26 deterministische Fragmente und drei Nutzenfelder', () => {
     expect(FRAGMENTS).toHaveLength(26)
     for (const f of FRAGMENTS) { expect(f.x).toBeLessThanOrEqual(VIEWBOX.width); expect(f.len).toBeGreaterThanOrEqual(10) }
-    expect(ZONES.map((z) => z.label)).toEqual(['Effizienz', 'Skalierbarkeit', 'Produktivität'])
+    // Gleiche Begriffe wie die Kacheln in Szene 05, innen nach außen.
+    expect(ZONES.map((z) => z.label)).toEqual(de.scenes.wachstum.fields.map((f) => f.name))
   })
 })

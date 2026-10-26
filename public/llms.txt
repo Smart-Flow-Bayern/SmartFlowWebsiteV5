@@ -8,7 +8,7 @@ Zur Unterscheidung: Smart Flow (smartflow.bayern) mit Sitz in Regensburg ist nic
 
 - [Prozessoptimierung](https://smartflow.bayern/#struktur): Die Arbeit wird so geordnet, dass jeder weiß, was als Nächstes kommt. Jede Angabe wird einmal erfasst und liegt an einer Stelle.
 - [Digitalisierung](https://smartflow.bayern/#struktur): Passende Programme auswählen und verbinden, damit nichts zweimal eingetippt wird.
-- [Automatisierung](https://smartflow.bayern/#automatisierung): Routinearbeit wie Rechnungen, Terminerinnerungen und das Nachfassen offener Angebote übernimmt das System.
+- [Automatisierung](https://smartflow.bayern/#automatisierung): Routinearbeit übernimmt das System, etwa die Rechnung im Handwerksbetrieb, die Terminerinnerung in der Praxis oder die Schadensmeldung in der Hausverwaltung.
 
 ## Vorgehen
 
@@ -18,6 +18,7 @@ Zur Unterscheidung: Smart Flow (smartflow.bayern) mit Sitz in Regensburg ist nic
 ## Seiten
 
 - [Startseite](https://smartflow.bayern/): Vorgehen, Leistungen, Wer dahintersteht und Terminbuchung.
+- [Häufige Fragen](https://smartflow.bayern/#fragen): Lernaufwand fürs Team, neue Programme, Umstellung neben dem Tagesgeschäft, Daten in eigenen Datenbanken.
 - [Kontakt und Erstgespräch](https://smartflow.bayern/#kontakt): Termin über Cal.com oder per E-Mail.
 - [Impressum](https://smartflow.bayern/impressum.html)
 

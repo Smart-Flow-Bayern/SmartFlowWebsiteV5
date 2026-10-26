@@ -45,6 +45,11 @@ function fixture(): SiteContent {
       photoAlt: 'Foto',
       initials: 'LH',
     },
+    faq: {
+      kicker: 'Fragen',
+      heading: 'Häufige Fragen',
+      items: [{ question: 'Erste Frage?', answer: 'Erste Antwort.' }],
+    },
     footer: {
       legal: [{ label: 'Impressum', href: '/impressum' }],
       legalLabel: 'Rechtliches',

@@ -9,5 +9,5 @@ Stand 2026-10-21. `docs/content/briefing-antworten.md` enthält zu allen 28 Frag
 - `priceRange`: fehlt; es gibt keine Preise auf der Seite, deshalb auch kein `Offer`.
 - `image`/`logo` für das Unternehmen (außer dem automatischen OG-Bild): fehlt.
 - `geo` (Koordinaten): fehlt.
-- `FAQPage`: nicht gesetzt, es gibt keine FAQ auf der Seite.
+- `FAQPage`: seit 2026-10-26 gesetzt, Quelle sind die sichtbaren Fragen (`content.faq`).
 - `aggregateRating`: nicht gesetzt, es gibt keine belegten Bewertungen.

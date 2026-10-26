@@ -46,5 +46,16 @@ export function buildSchema(content: SiteContent): object[] {
     provider: { '@id': BUSINESS_ID },
   }))
 
-  return [business, person, ...services]
+  // Nur weil die Fragen sichtbar auf der Seite stehen (components/scenes/Fragen.tsx).
+  const faq = {
+    '@context': CONTEXT,
+    '@type': 'FAQPage',
+    mainEntity: content.faq.items.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: { '@type': 'Answer', text: item.answer },
+    })),
+  }
+
+  return [business, person, ...services, faq]
 }
