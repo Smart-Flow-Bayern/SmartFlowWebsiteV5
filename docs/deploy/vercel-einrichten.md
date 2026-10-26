@@ -4,6 +4,8 @@ Stand 2026-10-21. Für Leon. Ziel: eine Preview-Adresse zum Prüfen, ohne dass e
 
 Nichts davon ist bisher passiert: Es gibt kein Vercel-Konto, kein Projekt und keine Preview. Die Schritte führst Du selbst aus.
 
+**Nachtrag 2026-10-26:** Leon hat den Stand von `main` für den Livegang freigegeben. Die Sperre `git.deploymentEnabled.main` ist aus `vercel.json` entfernt, die Branches `preview/abnahme` und `release` entfallen. Production Branch ist `main`; Abschnitt 3 und 4 sind damit überholt. Das Projekt kann direkt über **Add New, Project, Import Git Repository** angelegt werden, der erste Build ist dann die Live-Version auf der vercel.app-Adresse. Danach weiter mit `docs/deploy/domain-umzug.md`.
+
 ## Was im Repository schon vorbereitet ist
 
 - `vercel.json` sperrt Deployments für den Branch `main` (`git.deploymentEnabled.main: false`) und enthält drei Weiterleitungen für alte Pfade (`/index.html`, `/en/index.html`, `/404.html`).
