@@ -33,7 +33,7 @@ export const de: SiteContent = {
       number: '01',
       kicker: 'Komplexität',
       title: 'Anfragen auf Zetteln, Termine im Kopf, Rechnungen am Wochenende.',
-      text: 'In vielen Betrieben wächst die Arbeit schneller als die Ordnung. Wir machen daraus einen Ablauf, den Ihr ganzes Team versteht.',
+      text: 'In vielen Handwerksbetrieben, Praxen und Hausverwaltungen wächst die Arbeit schneller als die Ordnung. Wir machen daraus einen Ablauf, den Ihr ganzes Team versteht.',
       scrollHint: 'Scrollen',
     },
     analyse: {
@@ -102,7 +102,7 @@ export const de: SiteContent = {
     kicker: 'Wer dahintersteht',
     heading: 'Ein Ansprechpartner aus Regensburg.',
     sentences: [
-      'Smart Flow ist Leon Heinrich aus Regensburg.',
+      'Smart Flow ist Leon Heinrich aus Regensburg und arbeitet für Betriebe in ganz Bayern.',
       'Vom ersten Gespräch bis zum fertigen Umbau haben Sie denselben Ansprechpartner.',
       'Die Frage ist jedes Mal: Was spart Ihrem Betrieb Arbeit, und was ist nur laut?',
     ],
