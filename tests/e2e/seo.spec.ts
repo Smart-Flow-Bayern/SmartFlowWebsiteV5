@@ -8,8 +8,9 @@ test('Metadaten, JSON-LD und Vorschaubild', async ({ page, request }) => {
 
   const ld = page.locator('script[type="application/ld+json"]')
   await expect(ld).toHaveCount(1)
-  const data = JSON.parse((await ld.textContent()) ?? '') as { '@type': string }[]
-  const types = data.map((d) => d['@type'])
+  const data = JSON.parse((await ld.textContent()) ?? '') as { '@context': string; '@graph': { '@type': string }[] }
+  expect(data['@context']).toBe('https://schema.org')
+  const types = data['@graph'].map((d) => d['@type'])
   expect(types.filter((t) => t === 'Service')).toHaveLength(3)
   expect(types.filter((t) => t === 'LocalBusiness')).toHaveLength(1)
 
