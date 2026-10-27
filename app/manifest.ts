@@ -1,6 +1,8 @@
 import type { MetadataRoute } from 'next'
 import { colors } from '@/lib/brand/tokens'
 
+export const dynamic = 'force-static'
+
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Smart Flow',

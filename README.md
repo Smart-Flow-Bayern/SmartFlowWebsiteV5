@@ -15,14 +15,15 @@ Neue Unternehmenswebsite von Smart Flow (smartflow.bayern): eine Scroll-Fahrt en
 | Befehl | Zweck |
 |---|---|
 | `pnpm dev` | Entwicklungsserver |
-| `pnpm build` | Produktions-Build |
+| `pnpm build` | Statischer Export nach `out/` |
+| `pnpm preview` | Liefert `out/` lokal aus wie GitHub Pages (Port 3006) |
 | `pnpm lint` | ESLint |
 | `pnpm typecheck` | TypeScript-Prüfung |
 | `pnpm test` | Unit-Tests (Vitest) |
 | `pnpm test:watch` | Vitest im Watch-Modus |
 | `pnpm budget` | Prüft das JS-Budget der Startseite (220 000 Bytes gzip, nach `pnpm build`) |
 | `pnpm e2e` | E2E-Tests (Playwright, Chromium und Firefox, startet den Dev-Server auf Port 3005) |
-| `pnpm check:csp` | Prüft die Content-Security-Policy gegen den Production-Build (`pnpm start -p 3006` muss laufen) |
+| `pnpm check:csp` | Prüft die Content-Security-Policy gegen den Export (`pnpm preview` muss laufen) |
 
 Einmalig vor dem ersten E2E-Lauf: `pnpm exec playwright install chromium firefox`.
 
@@ -41,9 +42,9 @@ Platzhalter, die noch ersetzt werden müssen:
 Stand 2026-10-23, Details und Messwerte in `docs/rebranding-v2/07-uebergabe.md`.
 
 - Logo (endgültige Wortmarke), Foto für „Über“, Textkorrektur durch Leon
-- Production-Freigabe (nichts ist deployt)
+- Livegang über GitHub Pages: freigegeben, Schritte in `docs/deploy/github-pages.md`
 - Jury-Restpunkte: mobile Bühne im Fluss, Grafikpositionen Analyse und Wachstum, Standbilder je Szene bei reduzierter Bewegung, View Transition und gemeinsame Kopfzeile der Rechtsseiten, mobile Szenenleiste, breitere H1, ein Referenzbeispiel
 
-## Hinweis
+## Deployment
 
-Produktions-Deployment nur nach Freigabe.
+Jeder Push auf `main` geht über `.github/workflows/pages.yml` auf GitHub Pages (smartflow.bayern) live. Änderungen deshalb auf einem eigenen Branch vorbereiten, lokal mit `pnpm build && pnpm preview` prüfen und erst dann nach `main` übernehmen.

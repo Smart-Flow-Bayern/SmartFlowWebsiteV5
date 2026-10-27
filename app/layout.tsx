@@ -5,6 +5,7 @@ import { siteMetadata } from "@/lib/seo/metadata";
 import { buildSchema } from "@/lib/seo/schema";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { fontClasses } from "@/app/fonts";
+import { CSP } from "@/lib/security/csp";
 import "@/app/globals.css";
 
 const content = CONTENT;
@@ -19,6 +20,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     // suppressHydrationWarning: das Inline-Script setzt data-motion vor der Hydration.
     <html lang="de" className={`${fontClasses} h-full antialiased`} suppressHydrationWarning>
+      <head>
+        {process.env.NODE_ENV === "production" && <meta httpEquiv="Content-Security-Policy" content={CSP} />}
+      </head>
       <body className="min-h-full flex flex-col">
         <script dangerouslySetInnerHTML={{ __html: MOTION_SCRIPT }} />
         <JsonLd data={buildSchema(content)} />

@@ -3,14 +3,15 @@ import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import { IMPULSE_WORDMARK, UNDERSCORE } from "@/lib/brand/marks";
 import { colors, wordmarkVariant } from "@/lib/brand/tokens";
+import { OG_IMAGE } from "@/lib/seo/metadata";
 import { STILL_PROGRESS, frame } from "@/scene/process/frame";
 import { VIEWBOX } from "@/scene/process/layouts";
 
-// Läuft in der Node-Laufzeit (Standard). `export const runtime` ist mit cacheComponents nicht erlaubt.
+// Vorschaubild als Route /og.png statt Datei-Konvention opengraph-image.tsx: Der statische Export schreibt so
+// out/og.png mit Endung, und GitHub Pages liefert die Datei als image/png aus. Wird beim Build einmal erzeugt.
+export const dynamic = "force-static";
 
-export const alt = "Smart Flow";
-export const size = { width: 1200, height: 630 };
-export const contentType = "image/png";
+const size = { width: OG_IMAGE.width, height: OG_IMAGE.height };
 
 const WORDMARK_HEIGHT = 56;
 const ACTIVE_NODES = [1, 5, 7];
@@ -18,7 +19,7 @@ const STAGE_HEIGHT = 370;
 // Mindestkante der Knotenquadrate im gerenderten Bild (px), umgerechnet in viewBox-Einheiten
 const MIN_NODE_SIDE = (16 * VIEWBOX.height) / STAGE_HEIGHT;
 
-export default async function Image() {
+export async function GET() {
   const [wordmark, mono] = await Promise.all([
     // Freigegebene Wortmarke mit Text als Pfaden, unabhängig vom Schrift-Renderer
     readFile(

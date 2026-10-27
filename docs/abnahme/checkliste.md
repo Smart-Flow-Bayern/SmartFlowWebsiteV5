@@ -50,7 +50,7 @@ Auf Touch-Geräten statt Tastatur (Punkt 5): Navigation per Tipp, Cal.com-Button
 
 | Prüfung | Ergebnis |
 |---|---|
-| Sicherheits-Header am Dokument `/` (fünf Header, siehe `docs/deploy/vercel-einrichten.md`, Abschnitt 5) | nicht geprüft |
+| Content-Security-Policy als `<meta>`-Tag (GitHub Pages, siehe `docs/deploy/github-pages.md`) | lokal geprüft 2026-10-27 (`pnpm check:csp` gegen `pnpm preview`), auf der Domain nicht geprüft |
 | `/index.html` leitet auf `/`, `/en/index.html` auf `/en` | nicht geprüft |
 | Alte Anker `/#contact`, `/#services`, `/#process`, `/#about` | nicht geprüft |
 | Rechtsseiten (`/impressum.html`, `/datenschutz.html`, `/agb.html`, `/en/legal-notice.html`, `/en/privacy-policy.html`, `/en/terms.html`) | nicht geprüft |
@@ -63,7 +63,7 @@ Auf Touch-Geräten statt Tastatur (Punkt 5): Navigation per Tipp, Cal.com-Button
 - Frame-Zeiten auf echter GPU im Zielbrowser (p95 ≤ 33 ms): lokal mit `pnpm measure:frames` gemessen (siehe Messdokument), auf Preview und auf echten Mobilgeräten nicht geprüft.
 - Schema.org-Felder, die nur Du liefern kannst: `docs/content/seo-offen.md`.
 - JS-Budget (Abweichung von der Spec): Spec §3 verlangt „unter 350 kB gzipped inklusive Three.js“. Gemessen: Initial-JS 195 912 B (Gate, erfüllt), gesamt inklusive 3D-Szene 464 361 B (verfehlt). Entscheidung Leon: Spec auf „Initial-JS < 350 kB, 3D-Szene lazy, Gesamtwert informativ“ anpassen oder ein neues Gesamtlimit festlegen. Details: `docs/performance/2026-10-messung.md`.
-- Rechtstexte ergänzen, bevor die Domain umzieht: Abschnitt „3. Hosting“ in `public/datenschutz.html` und `public/en/privacy-policy.html` nennt keinen Anbieter (Vercel, AVV); offene Punkte stehen in `docs/content/rechtstexte-offen.md`. Der Text selbst ist Deine Sache bzw. die Deines Anwalts.
+- Rechtstexte ergänzen, bevor die Domain umzieht: Abschnitt „3. Hosting“ in `public/datenschutz.html` nennt keinen Anbieter (GitHub Pages, GitHub Inc., USA); offene Punkte stehen in `docs/content/rechtstexte-offen.md`. Der Text selbst ist Deine Sache bzw. die Deines Anwalts.
 - Freigabe 5: fehlt (Leon).
 
 ### Inszenierung (FREIGABE 4, offen)

@@ -1,50 +1,17 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import nextConfig from '../../../next.config'
+import { CSP } from '../../../lib/security/csp'
 
-describe('next.config headers', () => {
-  afterEach(() => vi.unstubAllEnvs())
-
-  it('liefert langes immutable Caching für Fonts', async () => {
-    const rules = await nextConfig.headers!()
-    for (const source of ['/fonts/:path*']) {
-      const rule = rules.find((r) => r.source === source)
-      expect(rule, source).toBeDefined()
-      expect(rule!.headers).toContainEqual({
-        key: 'Cache-Control',
-        value: 'public, max-age=31536000, immutable',
-      })
-    }
+describe('Auslieferung über GitHub Pages', () => {
+  it('baut einen statischen Export ohne Header- und Weiterleitungsregeln, die Pages nicht kennt', () => {
+    expect(nextConfig.output).toBe('export')
+    expect(nextConfig.headers).toBeUndefined()
+    expect(nextConfig.redirects).toBeUndefined()
   })
 
-  it('setzt Sicherheits-Header für alle Pfade', async () => {
-    vi.stubEnv('NODE_ENV', 'production')
-    const rules = await nextConfig.headers!()
-    const rule = rules.find((r) => r.source === '/:path*')
-    expect(rule).toBeDefined()
-    const byKey = Object.fromEntries(rule!.headers.map((h) => [h.key, h.value]))
-    expect(byKey['X-Content-Type-Options']).toBe('nosniff')
-    expect(byKey['Referrer-Policy']).toBe('strict-origin-when-cross-origin')
-    expect(byKey['Permissions-Policy']).toBe('camera=(), microphone=(), geolocation=()')
-    expect(byKey['X-Frame-Options']).toBe('SAMEORIGIN')
-    expect(byKey['Content-Security-Policy']).toBeDefined()
-  })
-
-  it('lässt die CSP in der Entwicklung weg, weil next dev unsafe-eval braucht', async () => {
-    vi.stubEnv('NODE_ENV', 'development')
-    const rules = await nextConfig.headers!()
-    const rule = rules.find((r) => r.source === '/:path*')!
-    expect(rule.headers.map((h) => h.key)).not.toContain('Content-Security-Policy')
-    expect(rule.headers.map((h) => h.key)).toContain('X-Content-Type-Options')
-  })
-
-  it('CSP erlaubt Cal.com nur für Frames und Verbindungen und sperrt Objekte', async () => {
-    vi.stubEnv('NODE_ENV', 'production')
-    const rules = await nextConfig.headers!()
-    const csp = rules
-      .find((r) => r.source === '/:path*')!
-      .headers.find((h) => h.key === 'Content-Security-Policy')!.value
+  it('CSP erlaubt Cal.com nur für Frames und Verbindungen und sperrt Objekte', () => {
     const directives = Object.fromEntries(
-      csp.split(';').map((d) => {
+      CSP.split(';').map((d) => {
         const [name, ...values] = d.trim().split(/\s+/)
         return [name, values]
       }),
@@ -56,7 +23,8 @@ describe('next.config headers', () => {
     expect(directives['worker-src']).toEqual(["'self'"])
     expect(directives['script-src']).not.toContain("'unsafe-eval'")
     expect(directives['object-src']).toEqual(["'none'"])
-    expect(directives['frame-ancestors']).toEqual(["'self'"])
-    expect(csp).not.toMatch(/\*\s*(;|$)/)
+    // Im <meta>-Tag wirkungslos, Browser melden es als Fehler
+    expect(directives['frame-ancestors']).toBeUndefined()
+    expect(CSP).not.toMatch(/\*\s*(;|$)/)
   })
 })

@@ -5,16 +5,24 @@ import { Wordmark } from '@/components/brand/Wordmark'
 import { CONTENT } from '@/content'
 import { wordmarkVariant } from '@/lib/brand/tokens'
 import { buildYear } from '@/lib/build-year'
+import { OG_IMAGE } from '@/lib/seo/metadata'
 
 // noindex setzt Next für die 404 selbst. Eigene openGraph-Angabe ersetzt die der Startseite (ohne og:url);
-// das Vorschaubild kommt hier aus der Datei-Konvention app/opengraph-image.tsx.
+// das Vorschaubild ist dasselbe wie dort (app/og.png/route.tsx).
 const TITLE = 'Seite nicht gefunden – Smart Flow'
 const DESCRIPTION = 'Diese Adresse gibt es auf smartflow.bayern nicht oder nicht mehr. Auf der Startseite geht es weiter.'
 
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
-  openGraph: { type: 'website', siteName: 'Smart Flow', locale: 'de_DE', title: TITLE, description: DESCRIPTION },
+  openGraph: {
+    type: 'website',
+    siteName: 'Smart Flow',
+    locale: 'de_DE',
+    title: TITLE,
+    description: DESCRIPTION,
+    images: [OG_IMAGE],
+  },
 }
 
 /** Unterbrochene Knotenkette: drei verbundene Knoten, eine Lücke, ein loser Knoten. */

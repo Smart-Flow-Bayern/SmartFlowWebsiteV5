@@ -1,6 +1,6 @@
 // CSP-Prüfung gegen den Production-Build: lädt /,
 // scrollt in 15 Schritten (0 bis 14 einschließlich) bis ans Ende, öffnet dann den Cal.com-Embed und schlägt bei jeder CSP-Verletzung fehl.
-// Aufruf: pnpm build && pnpm start -p 3006 (anderes Terminal), dann `pnpm check:csp [baseUrl]`.
+// Aufruf: pnpm build && pnpm preview (anderes Terminal), dann `pnpm check:csp [baseUrl]`.
 // Erfasst Konsolenmeldungen ("Content Security Policy", "Refused to") und securitypolicyviolation-Events.
 // Nicht Teil der e2e-Suite.
 import { chromium } from '@playwright/test'
@@ -31,8 +31,8 @@ for (const p of pages) {
   })
 
   const res = await page.goto(BASE + p.path, { waitUntil: 'load' })
-  const csp = res?.headers()['content-security-policy']
-  if (!csp) violations.push(tag('Antwort ohne Content-Security-Policy-Header'))
+  const csp = await page.locator('meta[http-equiv="Content-Security-Policy"]').count()
+  if (!res?.ok() || !csp) violations.push(tag('Seite ohne Content-Security-Policy-Meta-Tag'))
   await page.waitForTimeout(2000)
 
   for (let i = 0; i <= STEPS; i++) {

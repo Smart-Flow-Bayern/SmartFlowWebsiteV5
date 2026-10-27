@@ -3,8 +3,8 @@
 module.exports = {
   ci: {
     collect: {
-      startServerCommand: 'pnpm start -p 3006',
-      startServerReadyPattern: 'Ready',
+      startServerCommand: 'pnpm preview',
+      startServerReadyPattern: 'Accepting connections',
       url: ['http://localhost:3006/'],
       numberOfRuns: 3,
     },
