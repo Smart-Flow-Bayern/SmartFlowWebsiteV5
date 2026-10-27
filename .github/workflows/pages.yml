@@ -9,8 +9,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 # Nur ein Deployment gleichzeitig; ein laufendes wird nicht abgebrochen.
 concurrency:
@@ -22,7 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      # Fremd-Action auf festen Commit gepinnt
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -41,6 +40,10 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    # Schreibrechte für Pages nur im Deploy-Job
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
