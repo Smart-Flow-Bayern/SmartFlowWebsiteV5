@@ -63,7 +63,7 @@ Auf Touch-Geräten statt Tastatur (Punkt 5): Navigation per Tipp, Cal.com-Button
 - Frame-Zeiten auf echter GPU im Zielbrowser (p95 ≤ 33 ms): lokal mit `pnpm measure:frames` gemessen (siehe Messdokument), auf Preview und auf echten Mobilgeräten nicht geprüft.
 - Schema.org-Felder, die nur Du liefern kannst: `docs/content/seo-offen.md`.
 - JS-Budget (Abweichung von der Spec): Spec §3 verlangt „unter 350 kB gzipped inklusive Three.js“. Gemessen: Initial-JS 195 912 B (Gate, erfüllt), gesamt inklusive 3D-Szene 464 361 B (verfehlt). Entscheidung Leon: Spec auf „Initial-JS < 350 kB, 3D-Szene lazy, Gesamtwert informativ“ anpassen oder ein neues Gesamtlimit festlegen. Details: `docs/performance/2026-10-messung.md`.
-- Rechtstexte ergänzen, bevor die Domain umzieht: Abschnitt „3. Hosting“ in `public/datenschutz.html` nennt keinen Anbieter (GitHub Pages, GitHub Inc., USA); offene Punkte stehen in `docs/content/rechtstexte-offen.md`. Der Text selbst ist Deine Sache bzw. die Deines Anwalts.
+- Rechtstexte prüfen: Abschnitt „3. Hosting“ in `public/datenschutz.html` ist für GitHub Pages ergänzt (2026-10-27). Weitere offene Punkte stehen in `docs/content/rechtstexte-offen.md`. Die Freigabe des Wortlauts ist Deine Sache bzw. die Deines Anwalts.
 - Freigabe 5: fehlt (Leon).
 
 ### Inszenierung (FREIGABE 4, offen)

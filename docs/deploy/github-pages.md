@@ -65,4 +65,4 @@ Custom Domain in V5 leeren und wieder in `SmartFlowWebsite_v3` eintragen. Weil d
 
 ## Offen vor dem Livegang
 
-Datenschutzerklärung, Abschnitt „3. Hosting“: nennt keinen Anbieter. Mit GitHub Pages ist der Hoster GitHub Inc. (USA); Name, Anschrift, Rechtsgrundlage und Drittlandübermittlung ergänzen. Details in `docs/content/rechtstexte-offen.md`. Der Text ist Sache von Leon bzw. seinem Anwalt.
+Datenschutzerklärung, Abschnitt „3. Hosting“: am 2026-10-27 für GitHub Pages ergänzt (GitHub, Inc., USA; Data Privacy Framework). Prüfung durch Leon bzw. seinen Anwalt steht aus, offene Punkte in `docs/content/rechtstexte-offen.md`.
